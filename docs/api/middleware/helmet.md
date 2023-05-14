@@ -16,7 +16,7 @@ func New(config ...Config) woody.Handler
 package main
 
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/helmet"
 )
 

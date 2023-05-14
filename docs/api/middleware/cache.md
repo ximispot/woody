@@ -3,7 +3,7 @@ id: cache
 title: Cache
 ---
 
-Cache middleware for [Woody](https://github.com/gowoody/woody) designed to intercept responses and cache them. This middleware will cache the `Body`, `Content-Type` and `StatusCode` using the `c.Path()` as unique identifier. Special thanks to [@codemicro](https://github.com/codemicro/woody-cache) for creating this middleware for Woody core!
+Cache middleware for [Woody](https://github.com/ximispot/woody) designed to intercept responses and cache them. This middleware will cache the `Body`, `Content-Type` and `StatusCode` using the `c.Path()` as unique identifier. Special thanks to [@codemicro](https://github.com/codemicro/woody-cache) for creating this middleware for Woody core!
 
 Request Directives<br />
 `Cache-Control: no-cache` will return the up-to-date response but still caches it. You will always get a `miss` cache status.<br />
@@ -21,7 +21,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/cache"
 )
 ```

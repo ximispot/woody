@@ -3,7 +3,7 @@ id: proxy
 title: Proxy
 ---
 
-Proxy middleware for [Woody](https://github.com/gowoody/woody) that allows you to proxy requests to multiple servers.
+Proxy middleware for [Woody](https://github.com/ximispot/woody) that allows you to proxy requests to multiple servers.
 
 ## Signatures
 
@@ -32,7 +32,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/proxy"
 )
 ```
@@ -55,7 +55,7 @@ proxy.WithClient(&fasthttp.Client{
 app.Get("/gif", proxy.Forward("https://i.imgur.com/IWaBepg.gif"))
 
 // If you want to forward with a specific domain. You have to use proxy.DomainForward.
-app.Get("/payments", proxy.DomainForward("docs.gowoody.io", "http://localhost:8000"))
+app.Get("/payments", proxy.DomainForward("docs.ximispot.io", "http://localhost:8000"))
 
 // Forward to url with local custom client
 app.Get("/gif", proxy.Forward("https://i.imgur.com/IWaBepg.gif", &fasthttp.Client{

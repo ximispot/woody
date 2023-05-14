@@ -3,11 +3,11 @@ id: timeout
 title: Timeout
 ---
 
-There exist two distinct implementations of timeout middleware [Woody](https://github.com/gowoody/woody).
+There exist two distinct implementations of timeout middleware [Woody](https://github.com/ximispot/woody).
 
 **New**
 
-Wraps a `woody.Handler` with a timeout. If the handler takes longer than the given duration to return, the timeout error is set and forwarded to the centralized [ErrorHandler](https://docs.gowoody.io/error-handling).
+Wraps a `woody.Handler` with a timeout. If the handler takes longer than the given duration to return, the timeout error is set and forwarded to the centralized [ErrorHandler](https://docs.ximispot.io/error-handling).
 
 :::caution
 This has been deprecated since it raises race conditions.
@@ -35,7 +35,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/timeout"
 )
 ```

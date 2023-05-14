@@ -35,7 +35,7 @@ package main
 import (
     "log"
 
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/recover"
 )
 
@@ -66,7 +66,7 @@ app.Get("/", func(c *woody.Ctx) error {
 
 ## Default Error Handler
 
-Woody provides an error handler by default. For a standard error, the response is sent as **500 Internal Server Error**. If the error is of type [woody.Error](https://godoc.org/github.com/gowoody/woody#Error), the response is sent with the provided status code and message.
+Woody provides an error handler by default. For a standard error, the response is sent as **500 Internal Server Error**. If the error is of type [woody.Error](https://godoc.org/github.com/ximispot/woody#Error), the response is sent with the provided status code and message.
 
 ```go title="Example"
 // Default error handler

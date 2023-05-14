@@ -877,7 +877,7 @@ app.Post("/", func(c *woody.Ctx) error {
 
 ## Next
 
-When **Next** is called, it executes the next method in the stack that matches the current route. You can pass an error struct within the method that will end the chaining and call the [error handler](https://docs.gowoody.io/guide/error-handling).
+When **Next** is called, it executes the next method in the stack that matches the current route. You can pass an error struct within the method that will end the chaining and call the [error handler](https://docs.ximispot.io/guide/error-handling).
 
 ```go title="Signature"
 func (c *Ctx) Next() error
@@ -1326,7 +1326,7 @@ app.Get("/back", func(c *woody.Ctx) error {
 
 ## Render
 
-Renders a view with data and sends a `text/html` response. By default `Render` uses the default [**Go Template engine**](https://pkg.go.dev/html/template/). If you want to use another View engine, please take a look at our [**Template middleware**](https://github.com/gowoody/template).
+Renders a view with data and sends a `text/html` response. By default `Render` uses the default [**Go Template engine**](https://pkg.go.dev/html/template/). If you want to use another View engine, please take a look at our [**Template middleware**](https://github.com/ximispot/template).
 
 ```go title="Signature"
 func (c *Ctx) Render(name string, bind interface{}, layouts ...string) error
@@ -1419,7 +1419,7 @@ app.Get("/old", func(c *woody.Ctx) error {
 
 ## Route
 
-Returns the matched [Route](https://pkg.go.dev/github.com/gowoody/woody?tab=doc#Route) struct.
+Returns the matched [Route](https://pkg.go.dev/github.com/ximispot/woody?tab=doc#Route) struct.
 
 ```go title="Signature"
 func (c *Ctx) Route() *Route
@@ -1605,7 +1605,7 @@ app.Get("/file-with-url-chars", func(c *woody.Ctx) error {
 Sets the status code and the correct status message in the body, if the response body is **empty**.
 
 :::tip
-You can find all used status codes and messages [here](https://github.com/gowoody/woody/blob/dffab20bcdf4f3597d2c74633a7705a517d2c8c2/utils.go#L183-L244).
+You can find all used status codes and messages [here](https://github.com/ximispot/woody/blob/dffab20bcdf4f3597d2c74633a7705a517d2c8c2/utils.go#L183-L244).
 :::
 
 ```go title="Signature"

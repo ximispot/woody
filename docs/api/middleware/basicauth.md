@@ -3,7 +3,7 @@ id: basicauth
 title: BasicAuth
 ---
 
-Basic Authentication middleware for [Woody](https://github.com/gowoody/woody) that provides an HTTP basic authentication. It calls the next handler for valid credentials and [401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401) or a custom response for missing or invalid credentials.
+Basic Authentication middleware for [Woody](https://github.com/ximispot/woody) that provides an HTTP basic authentication. It calls the next handler for valid credentials and [401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401) or a custom response for missing or invalid credentials.
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/basicauth"
 )
 ```

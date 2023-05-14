@@ -18,7 +18,7 @@ First of all, [download](https://go.dev/dl/) and install Go. `1.17` or higher is
 Installation is done using the [`go get`](https://pkg.go.dev/cmd/go/#hdr-Add_dependencies_to_current_module_and_install_them) command:
 
 ```bash
-go get github.com/gowoody/woody/v2
+go get github.com/ximispot/woody
 ```
 
 ### Zero Allocation
@@ -52,7 +52,7 @@ func handler(c *woody.Ctx) error {
 }
 ```
 
-We created a custom `CopyString` function that does the above and is available under [gowoody/utils](https://github.com/gowoody/woody/tree/master/utils).
+We created a custom `CopyString` function that does the above and is available under [ximispot/utils](https://github.com/ximispot/woody/tree/master/utils).
 
 ```go
 app.Get("/:foo", func(c *woody.Ctx) error {
@@ -71,7 +71,7 @@ app := woody.New(woody.Config{
 })
 ```
 
-For more information, please check [**\#426**](https://github.com/gowoody/woody/issues/426) and [**\#185**](https://github.com/gowoody/woody/issues/185).
+For more information, please check [**\#426**](https://github.com/ximispot/woody/issues/426) and [**\#185**](https://github.com/ximispot/woody/issues/185).
 
 ### Hello, World!
 
@@ -80,7 +80,7 @@ Embedded below is essentially the most straightforward **Woody** app you can cre
 ```go
 package main
 
-import "github.com/gowoody/woody/v2"
+import "github.com/ximispot/woody"
 
 func main() {
 	app := woody.New()
@@ -113,9 +113,9 @@ app.Method(path string, ...func(*woody.Ctx) error)
 ```
 
 - `app` is an instance of **Woody**
-- `Method` is an [HTTP request method](https://docs.gowoody.io/api/app#route-handlers): `GET`, `PUT`, `POST`, etc.
+- `Method` is an [HTTP request method](https://docs.ximispot.io/api/app#route-handlers): `GET`, `PUT`, `POST`, etc.
 - `path` is a virtual path on the server
-- `func(*woody.Ctx) error` is a callback function containing the [Context](https://docs.gowoody.io/api/ctx) executed when the route is matched
+- `func(*woody.Ctx) error` is a callback function containing the [Context](https://docs.ximispot.io/api/ctx) executed when the route is matched
 
 **Simple route**
 

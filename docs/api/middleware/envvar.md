@@ -3,7 +3,7 @@ id: envvar
 title: EnvVar
 ---
 
-EnvVar middleware for [Woody](https://github.com/gowoody/woody) that can be used to expose environment variables with various options.
+EnvVar middleware for [Woody](https://github.com/ximispot/woody) that can be used to expose environment variables with various options.
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/envvar"
 )
 ```

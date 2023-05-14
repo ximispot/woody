@@ -137,7 +137,7 @@ func (a *Agent) RefererBytes(referer []byte) *Agent
 ```
 
 ```go title="Example"
-agent.Referer("https://docs.gowoody.io")
+agent.Referer("https://docs.ximispot.io")
 // ...
 ```
 

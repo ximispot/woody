@@ -15,7 +15,7 @@ var once sync.Once
 // New wraps a handler and aborts the process of the handler if the timeout is reached.
 //
 // Deprecated: This implementation contains data race issues. Use NewWithContext instead.
-// Find documentation and sample usage on https://docs.gowoody.io/api/middleware/timeout
+// Find documentation and sample usage on https://docs.ximispot.io/api/middleware/timeout
 func New(handler woody.Handler, timeout time.Duration) woody.Handler {
 	once.Do(func() {
 		log.Printf("[Warning] - [TIMEOUT] timeout contains data race issues, not ready for production!")

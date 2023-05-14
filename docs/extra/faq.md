@@ -13,7 +13,7 @@ There is no definitive answer to this question. The answer depends on the scale 
 
 Routes and other application-specific logic can live in as many files as you wish, in any directory structure you prefer. View the following examples for inspiration:
 
-* [gowoody/boilerplate](https://github.com/gowoody/boilerplate)
+* [ximispot/boilerplate](https://github.com/ximispot/boilerplate)
 * [thomasvvugt/woody-boilerplate](https://github.com/thomasvvugt/woody-boilerplate)
 * [Youtube - Building a REST API using Gorm and Woody](https://www.youtube.com/watch?v=Iq2qT0fRhAA)
 * [embedmode/woodyseed](https://github.com/embedmode/woodyseed)
@@ -57,7 +57,7 @@ air
 
 As you make changes to your source code, Air will detect them and automatically restart the application.
 
-A complete example demonstrating the use of Air with Woody can be found in the [Woody Recipes repository](https://github.com/gowoody/recipes/tree/master/air). This example shows how to configure and use Air in a Woody project to create an efficient development environment.
+A complete example demonstrating the use of Air with Woody can be found in the [Woody Recipes repository](https://github.com/ximispot/recipes/tree/master/air). This example shows how to configure and use Air in a Woody project to create an efficient development environment.
 
 
 ## How do I set up an error handler?
@@ -76,7 +76,7 @@ We have a dedicated page explaining how error handling works in Woody, see [Erro
 
 ## Which template engines does Woody support?
 
-Woody currently supports 8 template engines in our [gowoody/template](https://github.com/gowoody/template) middleware:
+Woody currently supports 8 template engines in our [ximispot/template](https://github.com/ximispot/template) middleware:
 
 * [Ace](https://github.com/yosssi/ace)
 * [Amber](https://github.com/eknkc/amber)
@@ -91,8 +91,8 @@ To learn more about using Templates in Woody, see [Templates](../guide/templates
 
 ## Does Woody have a community chat?
 
-Yes, we have our own [Discord ](https://gowoody.io/discord)server, where we hang out. We have different rooms for every subject.  
-If you have questions or just want to have a chat, feel free to join us via this **&gt;** [**invite link**](https://gowoody.io/discord) **&lt;**.
+Yes, we have our own [Discord ](https://ximispot.io/discord)server, where we hang out. We have different rooms for every subject.  
+If you have questions or just want to have a chat, feel free to join us via this **&gt;** [**invite link**](https://ximispot.io/discord) **&lt;**.
 
 ![](/img/support-discord.png)
 
@@ -106,7 +106,7 @@ package main
 import (
 	"log"
 
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/logger"
 )
 
@@ -165,4 +165,4 @@ func main() {
 	log.Fatal(app.Listen(":3000"))
 }
 ```
-If more information is needed, please refer to this issue [#750](https://github.com/gowoody/woody/issues/750)
+If more information is needed, please refer to this issue [#750](https://github.com/ximispot/woody/issues/750)

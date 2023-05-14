@@ -170,7 +170,7 @@ func Test_CORS_AllowOriginScheme(t *testing.T) {
 		},
 		{
 			pattern:           "http://example.com",
-			reqOrigin:         "http://gowoody.com",
+			reqOrigin:         "http://ximispot.com",
 			shouldAllowOrigin: false,
 		},
 		{

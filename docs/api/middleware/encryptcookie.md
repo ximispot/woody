@@ -3,7 +3,7 @@ id: encryptcookie
 title: Encrypt Cookie
 ---
 
-Encrypt middleware for [Woody](https://github.com/gowoody/woody) which encrypts cookie values. Note: this middleware does not encrypt cookie names.
+Encrypt middleware for [Woody](https://github.com/ximispot/woody) which encrypts cookie values. Note: this middleware does not encrypt cookie names.
 
 ## Signatures
 
@@ -21,7 +21,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/encryptcookie"
 )
 ```

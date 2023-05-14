@@ -14,7 +14,7 @@ func Test_ToUpper(t *testing.T) {
 const (
 	largeStr = "/RePos/GoFiBer/FibEr/iSsues/187643/CoMmEnts/RePos/GoFiBer/FibEr/iSsues/CoMmEnts"
 	upperStr = "/REPOS/GOFIBER/FIBER/ISSUES/187643/COMMENTS/REPOS/GOFIBER/FIBER/ISSUES/COMMENTS"
-	lowerStr = "/repos/gowoody/woody/issues/187643/comments/repos/gowoody/woody/issues/comments"
+	lowerStr = "/repos/ximispot/woody/issues/187643/comments/repos/ximispot/woody/issues/comments"
 )
 
 func Benchmark_ToUpper(b *testing.B) {

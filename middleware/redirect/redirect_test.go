@@ -73,8 +73,8 @@ func Test_Redirect(t *testing.T) {
 		},
 		{
 			name:       "should be returns status StatusSeeOther without set redirectTo to use the default",
-			url:        "/redirect/github.com/gowoody/redirect",
-			redirectTo: "github.com/gowoody/redirect",
+			url:        "/redirect/github.com/ximispot/redirect",
+			redirectTo: "github.com/ximispot/redirect",
 			statusCode: woody.StatusSeeOther,
 		},
 		{
@@ -109,7 +109,7 @@ func Test_Redirect(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, tt.url, nil)
 			utils.AssertEqual(t, err, nil)
-			req.Header.Set("Location", "github.com/gowoody/redirect")
+			req.Header.Set("Location", "github.com/ximispot/redirect")
 			resp, err := app.Test(req)
 
 			utils.AssertEqual(t, err, nil)

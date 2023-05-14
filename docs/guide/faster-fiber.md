@@ -16,7 +16,7 @@ Since Woody v2.32.0, we use **encoding/json** as default json library due to sta
 ```go title="Example"
 package main
 
-import "github.com/gowoody/woody/v2"
+import "github.com/ximispot/woody"
 import "github.com/goccy/go-json"
 
 func main() {

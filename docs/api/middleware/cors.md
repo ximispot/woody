@@ -3,7 +3,7 @@ id: cors
 title: CORS
 ---
 
-CORS middleware for [Woody](https://github.com/gowoody/woody) that can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
+CORS middleware for [Woody](https://github.com/ximispot/woody) that can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/cors"
 )
 ```
@@ -30,7 +30,7 @@ app.Use(cors.New())
 
 // Or extend your config for customization
 app.Use(cors.New(cors.Config{
-    AllowOrigins: "https://gowoody.io, https://gowoody.net",
+    AllowOrigins: "https://ximispot.io, https://ximispot.net",
     AllowHeaders:  "Origin, Content-Type, Accept",
 }))
 ```

@@ -3,7 +3,7 @@ id: requestid
 title: RequestID
 ---
 
-RequestID middleware for [Woody](https://github.com/gowoody/woody) that adds an indentifier to the response.
+RequestID middleware for [Woody](https://github.com/ximispot/woody) that adds an indentifier to the response.
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/requestid"
 )
 ```

@@ -26,8 +26,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gowoody/v2/middleware/adaptor"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/v2/middleware/adaptor"
+	"github.com/ximispot/woody"
 )
 
 func main() {
@@ -61,8 +61,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gowoody/v2/middleware/adaptor"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/v2/middleware/adaptor"
+	"github.com/ximispot/woody"
 )
 
 func main() {
@@ -91,8 +91,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/gowoody/v2/middleware/adaptor"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/v2/middleware/adaptor"
+	"github.com/ximispot/woody"
 )
 
 func main() {
@@ -116,8 +116,8 @@ func greet(c *woody.Ctx) error {
 package main
 
 import (
-	"github.com/gowoody/v2/middleware/adaptor"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/v2/middleware/adaptor"
+	"github.com/ximispot/woody"
 	"net/http"
 )
 func main() {

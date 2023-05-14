@@ -3,7 +3,7 @@ id: expvar
 title: ExpVar
 ---
 
-Expvar middleware for [Woody](https://github.com/gowoody/woody) that serves via its HTTP server runtime exposed variants in the JSON format. The package is typically only imported for the side effect of registering its HTTP handlers. The handled path is `/debug/vars`.
+Expvar middleware for [Woody](https://github.com/ximispot/woody) that serves via its HTTP server runtime exposed variants in the JSON format. The package is typically only imported for the side effect of registering its HTTP handlers. The handled path is `/debug/vars`.
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   expvarmw "github.com/ximispot/woody/middleware/expvar"
 )
 ```

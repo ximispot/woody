@@ -3,7 +3,7 @@ id: logger
 title: Logger
 ---
 
-Logger middleware for [Woody](https://github.com/gowoody/woody) that logs HTTP request/response details.
+Logger middleware for [Woody](https://github.com/ximispot/woody) that logs HTTP request/response details.
 
 ## Signatures
 ```go
@@ -15,7 +15,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/logger"
 )
 ```

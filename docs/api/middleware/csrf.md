@@ -3,14 +3,14 @@ id: csrf
 title: CSRF
 ---
 
-CSRF middleware for [Woody](https://github.com/gowoody/woody) that provides [Cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by passing a csrf token via cookies. This cookie value will be used to compare against the client csrf token on requests, other than those defined as "safe" by RFC7231 \(GET, HEAD, OPTIONS, or TRACE\). When the csrf token is invalid, this middleware will return the `woody.ErrForbidden` error. 
+CSRF middleware for [Woody](https://github.com/ximispot/woody) that provides [Cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by passing a csrf token via cookies. This cookie value will be used to compare against the client csrf token on requests, other than those defined as "safe" by RFC7231 \(GET, HEAD, OPTIONS, or TRACE\). When the csrf token is invalid, this middleware will return the `woody.ErrForbidden` error. 
 
 CSRF Tokens are generated on GET requests. You can retrieve the CSRF token with `c.Locals(contextKey)`, where `contextKey` is the string you set in the config (see Custom Config below).
 
 When no `csrf_` cookie is set, or the token has expired, a new token will be generated and `csrf_` cookie set.
 
 :::note
-This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/ximispot/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 ## Signatures
@@ -25,7 +25,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/csrf"
 )
 ```
@@ -157,10 +157,10 @@ const (
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
+You can use any storage from our [storage](https://github.com/ximispot/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
+storage := sqlite3.New() // From github.com/ximispot/storage/sqlite3
 app.Use(csrf.New(csrf.Config{
 	Storage: storage,
 }))

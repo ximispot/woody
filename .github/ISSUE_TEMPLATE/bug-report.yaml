@@ -10,7 +10,7 @@ body:
       value: |
         ### Notice
         **This repository is not related to external or third-part Woody modules. If you have a problem with them, open an issue under their repos. If you think the problem is related to Woody, open the issue here.**
-        - Don't forget you can ask your questions in our [Discord server](https://gowoody.io/discord).
+        - Don't forget you can ask your questions in our [Discord server](https://ximispot.io/discord).
         - If you have a suggestion for a Woody feature you would like to see, open the issue with the **✏️ Feature Request** template.
         - Write your issue with clear and understandable English.
   - type: textarea
@@ -61,7 +61,7 @@ body:
       value: |
         package main
 
-        import "github.com/gowoody/woody/v2"
+        import "github.com/ximispot/woody"
         import "log"
 
         func main() {
@@ -77,7 +77,7 @@ body:
       label: "Checklist:"
       description: "By submitting this issue, you confirm that:"
       options:
-        - label: "I agree to follow Woody's [Code of Conduct](https://github.com/gowoody/woody/blob/master/.github/CODE_OF_CONDUCT.md)."
+        - label: "I agree to follow Woody's [Code of Conduct](https://github.com/ximispot/woody/blob/master/.github/CODE_OF_CONDUCT.md)."
           required: true
         - label: "I have checked for existing issues that describe my problem prior to opening this one."
           required: true

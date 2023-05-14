@@ -19,7 +19,7 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/keyauth"
 )
 
@@ -68,7 +68,7 @@ curl --cookie "access_token=Clearly A Wrong Key" http://localhost:3000
 #>  missing or malformed API Key
 ```
 
-For a more detailed example, see also the [`github.com/gowoody/recipes`](https://github.com/gowoody/recipes) repository and specifically the `woody-envoy-extauthz` repository and the [`keyauth example`](https://github.com/gowoody/recipes/blob/master/woody-envoy-extauthz/authz/main.go) code.
+For a more detailed example, see also the [`github.com/ximispot/recipes`](https://github.com/ximispot/recipes) repository and specifically the `woody-envoy-extauthz` repository and the [`keyauth example`](https://github.com/ximispot/recipes/blob/master/woody-envoy-extauthz/authz/main.go) code.
 
 
 ### Authenticate only certain endpoints
@@ -81,7 +81,7 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/keyauth"
 	"regexp"
 	"strings"
@@ -163,7 +163,7 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/keyauth"
 )
 

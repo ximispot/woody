@@ -3,7 +3,7 @@ id: skip
 title: Skip
 ---
 
-Skip middleware for [Woody](https://github.com/gowoody/woody) that skips a wrapped handler if a predicate is true.
+Skip middleware for [Woody](https://github.com/ximispot/woody) that skips a wrapped handler if a predicate is true.
 
 ## Signatures
 ```go
@@ -14,7 +14,7 @@ func New(handler woody.Handler, exclude func(c *woody.Ctx) bool) woody.Handler
 Import the middleware package that is part of the Woody web framework
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/skip"
 )
 ```

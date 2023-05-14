@@ -48,16 +48,16 @@ app.Get("/", func(c *woody.Ctx) error {
 
 ## Engines
 
-Woody team maintains [templates](https://github.com/gowoody/template) package that provides wrappers for multiple template engines:
+Woody team maintains [templates](https://github.com/ximispot/template) package that provides wrappers for multiple template engines:
 
-* [html](https://github.com/gowoody/template/tree/master/html)
-* [ace](https://github.com/gowoody/template/tree/master/ace)
-* [amber](https://github.com/gowoody/template/tree/master/amber)
-* [django](https://github.com/gowoody/template/tree/master/django)
-* [handlebars](https://github.com/gowoody/template/tree/master/handlebars)
-* [jet](https://github.com/gowoody/template/tree/master/jet)
-* [mustache](https://github.com/gowoody/template/tree/master/mustache)
-* [pug](https://github.com/gowoody/template/tree/master/pug)
+* [html](https://github.com/ximispot/template/tree/master/html)
+* [ace](https://github.com/ximispot/template/tree/master/ace)
+* [amber](https://github.com/ximispot/template/tree/master/amber)
+* [django](https://github.com/ximispot/template/tree/master/django)
+* [handlebars](https://github.com/ximispot/template/tree/master/handlebars)
+* [jet](https://github.com/ximispot/template/tree/master/jet)
+* [mustache](https://github.com/ximispot/template/tree/master/mustache)
+* [pug](https://github.com/ximispot/template/tree/master/pug)
 
 <Tabs>
 <TabItem value="example" label="Example">
@@ -67,8 +67,8 @@ package main
 
 import (
     "log"
-    "github.com/gowoody/woody/v2"
-    "github.com/gowoody/template/html"
+    "github.com/ximispot/woody"
+    "github.com/ximispot/template/html"
 )
 
 func main() {

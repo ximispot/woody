@@ -2,8 +2,8 @@
 
 # Some env variables
 BRANCH="master"
-MAJOR_VERSION="v2"
-REPO_URL="github.com/gowoody/docs.git"
+MAJOR_VERSION="v0"
+REPO_URL="github.com/ximispot/docs.git"
 AUTHOR_EMAIL="github-actions[bot]@users.noreply.github.com"
 AUTHOR_USERNAME="github-actions[bot]"
 
@@ -22,7 +22,7 @@ if [[ $EVENT == "push" ]]; then
         # Push changes for next docs
         cd woody-docs/ || return
         git add .
-        git commit -m "Add docs from https://github.com/gowoody/woody/commit/${latest_commit}"
+        git commit -m "Add docs from https://github.com/ximispot/woody/commit/${latest_commit}"
         git push https://${TOKEN}@${REPO_URL}
     fi
 elif [[ $EVENT == "release" ]]; then

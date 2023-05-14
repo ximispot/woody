@@ -19,8 +19,8 @@ The table below shows the supported versions for Woody which include security up
 ## Reporting security problems to Woody
 
 **DO NOT CREATE AN ISSUE** to report a security problem. Instead, please
-send us an e-mail at `team@gowoody.io` or join our discord server via
-[this invite link](https://gowoody.io/discord) and send a private message
+send us an e-mail at `team@ximispot.io` or join our discord server via
+[this invite link](https://ximispot.io/discord) and send a private message
 to Fenny or any of the maintainers.
 
 <a name="contact"></a>
@@ -31,7 +31,7 @@ to security incident reports as fast as possible, within one business day at the
 latest.
 
 In case Fenny does not respond within a reasonable time, the secondary point
-of contact are any of the [@maintainers](https://github.com/orgs/gowoody/teams/maintainers).
+of contact are any of the [@maintainers](https://github.com/orgs/ximispot/teams/maintainers).
 The maintainers are the only other persons with administrative access to Woody's source code.
 
 <a name="process"></a>
@@ -65,7 +65,7 @@ it from happening again.
 
 ### Secure accounts with access
 
-The [Woody Organization](https://github.com/gowoody) requires 2FA authorization
+The [Woody Organization](https://github.com/ximispot) requires 2FA authorization
 for all of it's members.
 
 ### Critical Updates And Security Notices

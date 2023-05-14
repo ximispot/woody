@@ -3,7 +3,7 @@ id: filesystem
 title: FileSystem
 ---
 
-Filesystem middleware for [Woody](https://github.com/gowoody/woody) that enables you to serve files from a directory.
+Filesystem middleware for [Woody](https://github.com/ximispot/woody) that enables you to serve files from a directory.
 
 :::caution
 **`:params` & `:optionals?` within the prefix path are not supported!**
@@ -23,7 +23,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/filesystem"
 )
 ```
@@ -62,7 +62,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/filesystem"
 )
 
@@ -102,7 +102,7 @@ func main() {
 package main
 
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/markbates/pkger"
@@ -127,7 +127,7 @@ func main() {
 package main
 
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/gobuffalo/packr/v2"
@@ -152,7 +152,7 @@ func main() {
 package main
 
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/GeertJohan/go.rice"
@@ -177,7 +177,7 @@ func main() {
 package main
 
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/filesystem"
 
     "<Your go module>/myEmbeddedFiles"
@@ -202,7 +202,7 @@ func main() {
 package main
 
 import (
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/filesystem"
 
 	// Use blank to invoke init function and register data to statik

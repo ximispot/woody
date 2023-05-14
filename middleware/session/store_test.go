@@ -63,7 +63,7 @@ func TestStore_getSessionID(t *testing.T) {
 }
 
 // go test -run TestStore_Get
-// Regression: https://github.com/gowoody/woody/issues/1408
+// Regression: https://github.com/ximispot/woody/issues/1408
 func TestStore_Get(t *testing.T) {
 	t.Parallel()
 	unexpectedID := "test-session-id"

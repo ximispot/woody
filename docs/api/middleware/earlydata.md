@@ -3,7 +3,7 @@ id: earlydata
 title: EarlyData
 ---
 
-The Early Data middleware for [Woody](https://github.com/gowoody/woody) adds support for TLS 1.3's early data ("0-RTT") feature.
+The Early Data middleware for [Woody](https://github.com/ximispot/woody) adds support for TLS 1.3's early data ("0-RTT") feature.
 Citing [RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446#section-2-3), when a client and server share a PSK, TLS 1.3 allows clients to send data on the first flight ("early data") to speed up the request, effectively reducing the regular 1-RTT request to a 0-RTT request.
 
 Make sure to enable woody's `EnableTrustedProxyCheck` config option before using this middleware in order to not trust bogus HTTP request headers of the client.
@@ -28,7 +28,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/earlydata"
 )
 ```

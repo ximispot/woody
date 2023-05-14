@@ -3,10 +3,10 @@ id: session
 title: Session
 ---
 
-Session middleware for [Woody](https://github.com/gowoody/woody).
+Session middleware for [Woody](https://github.com/ximispot/woody).
 
 :::note
-This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/ximispot/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 ## Signatures
@@ -36,7 +36,7 @@ Storing `interface{}` values are limited to built-ins Go types.
 Import the middleware package that is part of the Woody web framework
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/session"
 )
 ```
@@ -167,10 +167,10 @@ const (
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
+You can use any storage from our [storage](https://github.com/ximispot/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
+storage := sqlite3.New() // From github.com/ximispot/storage/sqlite3
 store := session.New(session.Config{
 	Storage: storage,
 })

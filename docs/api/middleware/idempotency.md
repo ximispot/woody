@@ -3,7 +3,7 @@ id: idempotency
 title: Idempotency
 ---
 
-Idempotency middleware for [Woody](https://github.com/gowoody/woody) allows for fault-tolerant APIs where duplicate requests — for example due to networking issues on the client-side — do not erroneously cause the same action performed multiple times on the server-side.
+Idempotency middleware for [Woody](https://github.com/ximispot/woody) allows for fault-tolerant APIs where duplicate requests — for example due to networking issues on the client-side — do not erroneously cause the same action performed multiple times on the server-side.
 
 Refer to https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-02 for a better understanding.
 
@@ -19,7 +19,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 	"github.com/ximispot/woody/middleware/idempotency"
 )
 ```

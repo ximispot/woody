@@ -3,7 +3,7 @@ id: recover
 title: Recover
 ---
 
-Recover middleware for [Woody](https://github.com/gowoody/woody) that recovers from panics anywhere in the stack chain and handles the control to the centralized [ErrorHandler](https://docs.gowoody.io/error-handling).
+Recover middleware for [Woody](https://github.com/ximispot/woody) that recovers from panics anywhere in the stack chain and handles the control to the centralized [ErrorHandler](https://docs.ximispot.io/error-handling).
 
 ## Signatures
 
@@ -17,7 +17,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/recover"
 )
 ```

@@ -101,7 +101,7 @@ func main() {
 
 ```
 
-#### 📖 [**Serving Static Files**](https://docs.gowoody.io/api/app#static)
+#### 📖 [**Serving Static Files**](https://docs.ximispot.io/api/app#static)
 
 ```go
 func main() {
@@ -123,7 +123,7 @@ func main() {
 
 ```
 
-#### 📖 [**Middleware & Next**](https://docs.gowoody.io/api/ctx#next)
+#### 📖 [**Middleware & Next**](https://docs.ximispot.io/api/ctx#next)
 
 ```go
 func main() {
@@ -157,22 +157,22 @@ func main() {
 
 ### Views engines
 
-📖 [Config](https://docs.gowoody.io/api/woody#config)
-📖 [Engines](https://github.com/gowoody/template)
-📖 [Render](https://docs.gowoody.io/api/ctx#render)
+📖 [Config](https://docs.ximispot.io/api/woody#config)
+📖 [Engines](https://github.com/ximispot/template)
+📖 [Render](https://docs.ximispot.io/api/ctx#render)
 
 Woody defaults to the [html/template](https://pkg.go.dev/html/template/) when no view engine is set.
 
 If you want to execute partials or use a different engine like [amber](https://github.com/eknkc/amber), [handlebars](https://github.com/aymerick/raymond), [mustache](https://github.com/cbroglie/mustache) or [pug](https://github.com/Joker/jade) etc..
 
-Checkout our [Template](https://github.com/gowoody/template) package that support multiple view engines.
+Checkout our [Template](https://github.com/ximispot/template) package that support multiple view engines.
 
 ```go
 package main
 
 import (
-    "github.com/gowoody/woody/v2"
-    "github.com/gowoody/template/pug"
+    "github.com/ximispot/woody"
+    "github.com/ximispot/template/pug"
 )
 
 func main() {
@@ -195,7 +195,7 @@ func main() {
 
 ### Grouping routes into chains
 
-📖 [Group](https://docs.gowoody.io/api/app#group)
+📖 [Group](https://docs.ximispot.io/api/app#group)
 
 ```go
 func middleware(c *woody.Ctx) error {
@@ -230,7 +230,7 @@ func main() {
 
 ### Middleware logger
 
-📖 [Logger](https://docs.gowoody.io/api/middleware/logger)
+📖 [Logger](https://docs.ximispot.io/api/middleware/logger)
 
 ```go
 package main
@@ -238,7 +238,7 @@ package main
 import (
     "log"
 
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/logger"
 )
 
@@ -255,13 +255,13 @@ func main() {
 
 ### Cross-Origin Resource Sharing (CORS)
 
-📖 [CORS](https://docs.gowoody.io/api/middleware/cors)
+📖 [CORS](https://docs.ximispot.io/api/middleware/cors)
 
 ```go
 import (
     "log"
 
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/cors"
 )
 
@@ -284,7 +284,7 @@ curl -H "Origin: http://example.com" --verbose http://localhost:3000
 
 ### Custom 404 response
 
-📖 [HTTP Methods](https://docs.gowoody.io/api/ctx#status)
+📖 [HTTP Methods](https://docs.ximispot.io/api/ctx#status)
 
 ```go
 func main() {
@@ -312,7 +312,7 @@ func main() {
 
 ### JSON Response
 
-📖 [JSON](https://docs.gowoody.io/api/ctx#json)
+📖 [JSON](https://docs.ximispot.io/api/ctx#json)
 
 ```go
 type User struct {
@@ -342,11 +342,11 @@ func main() {
 
 ### WebSocket Upgrade
 
-📖 [Websocket](https://github.com/gowoody/websocket)
+📖 [Websocket](https://github.com/ximispot/websocket)
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/websocket"
 )
 
@@ -380,7 +380,7 @@ func main() {
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/valyala/fasthttp"
 )
 
@@ -417,11 +417,11 @@ func main() {
 
 ### Recover middleware
 
-📖 [Recover](https://docs.gowoody.io/api/middleware/recover)
+📖 [Recover](https://docs.ximispot.io/api/middleware/recover)
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/recover"
 )
 
@@ -442,11 +442,11 @@ func main() {
 
 ### Using Trusted Proxy
 
-📖 [Config](https://docs.gowoody.io/api/woody#config)
+📖 [Config](https://docs.ximispot.io/api/woody#config)
 
 ```go
 import (
-    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody"
     "github.com/ximispot/woody/middleware/recover"
 )
 

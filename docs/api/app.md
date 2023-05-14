@@ -53,7 +53,7 @@ If you want to have a little bit more control regarding the settings for serving
 // Static defines configuration options when defining static assets.
 type Static struct {
     // When set to true, the server tries minimizing CPU usage by caching compressed files.
-    // This works differently than the github.com/gowoody/compression middleware.
+    // This works differently than the github.com/ximispot/compression middleware.
     // Optional. Default value false
     Compress bool `json:"compress"`
 

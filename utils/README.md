@@ -1,4 +1,4 @@
-A collection of common functions but with better performance, less allocations and no dependencies created for [Woody](https://github.com/gowoody/woody).
+A collection of common functions but with better performance, less allocations and no dependencies created for [Woody](https://github.com/ximispot/woody).
 
 ```go
 // go test -benchmem -run=^$ -bench=Benchmark_ -count=2

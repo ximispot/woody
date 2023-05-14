@@ -417,8 +417,8 @@ func (app *App) startupMessage(addr string, tls bool, pids string) { //nolint: r
 // printRoutesMessage print all routes with method, path, name and handlers
 // in a format of table, like this:
 // method | path | name      | handlers
-// GET    | /    | routeName | github.com/gowoody/woody/v2.emptyHandler
-// HEAD   | /    |           | github.com/gowoody/woody/v2.emptyHandler
+// GET    | /    | routeName | github.com/ximispot/woody.emptyHandler
+// HEAD   | /    |           | github.com/ximispot/woody.emptyHandler
 func (app *App) printRoutesMessage() {
 	// ignore child processes
 	if IsChild() {

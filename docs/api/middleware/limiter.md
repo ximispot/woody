@@ -3,10 +3,10 @@ id: limiter
 title: Limiter
 ---
 
-Limiter middleware for [Woody](https://github.com/gowoody/woody) that is used to limit repeat requests to public APIs and/or endpoints such as password reset. It is also useful for API clients, web crawling, or other tasks that need to be throttled.
+Limiter middleware for [Woody](https://github.com/ximispot/woody) that is used to limit repeat requests to public APIs and/or endpoints such as password reset. It is also useful for API clients, web crawling, or other tasks that need to be throttled.
 
 :::note
-This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/ximispot/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 :::note
@@ -25,7 +25,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/limiter"
 )
 ```
@@ -153,10 +153,10 @@ var ConfigDefault = Config{
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
+You can use any storage from our [storage](https://github.com/ximispot/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
+storage := sqlite3.New() // From github.com/ximispot/storage/sqlite3
 app.Use(limiter.New(limiter.Config{
 	Storage: storage,
 }))

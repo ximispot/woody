@@ -3,7 +3,7 @@ id: monitor
 title: Monitor
 ---
 
-Monitor middleware for [Woody](https://github.com/gowoody/woody) that reports server metrics, inspired by [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor)
+Monitor middleware for [Woody](https://github.com/ximispot/woody) that reports server metrics, inspired by [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor)
 
 :::caution
 
@@ -23,7 +23,7 @@ Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody"
   "github.com/ximispot/woody/middleware/monitor"
 )
 ```

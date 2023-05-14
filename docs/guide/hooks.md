@@ -59,7 +59,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 )
 
 func main() {
@@ -160,7 +160,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody"
 )
 
 func main() {
