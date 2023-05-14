@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/bytebufferpool"
 )

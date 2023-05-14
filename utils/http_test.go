@@ -35,7 +35,7 @@ func Test_GetMIME(t *testing.T) {
 // go test -v -run=^$ -bench=Benchmark_GetMIME -benchmem -count=2
 func Benchmark_GetMIME(b *testing.B) {
 	var res string
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = GetMIME(".xml")
 			res = GetMIME(".txt")
@@ -129,7 +129,7 @@ func Test_StatusMessage(t *testing.T) {
 // go test -run=^$ -bench=Benchmark_StatusMessage -benchmem -count=2
 func Benchmark_StatusMessage(b *testing.B) {
 	var res string
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = StatusMessage(http.StatusNotExtended)
 		}

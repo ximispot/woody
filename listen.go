@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"crypto/tls"
@@ -302,7 +302,7 @@ func (app *App) startupMessage(addr string, tls bool, pids string) { //nolint: r
 	if app.config.AppName != "" {
 		mainLogo += " │ " + centerValue(app.config.AppName, lineLen) + " │\n"
 	}
-	mainLogo += " │ " + centerValue("Fiber v"+Version, lineLen) + " │\n"
+	mainLogo += " │ " + centerValue("Woody v"+Version, lineLen) + " │\n"
 
 	if host == "0.0.0.0" {
 		mainLogo += " │ " + center(fmt.Sprintf("%s://127.0.0.1:%s", scheme, port), lineLen) + " │\n" +
@@ -379,7 +379,7 @@ func (app *App) startupMessage(addr string, tls bool, pids string) { //nolint: r
 		)
 	}
 
-	// Combine both the child PID logo and the main Fiber logo
+	// Combine both the child PID logo and the main Woody logo
 
 	// Pad the shorter logo to the length of the longer one
 	splitMainLogo := strings.Split(mainLogo, "\n")
@@ -417,8 +417,8 @@ func (app *App) startupMessage(addr string, tls bool, pids string) { //nolint: r
 // printRoutesMessage print all routes with method, path, name and handlers
 // in a format of table, like this:
 // method | path | name      | handlers
-// GET    | /    | routeName | github.com/gofiber/fiber/v2.emptyHandler
-// HEAD   | /    |           | github.com/gofiber/fiber/v2.emptyHandler
+// GET    | /    | routeName | github.com/gowoody/woody/v2.emptyHandler
+// HEAD   | /    |           | github.com/gowoody/woody/v2.emptyHandler
 func (app *App) printRoutesMessage() {
 	// ignore child processes
 	if IsChild() {

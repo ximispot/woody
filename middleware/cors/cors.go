@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
@@ -13,7 +13,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// AllowOriginsFunc defines a function that will set the 'access-control-allow-origin'
 	// response header to the 'origin' request header when returned true.
@@ -65,12 +65,12 @@ var ConfigDefault = Config{
 	AllowOriginsFunc: nil,
 	AllowOrigins:     "*",
 	AllowMethods: strings.Join([]string{
-		fiber.MethodGet,
-		fiber.MethodPost,
-		fiber.MethodHead,
-		fiber.MethodPut,
-		fiber.MethodDelete,
-		fiber.MethodPatch,
+		woody.MethodGet,
+		woody.MethodPost,
+		woody.MethodHead,
+		woody.MethodPut,
+		woody.MethodDelete,
+		woody.MethodPatch,
 	}, ","),
 	AllowHeaders:     "",
 	AllowCredentials: false,
@@ -79,7 +79,7 @@ var ConfigDefault = Config{
 }
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := ConfigDefault
 
@@ -113,14 +113,14 @@ func New(config ...Config) fiber.Handler {
 	maxAge := strconv.Itoa(cfg.MaxAge)
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
 		}
 
 		// Get origin header
-		origin := c.Get(fiber.HeaderOrigin)
+		origin := c.Get(woody.HeaderOrigin)
 		allowOrigin := ""
 
 		// Check allowed origins
@@ -149,47 +149,47 @@ func New(config ...Config) fiber.Handler {
 		}
 
 		// Simple request
-		if c.Method() != fiber.MethodOptions {
-			c.Vary(fiber.HeaderOrigin)
-			c.Set(fiber.HeaderAccessControlAllowOrigin, allowOrigin)
+		if c.Method() != woody.MethodOptions {
+			c.Vary(woody.HeaderOrigin)
+			c.Set(woody.HeaderAccessControlAllowOrigin, allowOrigin)
 
 			if cfg.AllowCredentials {
-				c.Set(fiber.HeaderAccessControlAllowCredentials, "true")
+				c.Set(woody.HeaderAccessControlAllowCredentials, "true")
 			}
 			if exposeHeaders != "" {
-				c.Set(fiber.HeaderAccessControlExposeHeaders, exposeHeaders)
+				c.Set(woody.HeaderAccessControlExposeHeaders, exposeHeaders)
 			}
 			return c.Next()
 		}
 
 		// Preflight request
-		c.Vary(fiber.HeaderOrigin)
-		c.Vary(fiber.HeaderAccessControlRequestMethod)
-		c.Vary(fiber.HeaderAccessControlRequestHeaders)
-		c.Set(fiber.HeaderAccessControlAllowOrigin, allowOrigin)
-		c.Set(fiber.HeaderAccessControlAllowMethods, allowMethods)
+		c.Vary(woody.HeaderOrigin)
+		c.Vary(woody.HeaderAccessControlRequestMethod)
+		c.Vary(woody.HeaderAccessControlRequestHeaders)
+		c.Set(woody.HeaderAccessControlAllowOrigin, allowOrigin)
+		c.Set(woody.HeaderAccessControlAllowMethods, allowMethods)
 
 		// Set Allow-Credentials if set to true
 		if cfg.AllowCredentials {
-			c.Set(fiber.HeaderAccessControlAllowCredentials, "true")
+			c.Set(woody.HeaderAccessControlAllowCredentials, "true")
 		}
 
 		// Set Allow-Headers if not empty
 		if allowHeaders != "" {
-			c.Set(fiber.HeaderAccessControlAllowHeaders, allowHeaders)
+			c.Set(woody.HeaderAccessControlAllowHeaders, allowHeaders)
 		} else {
-			h := c.Get(fiber.HeaderAccessControlRequestHeaders)
+			h := c.Get(woody.HeaderAccessControlRequestHeaders)
 			if h != "" {
-				c.Set(fiber.HeaderAccessControlAllowHeaders, h)
+				c.Set(woody.HeaderAccessControlAllowHeaders, h)
 			}
 		}
 
 		// Set MaxAge is set
 		if cfg.MaxAge > 0 {
-			c.Set(fiber.HeaderAccessControlMaxAge, maxAge)
+			c.Set(woody.HeaderAccessControlMaxAge, maxAge)
 		}
 
 		// Send 204 No Content
-		return c.SendStatus(fiber.StatusNoContent)
+		return c.SendStatus(woody.StatusNoContent)
 	}
 }

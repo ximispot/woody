@@ -3,14 +3,14 @@ package monitor
 import (
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
 type Config struct {
 	// Metrics page title
 	//
-	// Optional. Default: "Fiber Monitor"
+	// Optional. Default: "Woody Monitor"
 	Title string
 
 	// Refresh period
@@ -26,7 +26,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Custom HTML Code to Head Section(Before End)
 	//

@@ -3,28 +3,28 @@ id: idempotency
 title: Idempotency
 ---
 
-Idempotency middleware for [Fiber](https://github.com/gofiber/fiber) allows for fault-tolerant APIs where duplicate requests — for example due to networking issues on the client-side — do not erroneously cause the same action performed multiple times on the server-side.
+Idempotency middleware for [Woody](https://github.com/gowoody/woody) allows for fault-tolerant APIs where duplicate requests — for example due to networking issues on the client-side — do not erroneously cause the same action performed multiple times on the server-side.
 
 Refer to https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header-02 for a better understanding.
 
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/idempotency"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/idempotency"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ### Default Config
 
@@ -49,7 +49,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: a function which skips the middleware on safe HTTP request method.
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Lifetime is the maximum lifetime of an idempotency key.
 	//
@@ -78,7 +78,7 @@ type Config struct {
 	// Storage stores response data by idempotency key.
 	//
 	// Optional. Default: an in-memory storage for this process only.
-	Storage fiber.Storage
+	Storage woody.Storage
 }
 ```
 
@@ -86,9 +86,9 @@ type Config struct {
 
 ```go
 var ConfigDefault = Config{
-	Next: func(c *fiber.Ctx) bool {
+	Next: func(c *woody.Ctx) bool {
 		// Skip middleware if the request was done using a safe HTTP method
-		return fiber.IsMethodSafe(c.Method())
+		return woody.IsMethodSafe(c.Method())
 	},
 
 	Lifetime: 30 * time.Minute,

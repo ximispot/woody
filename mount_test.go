@@ -1,5 +1,5 @@
 //nolint:bodyclose // Much easier to just ignore memory leaks in tests
-package fiber
+package woody
 
 import (
 	"errors"
@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofiber/fiber/v2/internal/template/html"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/internal/template/html"
+	"github.com/ximispot/woody/utils"
 )
 
 // go test -run Test_App_Mount
@@ -220,12 +220,12 @@ func Test_App_UseParentErrorHandler(t *testing.T) {
 		},
 	})
 
-	fiber := New()
-	fiber.Get("/", func(c *Ctx) error {
+	woody := New()
+	woody.Get("/", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
 
-	app.Mount("/api", fiber)
+	app.Mount("/api", woody)
 
 	resp, err := app.Test(httptest.NewRequest(MethodGet, "/api", nil))
 	testErrorResponse(t, err, resp, "hi, i'm a custom error")
@@ -235,16 +235,16 @@ func Test_App_UseMountedErrorHandler(t *testing.T) {
 	t.Parallel()
 	app := New()
 
-	fiber := New(Config{
+	woody := New(Config{
 		ErrorHandler: func(ctx *Ctx, err error) error {
 			return ctx.Status(500).SendString("hi, i'm a custom error")
 		},
 	})
-	fiber.Get("/", func(c *Ctx) error {
+	woody.Get("/", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
 
-	app.Mount("/api", fiber)
+	app.Mount("/api", woody)
 
 	resp, err := app.Test(httptest.NewRequest(MethodGet, "/api", nil))
 	testErrorResponse(t, err, resp, "hi, i'm a custom error")
@@ -254,16 +254,16 @@ func Test_App_UseMountedErrorHandlerRootLevel(t *testing.T) {
 	t.Parallel()
 	app := New()
 
-	fiber := New(Config{
+	woody := New(Config{
 		ErrorHandler: func(ctx *Ctx, err error) error {
 			return ctx.Status(500).SendString("hi, i'm a custom error")
 		},
 	})
-	fiber.Get("/api", func(c *Ctx) error {
+	woody.Get("/api", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
 
-	app.Mount("/", fiber)
+	app.Mount("/", woody)
 
 	resp, err := app.Test(httptest.NewRequest(MethodGet, "/api", nil))
 	testErrorResponse(t, err, resp, "hi, i'm a custom error")
@@ -274,38 +274,38 @@ func Test_App_UseMountedErrorHandlerForBestPrefixMatch(t *testing.T) {
 	app := New()
 
 	tsf := func(ctx *Ctx, err error) error {
-		return ctx.Status(200).SendString("hi, i'm a custom sub sub fiber error")
+		return ctx.Status(200).SendString("hi, i'm a custom sub sub woody error")
 	}
-	tripleSubFiber := New(Config{
+	tripleSubWoody := New(Config{
 		ErrorHandler: tsf,
 	})
-	tripleSubFiber.Get("/", func(c *Ctx) error {
+	tripleSubWoody.Get("/", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
 
 	sf := func(ctx *Ctx, err error) error {
-		return ctx.Status(200).SendString("hi, i'm a custom sub fiber error")
+		return ctx.Status(200).SendString("hi, i'm a custom sub woody error")
 	}
-	subfiber := New(Config{
+	subwoody := New(Config{
 		ErrorHandler: sf,
 	})
-	subfiber.Get("/", func(c *Ctx) error {
+	subwoody.Get("/", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
-	subfiber.Mount("/third", tripleSubFiber)
+	subwoody.Mount("/third", tripleSubWoody)
 
 	f := func(ctx *Ctx, err error) error {
 		return ctx.Status(200).SendString("hi, i'm a custom error")
 	}
-	fiber := New(Config{
+	woody := New(Config{
 		ErrorHandler: f,
 	})
-	fiber.Get("/", func(c *Ctx) error {
+	woody.Get("/", func(c *Ctx) error {
 		return errors.New("something happened")
 	})
-	fiber.Mount("/sub", subfiber)
+	woody.Mount("/sub", subwoody)
 
-	app.Mount("/api", fiber)
+	app.Mount("/api", woody)
 
 	resp, err := app.Test(httptest.NewRequest(MethodGet, "/api/sub", nil))
 	utils.AssertEqual(t, nil, err, "/api/sub req")
@@ -313,7 +313,7 @@ func Test_App_UseMountedErrorHandlerForBestPrefixMatch(t *testing.T) {
 
 	b, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err, "iotuil.ReadAll()")
-	utils.AssertEqual(t, "hi, i'm a custom sub fiber error", string(b), "Response body")
+	utils.AssertEqual(t, "hi, i'm a custom sub woody error", string(b), "Response body")
 
 	resp2, err := app.Test(httptest.NewRequest(MethodGet, "/api/sub/third", nil))
 	utils.AssertEqual(t, nil, err, "/api/sub/third req")
@@ -321,7 +321,7 @@ func Test_App_UseMountedErrorHandlerForBestPrefixMatch(t *testing.T) {
 
 	b, err = io.ReadAll(resp2.Body)
 	utils.AssertEqual(t, nil, err, "iotuil.ReadAll()")
-	utils.AssertEqual(t, "hi, i'm a custom sub sub fiber error", string(b), "Third fiber Response body")
+	utils.AssertEqual(t, "hi, i'm a custom sub sub woody error", string(b), "Third woody Response body")
 }
 
 // go test -run Test_Ctx_Render_Mount

@@ -1,25 +1,23 @@
 package earlydata
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 const (
 	localsKeyAllowed = "earlydata_allowed"
 )
 
-func IsEarly(c *fiber.Ctx) bool {
+func IsEarly(c *woody.Ctx) bool {
 	return c.Locals(localsKeyAllowed) != nil
 }
 
 // New creates a new middleware handler
 // https://datatracker.ietf.org/doc/html/rfc8470#section-5.1
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()

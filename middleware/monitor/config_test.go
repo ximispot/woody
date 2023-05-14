@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 func Test_Config_Default(t *testing.T) {
@@ -21,7 +21,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, defaultRefresh, defaultFontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -38,7 +38,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{title, defaultRefresh, defaultFontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -54,7 +54,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, minRefresh, defaultFontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -71,7 +71,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, refresh, defaultFontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -88,7 +88,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, defaultRefresh, fontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -105,7 +105,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, chartURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, defaultRefresh, defaultFontURL, chartURL, defaultCustomHead}), cfg.index)
 	})
 
@@ -122,7 +122,7 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, head, cfg.CustomHead)
 		utils.AssertEqual(t, false, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, defaultRefresh, defaultFontURL, defaultChartJSURL, head}), cfg.index)
 	})
 
@@ -138,13 +138,13 @@ func Test_Config_Default(t *testing.T) {
 		utils.AssertEqual(t, defaultChartJSURL, cfg.ChartJsURL)
 		utils.AssertEqual(t, defaultCustomHead, cfg.CustomHead)
 		utils.AssertEqual(t, true, cfg.APIOnly)
-		utils.AssertEqual(t, (func(*fiber.Ctx) bool)(nil), cfg.Next)
+		utils.AssertEqual(t, (func(*woody.Ctx) bool)(nil), cfg.Next)
 		utils.AssertEqual(t, newIndex(viewBag{defaultTitle, defaultRefresh, defaultFontURL, defaultChartJSURL, defaultCustomHead}), cfg.index)
 	})
 
 	t.Run("set next", func(t *testing.T) {
 		t.Parallel()
-		f := func(c *fiber.Ctx) bool {
+		f := func(c *woody.Ctx) bool {
 			return true
 		}
 		cfg := configDefault(Config{

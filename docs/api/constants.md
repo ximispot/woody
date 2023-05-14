@@ -1,7 +1,7 @@
 ---
 id: constants
 title: 📋 Constants
-description: Some constants for Fiber.
+description: Some constants for Woody.
 sidebar_position: 4
 ---
 

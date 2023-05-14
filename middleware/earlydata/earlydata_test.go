@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/earlydata"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/middleware/earlydata"
+	"github.com/ximispot/woody/utils"
 )
 
 const (
@@ -19,22 +19,22 @@ const (
 	headerValOff = "0"
 )
 
-func appWithConfig(t *testing.T, c *fiber.Config) *fiber.App {
+func appWithConfig(t *testing.T, c *woody.Config) *woody.App {
 	t.Helper()
 	t.Parallel()
 
-	var app *fiber.App
+	var app *woody.App
 	if c == nil {
-		app = fiber.New()
+		app = woody.New()
 	} else {
-		app = fiber.New(*c)
+		app = woody.New(*c)
 	}
 
 	app.Use(earlydata.New())
 
 	// Middleware to test IsEarly func
 	const localsKeyTestValid = "earlydata_testvalid"
-	app.Use(func(c *fiber.Ctx) error {
+	app.Use(func(c *woody.Ctx) error {
 		isEarly := earlydata.IsEarly(c)
 
 		switch h := c.Get(headerName); h {
@@ -45,7 +45,7 @@ func appWithConfig(t *testing.T, c *fiber.Config) *fiber.App {
 
 		case headerValOn:
 			switch {
-			case fiber.IsMethodSafe(c.Method()):
+			case woody.IsMethodSafe(c.Method()):
 				if !isEarly {
 					return errors.New("should be early-data on safe HTTP methods")
 				}
@@ -66,7 +66,7 @@ func appWithConfig(t *testing.T, c *fiber.Config) *fiber.App {
 
 	{
 		{
-			handler := func(c *fiber.Ctx) error {
+			handler := func(c *woody.Ctx) error {
 				if !c.Locals(localsKeyTestValid).(bool) { //nolint:forcetypeassert // We store nothing else in the pool
 					return errors.New("handler called even though validation failed")
 				}
@@ -86,83 +86,83 @@ func appWithConfig(t *testing.T, c *fiber.Config) *fiber.App {
 func Test_EarlyData(t *testing.T) {
 	t.Parallel()
 
-	trustedRun := func(t *testing.T, app *fiber.App) {
+	trustedRun := func(t *testing.T, app *woody.App) {
 		t.Helper()
 
 		{
-			req := httptest.NewRequest(fiber.MethodGet, "/", http.NoBody)
+			req := httptest.NewRequest(woody.MethodGet, "/", http.NoBody)
 
 			resp, err := app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOff)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOn)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 		}
 
 		{
-			req := httptest.NewRequest(fiber.MethodPost, "/", http.NoBody)
+			req := httptest.NewRequest(woody.MethodPost, "/", http.NoBody)
 
 			resp, err := app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOff)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOn)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 		}
 	}
 
-	untrustedRun := func(t *testing.T, app *fiber.App) {
+	untrustedRun := func(t *testing.T, app *woody.App) {
 		t.Helper()
 
 		{
-			req := httptest.NewRequest(fiber.MethodGet, "/", http.NoBody)
+			req := httptest.NewRequest(woody.MethodGet, "/", http.NoBody)
 
 			resp, err := app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOff)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOn)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 		}
 
 		{
-			req := httptest.NewRequest(fiber.MethodPost, "/", http.NoBody)
+			req := httptest.NewRequest(woody.MethodPost, "/", http.NoBody)
 
 			resp, err := app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOff)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 
 			req.Header.Set(headerName, headerValOn)
 			resp, err = app.Test(req)
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusTooEarly, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusTooEarly, resp.StatusCode)
 		}
 	}
 
@@ -171,18 +171,18 @@ func Test_EarlyData(t *testing.T) {
 		trustedRun(t, app)
 	})
 	t.Run("default config", func(t *testing.T) {
-		app := appWithConfig(t, &fiber.Config{})
+		app := appWithConfig(t, &woody.Config{})
 		trustedRun(t, app)
 	})
 
 	t.Run("config with EnableTrustedProxyCheck", func(t *testing.T) {
-		app := appWithConfig(t, &fiber.Config{
+		app := appWithConfig(t, &woody.Config{
 			EnableTrustedProxyCheck: true,
 		})
 		untrustedRun(t, app)
 	})
 	t.Run("config with EnableTrustedProxyCheck and trusted TrustedProxies", func(t *testing.T) {
-		app := appWithConfig(t, &fiber.Config{
+		app := appWithConfig(t, &woody.Config{
 			EnableTrustedProxyCheck: true,
 			TrustedProxies: []string{
 				"0.0.0.0",

@@ -3,11 +3,11 @@ id: timeout
 title: Timeout
 ---
 
-There exist two distinct implementations of timeout middleware [Fiber](https://github.com/gofiber/fiber).
+There exist two distinct implementations of timeout middleware [Woody](https://github.com/gowoody/woody).
 
 **New**
 
-Wraps a `fiber.Handler` with a timeout. If the handler takes longer than the given duration to return, the timeout error is set and forwarded to the centralized [ErrorHandler](https://docs.gofiber.io/error-handling).
+Wraps a `woody.Handler` with a timeout. If the handler takes longer than the given duration to return, the timeout error is set and forwarded to the centralized [ErrorHandler](https://docs.gowoody.io/error-handling).
 
 :::caution
 This has been deprecated since it raises race conditions.
@@ -15,7 +15,7 @@ This has been deprecated since it raises race conditions.
 
 **NewWithContext**
 
-As a `fiber.Handler` wrapper, it creates a context with `context.WithTimeout` and pass it in `UserContext`. 
+As a `woody.Handler` wrapper, it creates a context with `context.WithTimeout` and pass it in `UserContext`. 
  
 If the context passed executions (eg. DB ops, Http calls) takes longer than the given duration to return, the timeout error is set and forwarded to the centralized `ErrorHandler`.
 
@@ -25,28 +25,28 @@ It does not cancel long running executions. Underlying executions must handle ti
 ## Signatures
 
 ```go
-func New(handler fiber.Handler, timeout time.Duration, timeoutErrors ...error) fiber.Handler
-func NewWithContext(handler fiber.Handler, timeout time.Duration, timeoutErrors ...error) fiber.Handler
+func New(handler woody.Handler, timeout time.Duration, timeoutErrors ...error) woody.Handler
+func NewWithContext(handler woody.Handler, timeout time.Duration, timeoutErrors ...error) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/timeout"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/timeout"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
-	h := func(c *fiber.Ctx) error {
+	h := func(c *woody.Ctx) error {
 		sleepTime, _ := time.ParseDuration(c.Params("sleepTime") + "ms")
 		if err := sleepWithContext(c.UserContext(), sleepTime); err != nil {
 			return fmt.Errorf("%w: execution error", err)
@@ -91,8 +91,8 @@ Use with custom error:
 var ErrFooTimeOut = errors.New("foo context canceled")
 
 func main() {
-	app := fiber.New()
-	h := func(c *fiber.Ctx) error {
+	app := woody.New()
+	h := func(c *woody.Ctx) error {
 		sleepTime, _ := time.ParseDuration(c.Params("sleepTime") + "ms")
 		if err := sleepWithContextWithCustomError(c.UserContext(), sleepTime); err != nil {
 			return fmt.Errorf("%w: execution error", err)
@@ -122,10 +122,10 @@ Sample usage with a DB call:
 
 ```go
 func main() {
-	app := fiber.New()
+	app := woody.New()
 	db, _ := gorm.Open(postgres.Open("postgres://localhost/foodb"), &gorm.Config{})
 
-	handler := func(ctx *fiber.Ctx) error {
+	handler := func(ctx *woody.Ctx) error {
 		tran := db.WithContext(ctx.UserContext()).Begin()
 		
 		if tran = tran.Exec("SELECT pg_sleep(50)"); tran.Error != nil {

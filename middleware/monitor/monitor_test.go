@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -17,11 +17,11 @@ import (
 func Test_Monitor_405(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/", New())
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodPost, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 405, resp.StatusCode)
 }
@@ -29,16 +29,16 @@ func Test_Monitor_405(t *testing.T) {
 func Test_Monitor_Html(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	// defaults
 	app.Get("/", New())
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8,
-		resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8,
+		resp.Header.Get(woody.HeaderContentType))
 	buf, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, bytes.Contains(buf, []byte("<title>"+defaultTitle+"</title>")))
@@ -49,12 +49,12 @@ func Test_Monitor_Html(t *testing.T) {
 	// custom config
 	conf := Config{Title: "New " + defaultTitle, Refresh: defaultRefresh + time.Second}
 	app.Get("/custom", New(conf))
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/custom", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/custom", nil))
 
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8,
-		resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8,
+		resp.Header.Get(woody.HeaderContentType))
 	buf, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, bytes.Contains(buf, []byte("<title>"+conf.Title+"</title>")))
@@ -66,16 +66,16 @@ func Test_Monitor_Html(t *testing.T) {
 func Test_Monitor_Html_CustomCodes(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	// defaults
 	app.Get("/", New())
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8,
-		resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8,
+		resp.Header.Get(woody.HeaderContentType))
 	buf, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, bytes.Contains(buf, []byte("<title>"+defaultTitle+"</title>")))
@@ -92,12 +92,12 @@ func Test_Monitor_Html_CustomCodes(t *testing.T) {
 		CustomHead: `<style>body{background:#fff}</style>`,
 	}
 	app.Get("/custom", New(conf))
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/custom", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/custom", nil))
 
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8,
-		resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8,
+		resp.Header.Get(woody.HeaderContentType))
 	buf, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, bytes.Contains(buf, []byte("<title>"+conf.Title+"</title>")))
@@ -114,16 +114,16 @@ func Test_Monitor_Html_CustomCodes(t *testing.T) {
 func Test_Monitor_JSON(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Get("/", New())
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
-	req.Header.Set(fiber.HeaderAccept, fiber.MIMEApplicationJSON)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
+	req.Header.Set(woody.HeaderAccept, woody.MIMEApplicationJSON)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMEApplicationJSON, resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMEApplicationJSON, resp.Header.Get(woody.HeaderContentType))
 
 	b, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -133,16 +133,16 @@ func Test_Monitor_JSON(t *testing.T) {
 
 // go test -v -run=^$ -bench=Benchmark_Monitor -benchmem -count=4
 func Benchmark_Monitor(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Get("/", New())
 
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/")
-	fctx.Request.Header.Set(fiber.HeaderAccept, fiber.MIMEApplicationJSON)
+	fctx.Request.Header.Set(woody.HeaderAccept, woody.MIMEApplicationJSON)
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -155,41 +155,41 @@ func Benchmark_Monitor(b *testing.B) {
 
 	utils.AssertEqual(b, 200, fctx.Response.Header.StatusCode())
 	utils.AssertEqual(b,
-		fiber.MIMEApplicationJSON,
-		string(fctx.Response.Header.Peek(fiber.HeaderContentType)))
+		woody.MIMEApplicationJSON,
+		string(fctx.Response.Header.Peek(woody.HeaderContentType)))
 }
 
 // go test -run Test_Monitor_Next
 func Test_Monitor_Next(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/", New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodPost, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 404, resp.StatusCode)
 }
 
 // go test -run Test_Monitor_APIOnly -race
 func Test_Monitor_APIOnly(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Get("/", New(Config{
 		APIOnly: true,
 	}))
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
-	req.Header.Set(fiber.HeaderAccept, fiber.MIMEApplicationJSON)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
+	req.Header.Set(woody.HeaderAccept, woody.MIMEApplicationJSON)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMEApplicationJSON, resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMEApplicationJSON, resp.Header.Get(woody.HeaderContentType))
 
 	b, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)

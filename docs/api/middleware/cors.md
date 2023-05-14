@@ -3,26 +3,26 @@ id: cors
 title: CORS
 ---
 
-CORS middleware for [Fiber](https://github.com/gofiber/fiber) that can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
+CORS middleware for [Woody](https://github.com/gowoody/woody) that can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
 
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/cors"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/cors"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -30,7 +30,7 @@ app.Use(cors.New())
 
 // Or extend your config for customization
 app.Use(cors.New(cors.Config{
-    AllowOrigins: "https://gofiber.io, https://gofiber.net",
+    AllowOrigins: "https://gowoody.io, https://gowoody.net",
     AllowHeaders:  "Origin, Content-Type, Accept",
 }))
 ```
@@ -59,7 +59,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// AllowOriginsFunc defines a function that will set the 'access-control-allow-origin'
 	// response header to the 'origin' request header when returned true.
@@ -117,12 +117,12 @@ var ConfigDefault = Config{
 	AllowOriginsFunc: nil,
 	AllowOrigins: "*",
 	AllowMethods: strings.Join([]string{
-		fiber.MethodGet,
-		fiber.MethodPost,
-		fiber.MethodHead,
-		fiber.MethodPut,
-		fiber.MethodDelete,
-		fiber.MethodPatch,
+		woody.MethodGet,
+		woody.MethodPost,
+		woody.MethodHead,
+		woody.MethodPut,
+		woody.MethodDelete,
+		woody.MethodPatch,
 	}, ","),
 	AllowHeaders:     "",
 	AllowCredentials: false,

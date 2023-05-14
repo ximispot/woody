@@ -23,17 +23,17 @@ Route paths, combined with a request method, define the endpoints at which reque
 
 ```go
 // This route path will match requests to the root route, "/":
-app.Get("/", func(c *fiber.Ctx) error {
+app.Get("/", func(c *woody.Ctx) error {
       return c.SendString("root")
 })
 
 // This route path will match requests to "/about":
-app.Get("/about", func(c *fiber.Ctx) error {
+app.Get("/about", func(c *woody.Ctx) error {
     return c.SendString("about")
 })
 
 // This route path will match requests to "/random.txt":
-app.Get("/random.txt", func(c *fiber.Ctx) error {
+app.Get("/random.txt", func(c *woody.Ctx) error {
     return c.SendString("random.txt")
 })
 ```
@@ -47,7 +47,7 @@ So please be careful to write routes with variable parameters after the routes t
 
 ## Parameters
 
-Route parameters are dynamic elements in the route, which are **named** or **not named segments**. This segments that are used to capture the values specified at their position in the URL. The obtained values can be retrieved using the [Params](https://fiber.wiki/context#params) function, with the name of the route parameter specified in the path as their respective keys or for unnamed parameters the character\(\*, +\) and the counter of this.
+Route parameters are dynamic elements in the route, which are **named** or **not named segments**. This segments that are used to capture the values specified at their position in the URL. The obtained values can be retrieved using the [Params](https://woody.wiki/context#params) function, with the name of the route parameter specified in the path as their respective keys or for unnamed parameters the character\(\*, +\) and the counter of this.
 
 The characters :, +, and \* are characters that introduce a parameter.
 
@@ -59,28 +59,28 @@ The routing also offers the possibility to use optional parameters, for the name
 
 ```go
 // Parameters
-app.Get("/user/:name/books/:title", func(c *fiber.Ctx) error {
+app.Get("/user/:name/books/:title", func(c *woody.Ctx) error {
     fmt.Fprintf(c, "%s\n", c.Params("name"))
     fmt.Fprintf(c, "%s\n", c.Params("title"))
     return nil
 })
 // Plus - greedy - not optional
-app.Get("/user/+", func(c *fiber.Ctx) error {
+app.Get("/user/+", func(c *woody.Ctx) error {
     return c.SendString(c.Params("+"))
 })
 
 // Optional parameter
-app.Get("/user/:name?", func(c *fiber.Ctx) error {
+app.Get("/user/:name?", func(c *woody.Ctx) error {
     return c.SendString(c.Params("name"))
 })
 
 // Wildcard - greedy - optional
-app.Get("/user/*", func(c *fiber.Ctx) error {
+app.Get("/user/*", func(c *woody.Ctx) error {
     return c.SendString(c.Params("*"))
 })
 
 // This route path will match requests to "/v1/some/resource/name:customVerb", since the parameter character is escaped
-app.Get("/v1/some/resource/name\\:customVerb", func(c *fiber.Ctx) error {
+app.Get("/v1/some/resource/name\\:customVerb", func(c *woody.Ctx) error {
     return c.SendString("Hello, Community")
 })
 ```
@@ -95,7 +95,7 @@ All special parameter characters can also be escaped with `"\\"` and lose their 
 
 ```go
 // http://localhost:3000/plantae/prunus.persica
-app.Get("/plantae/:genus.:species", func(c *fiber.Ctx) error {
+app.Get("/plantae/:genus.:species", func(c *woody.Ctx) error {
     fmt.Fprintf(c, "%s.%s\n", c.Params("genus"), c.Params("species"))
     return nil // prunus.persica
 })
@@ -103,7 +103,7 @@ app.Get("/plantae/:genus.:species", func(c *fiber.Ctx) error {
 
 ```go
 // http://localhost:3000/flights/LAX-SFO
-app.Get("/flights/:from-:to", func(c *fiber.Ctx) error {
+app.Get("/flights/:from-:to", func(c *woody.Ctx) error {
     fmt.Fprintf(c, "%s-%s\n", c.Params("from"), c.Params("to"))
     return nil // LAX-SFO
 })
@@ -113,7 +113,7 @@ Our intelligent router recognizes that the introductory parameter characters sho
 
 ```go
 // http://localhost:3000/shop/product/color:blue/size:xs
-app.Get("/shop/product/color::color/size::size", func(c *fiber.Ctx) error {
+app.Get("/shop/product/color::color/size::size", func(c *woody.Ctx) error {
     fmt.Fprintf(c, "%s:%s\n", c.Params("color"), c.Params("size"))
     return nil // blue:xs
 })
@@ -145,7 +145,7 @@ We have adapted the routing strongly to the express routing, but currently witho
 Route constraints execute when a match has occurred to the incoming URL and the URL path is tokenized into route values by parameters. The feature was intorduced in `v2.37.0` and inspired by [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-6.0#route-constraints).
 
 :::caution
-Constraints aren't validation for parameters. If constraint aren't valid for parameter value, Fiber returns **404 handler**.
+Constraints aren't validation for parameters. If constraint aren't valid for parameter value, Woody returns **404 handler**.
 :::
 
 | Constraint        | Example                              | Example matches                                                                             |
@@ -170,7 +170,7 @@ Constraints aren't validation for parameters. If constraint aren't valid for par
 <TabItem value="single-constraint" label="Single Constraint">
 
 ```go
-app.Get("/:test<min(5)>", func(c *fiber.Ctx) error {
+app.Get("/:test<min(5)>", func(c *woody.Ctx) error {
   return c.SendString(c.Params("test"))
 })
 
@@ -185,7 +185,7 @@ app.Get("/:test<min(5)>", func(c *fiber.Ctx) error {
 
 You can use `;` for multiple constraints.
 ```go
-app.Get("/:test<min(100);maxLen(5)>", func(c *fiber.Ctx) error {
+app.Get("/:test<min(100);maxLen(5)>", func(c *woody.Ctx) error {
   return c.SendString(c.Params("test"))
 })
 
@@ -201,9 +201,9 @@ app.Get("/:test<min(100);maxLen(5)>", func(c *fiber.Ctx) error {
 </TabItem>
 <TabItem value="regex-constraint" label="Regex Constraint">
 
-Fiber precompiles regex query when to register routes. So there're no performance overhead for regex constraint.
+Woody precompiles regex query when to register routes. So there're no performance overhead for regex constraint.
 ```go
-app.Get("/:date<regex(\\d{4}-\\d{2}-\\d{2})}>", func(c *fiber.Ctx) error {
+app.Get("/:date<regex(\\d{4}-\\d{2}-\\d{2})}>", func(c *woody.Ctx) error {
   return c.SendString(c.Params("date"))
 })
 
@@ -229,7 +229,7 @@ You should use `\\` before routing-specific characters when to use datetime cons
 You can impose constraints on optional parameters as well.
 
 ```go
-app.Get("/:test<int>?", func(c *fiber.Ctx) error {
+app.Get("/:test<int>?", func(c *woody.Ctx) error {
   return c.SendString(c.Params("test"))
 })
 // curl -X GET http://localhost:3000/42
@@ -242,12 +242,12 @@ app.Get("/:test<int>?", func(c *fiber.Ctx) error {
 
 ## Middleware
 
-Functions that are designed to make changes to the request or response are called **middleware functions**. The [Next](../api/ctx.md#next) is a **Fiber** router function, when called, executes the **next** function that **matches** the current route.
+Functions that are designed to make changes to the request or response are called **middleware functions**. The [Next](../api/ctx.md#next) is a **Woody** router function, when called, executes the **next** function that **matches** the current route.
 
 **Example of a middleware function**
 
 ```go
-app.Use(func(c *fiber.Ctx) error {
+app.Use(func(c *woody.Ctx) error {
   // Set a custom header on all responses:
   c.Set("X-Custom-Header", "Hello, World")
 
@@ -255,7 +255,7 @@ app.Use(func(c *fiber.Ctx) error {
   return c.Next()
 })
 
-app.Get("/", func(c *fiber.Ctx) error {
+app.Get("/", func(c *woody.Ctx) error {
   return c.SendString("Hello, World!")
 })
 ```
@@ -268,7 +268,7 @@ If you have many endpoints, you can organize your routes using `Group`.
 
 ```go
 func main() {
-  app := fiber.New()
+  app := woody.New()
 
   api := app.Group("/api", middleware) // /api
 

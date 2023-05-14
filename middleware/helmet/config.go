@@ -1,14 +1,12 @@
 package helmet
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 // Config defines the config for middleware.
 type Config struct {
 	// Next defines a function to skip middleware.
 	// Optional. Default: nil
-	Next func(*fiber.Ctx) bool
+	Next func(*woody.Ctx) bool
 
 	// XSSProtection
 	// Optional. Default value "0".

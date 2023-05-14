@@ -3,10 +3,10 @@ id: limiter
 title: Limiter
 ---
 
-Limiter middleware for [Fiber](https://github.com/gofiber/fiber) that is used to limit repeat requests to public APIs and/or endpoints such as password reset. It is also useful for API clients, web crawling, or other tasks that need to be throttled.
+Limiter middleware for [Woody](https://github.com/gowoody/woody) that is used to limit repeat requests to public APIs and/or endpoints such as password reset. It is also useful for API clients, web crawling, or other tasks that need to be throttled.
 
 :::note
-This middleware uses our [Storage](https://github.com/gofiber/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 :::note
@@ -16,21 +16,21 @@ This module does not share state with other processes/servers by default.
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/limiter"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/limiter"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -38,15 +38,15 @@ app.Use(limiter.New())
 
 // Or extend your config for customization
 app.Use(limiter.New(limiter.Config{
-    Next: func(c *fiber.Ctx) bool {
+    Next: func(c *woody.Ctx) bool {
         return c.IP() == "127.0.0.1"
     },
     Max:          20,
     Expiration:     30 * time.Second,
-    KeyGenerator:          func(c *fiber.Ctx) string {
+    KeyGenerator:          func(c *woody.Ctx) string {
         return c.Get("x-forwarded-for")
     },
-    LimitReached: func(c *fiber.Ctx) error {
+    LimitReached: func(c *woody.Ctx) error {
         return c.SendFile("./toofast.html")
     },
     Storage: myCustomStorage{},
@@ -81,7 +81,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 
 	// Max number of recent connections during `Duration` seconds before sending a 429 response
     //
@@ -90,10 +90,10 @@ type Config struct {
 
     // KeyGenerator allows you to generate custom keys, by default c.IP() is used
     //
-    // Default: func(c *fiber.Ctx) string {
+    // Default: func(c *woody.Ctx) string {
     //   return c.IP()
     // }
-    KeyGenerator func(*fiber.Ctx) string
+    KeyGenerator func(*woody.Ctx) string
 
     // Expiration is the time on how long to keep records of requests in memory
     //
@@ -102,10 +102,10 @@ type Config struct {
 
     // LimitReached is called when a request hits the limit
     //
-    // Default: func(c *fiber.Ctx) error {
-    //   return c.SendStatus(fiber.StatusTooManyRequests)
+    // Default: func(c *woody.Ctx) error {
+    //   return c.SendStatus(woody.StatusTooManyRequests)
     // }
-    LimitReached fiber.Handler
+    LimitReached woody.Handler
 
     // When set to true, requests with StatusCode >= 400 won't be counted.
     //
@@ -120,7 +120,7 @@ type Config struct {
     // Store is used to store the state of the middleware
     //
     // Default: an in memory store for this process only
-    Storage fiber.Storage
+    Storage woody.Storage
 
     // LimiterMiddleware is the struct that implements limiter middleware.
     //
@@ -139,11 +139,11 @@ A custom store can be used if it implements the `Storage` interface - more detai
 var ConfigDefault = Config{
     Max:        5,
     Expiration: 1 * time.Minute,
-    KeyGenerator: func(c *fiber.Ctx) string {
+    KeyGenerator: func(c *woody.Ctx) string {
         return c.IP()
     },
-    LimitReached: func(c *fiber.Ctx) error {
-        return c.SendStatus(fiber.StatusTooManyRequests)
+    LimitReached: func(c *woody.Ctx) error {
+        return c.SendStatus(woody.StatusTooManyRequests)
     },
     SkipFailedRequests: false,
     SkipSuccessfulRequests: false,
@@ -153,10 +153,10 @@ var ConfigDefault = Config{
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gofiber/storage/) package.
+You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gofiber/storage/sqlite3
+storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
 app.Use(limiter.New(limiter.Config{
 	Storage: storage,
 }))

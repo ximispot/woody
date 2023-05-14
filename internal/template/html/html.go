@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofiber/fiber/v2/internal/template/utils"
+	"github.com/ximispot/woody/internal/template/utils"
 )
 
 // Engine struct
@@ -41,7 +41,7 @@ type Engine struct {
 	Templates *template.Template
 }
 
-// New returns a HTML render engine for Fiber
+// New returns a HTML render engine for Woody
 func New(directory, extension string) *Engine {
 	engine := &Engine{
 		left:      "{{",

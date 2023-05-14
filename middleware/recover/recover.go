@@ -5,20 +5,20 @@ import (
 	"os"
 	"runtime/debug"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
-func defaultStackTraceHandler(_ *fiber.Ctx, e interface{}) {
+func defaultStackTraceHandler(_ *woody.Ctx, e interface{}) {
 	_, _ = os.Stderr.WriteString(fmt.Sprintf("panic: %v\n%s\n", e, debug.Stack())) //nolint:errcheck // This will never fail
 }
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
 	// Return new handler
-	return func(c *fiber.Ctx) (err error) { //nolint:nonamedreturns // Uses recover() to overwrite the error
+	return func(c *woody.Ctx) (err error) { //nolint:nonamedreturns // Uses recover() to overwrite the error
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()

@@ -3,32 +3,32 @@ id: filesystem
 title: FileSystem
 ---
 
-Filesystem middleware for [Fiber](https://github.com/gofiber/fiber) that enables you to serve files from a directory.
+Filesystem middleware for [Woody](https://github.com/gowoody/woody) that enables you to serve files from a directory.
 
 :::caution
 **`:params` & `:optionals?` within the prefix path are not supported!**
 
-**To handle paths with spaces (or other url encoded values) make sure to set `fiber.Config{ UnescapePath: true }`**
+**To handle paths with spaces (or other url encoded values) make sure to set `woody.Config{ UnescapePath: true }`**
 :::
 
 ## Signatures
 
 ```go
-func New(config Config) fiber.Handler
+func New(config Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/filesystem"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/filesystem"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Provide a minimal config
@@ -62,8 +62,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/filesystem"
 )
 
 // Embed a single file
@@ -75,7 +75,7 @@ var f embed.FS
 var embedDirStatic embed.FS
 
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/", filesystem.New(filesystem.Config{
 		Root: http.FS(f),
@@ -102,14 +102,14 @@ func main() {
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/filesystem"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/markbates/pkger"
 )
 
 func main() {
-    app := fiber.New()
+    app := woody.New()
 
     app.Use("/assets", filesystem.New(filesystem.Config{
         Root: pkger.Dir("/assets"),
@@ -127,14 +127,14 @@ func main() {
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/filesystem"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/gobuffalo/packr/v2"
 )
 
 func main() {
-    app := fiber.New()
+    app := woody.New()
 
     app.Use("/assets", filesystem.New(filesystem.Config{
         Root: packr.New("Assets Box", "/assets"),
@@ -152,14 +152,14 @@ func main() {
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/filesystem"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/filesystem"
 
     "github.com/GeertJohan/go.rice"
 )
 
 func main() {
-    app := fiber.New()
+    app := woody.New()
 
     app.Use("/assets", filesystem.New(filesystem.Config{
         Root: rice.MustFindBox("assets").HTTPBox(),
@@ -177,14 +177,14 @@ func main() {
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/filesystem"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/filesystem"
 
     "<Your go module>/myEmbeddedFiles"
 )
 
 func main() {
-    app := fiber.New()
+    app := woody.New()
 
     app.Use("/assets", filesystem.New(filesystem.Config{
         Root: myEmbeddedFiles.HTTP,
@@ -202,8 +202,8 @@ func main() {
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/filesystem"
 
 	// Use blank to invoke init function and register data to statik
 	_ "<Your go module>/statik" 
@@ -216,7 +216,7 @@ func main() {
 		panic(err)
 	}
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/", filesystem.New(filesystem.Config{
 		Root: statikFS,
@@ -234,7 +234,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 
     // Root is a FileSystem that provides access
     // to a collection of files and directories.

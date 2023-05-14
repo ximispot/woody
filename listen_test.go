@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp/fasthttputil"
 )
@@ -318,8 +318,8 @@ func Test_App_print_Route_with_group(t *testing.T) {
 
 	v1 := app.Group("v1")
 	v1.Get("/test", emptyHandler).Name("v1")
-	v1.Post("/test/fiber", emptyHandler)
-	v1.Put("/test/fiber/*", emptyHandler)
+	v1.Post("/test/woody", emptyHandler)
+	v1.Put("/test/woody/*", emptyHandler)
 
 	printRoutesMessage := captureOutput(func() {
 		app.printRoutesMessage()
@@ -330,9 +330,9 @@ func Test_App_print_Route_with_group(t *testing.T) {
 	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "emptyHandler"))
 	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "/v1/test"))
 	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, MethodPost))
-	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "/v1/test/fiber"))
+	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "/v1/test/woody"))
 	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "PUT"))
-	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "/v1/test/fiber/*"))
+	utils.AssertEqual(t, true, strings.Contains(printRoutesMessage, "/v1/test/woody/*"))
 }
 
 func emptyHandler(_ *Ctx) error {

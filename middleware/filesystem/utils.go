@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 func getFileExtension(p string) string {
@@ -21,7 +21,7 @@ func getFileExtension(p string) string {
 	return p[n:]
 }
 
-func dirList(c *fiber.Ctx, f http.File) error {
+func dirList(c *woody.Ctx, f http.File) error {
 	fileinfos, err := f.Readdir(-1)
 	if err != nil {
 		return fmt.Errorf("failed to read dir: %w", err)

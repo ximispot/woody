@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"bytes"
@@ -20,8 +20,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gofiber/fiber/v2/internal/schema"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/internal/schema"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/savsgio/dictpool"
 	"github.com/valyala/bytebufferpool"
@@ -211,7 +211,7 @@ func (c *Ctx) AcceptsLanguages(offers ...string) string {
 	return getOffer(c.Get(HeaderAcceptLanguage), acceptsOffer, offers...)
 }
 
-// App returns the *App reference to the instance of the Fiber application
+// App returns the *App reference to the instance of the Woody application
 func (c *Ctx) App() *App {
 	return c.app
 }

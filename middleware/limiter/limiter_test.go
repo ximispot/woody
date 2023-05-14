@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/storage/memory"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/storage/memory"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -19,7 +19,7 @@ func Test_Limiter_Concurrency_Store(t *testing.T) {
 	t.Parallel()
 	// Test concurrency using a custom store
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:        50,
@@ -27,16 +27,16 @@ func Test_Limiter_Concurrency_Store(t *testing.T) {
 		Storage:    memory.New(),
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello tester!")
 	})
 
 	var wg sync.WaitGroup
 	singleRequest := func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 		utils.AssertEqual(t, nil, err)
-		utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+		utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 		body, err := io.ReadAll(resp.Body)
 		utils.AssertEqual(t, nil, err)
@@ -50,13 +50,13 @@ func Test_Limiter_Concurrency_Store(t *testing.T) {
 
 	wg.Wait()
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 429, resp.StatusCode)
 
 	time.Sleep(3 * time.Second)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 }
@@ -66,23 +66,23 @@ func Test_Limiter_Concurrency(t *testing.T) {
 	t.Parallel()
 	// Test concurrency using a default store
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:        50,
 		Expiration: 2 * time.Second,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello tester!")
 	})
 
 	var wg sync.WaitGroup
 	singleRequest := func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 		utils.AssertEqual(t, nil, err)
-		utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+		utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 
 		body, err := io.ReadAll(resp.Body)
 		utils.AssertEqual(t, nil, err)
@@ -96,13 +96,13 @@ func Test_Limiter_Concurrency(t *testing.T) {
 
 	wg.Wait()
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 429, resp.StatusCode)
 
 	time.Sleep(3 * time.Second)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 }
@@ -110,7 +110,7 @@ func Test_Limiter_Concurrency(t *testing.T) {
 // go test -run Test_Limiter_No_Skip_Choices -v
 func Test_Limiter_No_Skip_Choices(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:                    2,
@@ -119,22 +119,22 @@ func Test_Limiter_No_Skip_Choices(t *testing.T) {
 		SkipSuccessfulRequests: false,
 	}))
 
-	app.Get("/:status", func(c *fiber.Ctx) error {
+	app.Get("/:status", func(c *woody.Ctx) error {
 		if c.Params("status") == "fail" { //nolint:goconst // False positive
 			return c.SendStatus(400)
 		}
 		return c.SendStatus(200)
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/fail", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/fail", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 400, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 429, resp.StatusCode)
 }
@@ -142,7 +142,7 @@ func Test_Limiter_No_Skip_Choices(t *testing.T) {
 // go test -run Test_Limiter_Skip_Failed_Requests -v
 func Test_Limiter_Skip_Failed_Requests(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:                1,
@@ -150,28 +150,28 @@ func Test_Limiter_Skip_Failed_Requests(t *testing.T) {
 		SkipFailedRequests: true,
 	}))
 
-	app.Get("/:status", func(c *fiber.Ctx) error {
+	app.Get("/:status", func(c *woody.Ctx) error {
 		if c.Params("status") == "fail" {
 			return c.SendStatus(400)
 		}
 		return c.SendStatus(200)
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/fail", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/fail", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 400, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 429, resp.StatusCode)
 
 	time.Sleep(3 * time.Second)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 }
@@ -181,7 +181,7 @@ func Test_Limiter_Skip_Successful_Requests(t *testing.T) {
 	t.Parallel()
 	// Test concurrency using a default store
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:                    1,
@@ -189,35 +189,35 @@ func Test_Limiter_Skip_Successful_Requests(t *testing.T) {
 		SkipSuccessfulRequests: true,
 	}))
 
-	app.Get("/:status", func(c *fiber.Ctx) error {
+	app.Get("/:status", func(c *woody.Ctx) error {
 		if c.Params("status") == "fail" {
 			return c.SendStatus(400)
 		}
 		return c.SendStatus(200)
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/success", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/success", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/fail", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/fail", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 400, resp.StatusCode)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/fail", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/fail", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 429, resp.StatusCode)
 
 	time.Sleep(3 * time.Second)
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/fail", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/fail", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 400, resp.StatusCode)
 }
 
 // go test -v -run=^$ -bench=Benchmark_Limiter_Custom_Store -benchmem -count=4
 func Benchmark_Limiter_Custom_Store(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:        100,
@@ -225,14 +225,14 @@ func Benchmark_Limiter_Custom_Store(b *testing.B) {
 		Storage:    memory.New(),
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/")
 
 	b.ResetTimer()
@@ -245,33 +245,33 @@ func Benchmark_Limiter_Custom_Store(b *testing.B) {
 // go test -run Test_Limiter_Next
 func Test_Limiter_Next(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusNotFound, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotFound, resp.StatusCode)
 }
 
 func Test_Limiter_Headers(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:        50,
 		Expiration: 2 * time.Second,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello tester!")
 	})
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/")
 
 	app.Handler()(fctx)
@@ -287,21 +287,21 @@ func Test_Limiter_Headers(t *testing.T) {
 
 // go test -v -run=^$ -bench=Benchmark_Limiter -benchmem -count=4
 func Benchmark_Limiter(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Max:        100,
 		Expiration: 60 * time.Second,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/")
 
 	b.ResetTimer()
@@ -314,7 +314,7 @@ func Benchmark_Limiter(b *testing.B) {
 // go test -run Test_Sliding_Window -race -v
 func Test_Sliding_Window(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		Max:               10,
 		Expiration:        2 * time.Second,
@@ -322,18 +322,18 @@ func Test_Sliding_Window(t *testing.T) {
 		LimiterMiddleware: SlidingWindow{},
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello tester!")
 	})
 
 	singleRequest := func(shouldFail bool) {
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 		if shouldFail {
 			utils.AssertEqual(t, nil, err)
 			utils.AssertEqual(t, 429, resp.StatusCode)
 		} else {
 			utils.AssertEqual(t, nil, err)
-			utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+			utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 		}
 	}
 

@@ -6,21 +6,21 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 func Test_Non_Pprof_Path(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 
@@ -31,15 +31,15 @@ func Test_Non_Pprof_Path(t *testing.T) {
 
 func Test_Non_Pprof_Path_WithPrefix(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
-	app.Use(New(Config{Prefix: "/federated-fiber"}))
+	app.Use(New(Config{Prefix: "/federated-woody"}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 
@@ -50,18 +50,18 @@ func Test_Non_Pprof_Path_WithPrefix(t *testing.T) {
 
 func Test_Pprof_Index(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/debug/pprof/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/debug/pprof/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8, resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8, resp.Header.Get(woody.HeaderContentType))
 
 	b, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -70,18 +70,18 @@ func Test_Pprof_Index(t *testing.T) {
 
 func Test_Pprof_Index_WithPrefix(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
-	app.Use(New(Config{Prefix: "/federated-fiber"}))
+	app.Use(New(Config{Prefix: "/federated-woody"}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/federated-fiber/debug/pprof/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/federated-woody/debug/pprof/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
-	utils.AssertEqual(t, fiber.MIMETextHTMLCharsetUTF8, resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.MIMETextHTMLCharsetUTF8, resp.Header.Get(woody.HeaderContentType))
 
 	b, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -90,11 +90,11 @@ func Test_Pprof_Index_WithPrefix(t *testing.T) {
 
 func Test_Pprof_Subs(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
@@ -110,7 +110,7 @@ func Test_Pprof_Subs(t *testing.T) {
 			if sub == "profile" {
 				target += "?seconds=1"
 			}
-			resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, target, nil), 5000)
+			resp, err := app.Test(httptest.NewRequest(woody.MethodGet, target, nil), 5000)
 			utils.AssertEqual(t, nil, err)
 			utils.AssertEqual(t, 200, resp.StatusCode)
 		})
@@ -119,11 +119,11 @@ func Test_Pprof_Subs(t *testing.T) {
 
 func Test_Pprof_Subs_WithPrefix(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
-	app.Use(New(Config{Prefix: "/federated-fiber"}))
+	app.Use(New(Config{Prefix: "/federated-woody"}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
@@ -135,11 +135,11 @@ func Test_Pprof_Subs_WithPrefix(t *testing.T) {
 	for _, sub := range subs {
 		t.Run(sub, func(t *testing.T) {
 			t.Parallel()
-			target := "/federated-fiber/debug/pprof/" + sub
+			target := "/federated-woody/debug/pprof/" + sub
 			if sub == "profile" {
 				target += "?seconds=1"
 			}
-			resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, target, nil), 5000)
+			resp, err := app.Test(httptest.NewRequest(woody.MethodGet, target, nil), 5000)
 			utils.AssertEqual(t, nil, err)
 			utils.AssertEqual(t, 200, resp.StatusCode)
 		})
@@ -148,30 +148,30 @@ func Test_Pprof_Subs_WithPrefix(t *testing.T) {
 
 func Test_Pprof_Other(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/debug/pprof/302", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/debug/pprof/302", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 302, resp.StatusCode)
 }
 
 func Test_Pprof_Other_WithPrefix(t *testing.T) {
 	t.Parallel()
-	app := fiber.New(fiber.Config{DisableStartupMessage: true})
+	app := woody.New(woody.Config{DisableStartupMessage: true})
 
-	app.Use(New(Config{Prefix: "/federated-fiber"}))
+	app.Use(New(Config{Prefix: "/federated-woody"}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("escaped")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/federated-fiber/debug/pprof/302", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/federated-woody/debug/pprof/302", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 302, resp.StatusCode)
 }
@@ -179,15 +179,15 @@ func Test_Pprof_Other_WithPrefix(t *testing.T) {
 // go test -run Test_Pprof_Next
 func Test_Pprof_Next(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/debug/pprof/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/debug/pprof/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 404, resp.StatusCode)
 }
@@ -195,16 +195,16 @@ func Test_Pprof_Next(t *testing.T) {
 // go test -run Test_Pprof_Next_WithPrefix
 func Test_Pprof_Next_WithPrefix(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
-		Prefix: "/federated-fiber",
+		Prefix: "/federated-woody",
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/federated-fiber/debug/pprof/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/federated-woody/debug/pprof/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 404, resp.StatusCode)
 }

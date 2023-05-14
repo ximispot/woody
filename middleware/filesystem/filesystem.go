@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // Config defines the config for middleware.
@@ -17,7 +17,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Root is a FileSystem that provides access
 	// to a collection of files and directories.
@@ -76,8 +76,8 @@ var ConfigDefault = Config{
 //
 // filesystem does not handle url encoded values (for example spaces)
 // on it's own. If you need that functionality, set "UnescapePath"
-// in fiber.Config
-func New(config ...Config) fiber.Handler {
+// in woody.Config
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := ConfigDefault
 
@@ -110,7 +110,7 @@ func New(config ...Config) fiber.Handler {
 	cacheControlStr := "public, max-age=" + strconv.Itoa(cfg.MaxAge)
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -119,7 +119,7 @@ func New(config ...Config) fiber.Handler {
 		method := c.Method()
 
 		// We only serve static assets on GET or HEAD methods
-		if method != fiber.MethodGet && method != fiber.MethodHead {
+		if method != woody.MethodGet && method != woody.MethodHead {
 			return c.Next()
 		}
 
@@ -148,7 +148,7 @@ func New(config ...Config) fiber.Handler {
 		}
 		if err != nil {
 			if os.IsNotExist(err) {
-				return c.Status(fiber.StatusNotFound).Next()
+				return c.Status(woody.StatusNotFound).Next()
 			}
 			return fmt.Errorf("failed to open: %w", err)
 		}
@@ -176,7 +176,7 @@ func New(config ...Config) fiber.Handler {
 			if cfg.Browse {
 				return dirList(c, file)
 			}
-			return fiber.ErrForbidden
+			return woody.ErrForbidden
 		}
 
 		modTime := stat.ModTime()
@@ -191,17 +191,17 @@ func New(config ...Config) fiber.Handler {
 
 		// Set Last Modified header
 		if !modTime.IsZero() {
-			c.Set(fiber.HeaderLastModified, modTime.UTC().Format(http.TimeFormat))
+			c.Set(woody.HeaderLastModified, modTime.UTC().Format(http.TimeFormat))
 		}
 
-		if method == fiber.MethodGet {
+		if method == woody.MethodGet {
 			if cfg.MaxAge > 0 {
-				c.Set(fiber.HeaderCacheControl, cacheControlStr)
+				c.Set(woody.HeaderCacheControl, cacheControlStr)
 			}
 			c.Response().SetBodyStream(file, contentLength)
 			return nil
 		}
-		if method == fiber.MethodHead {
+		if method == woody.MethodHead {
 			c.Request().ResetBody()
 			// Fasthttp should skipbody by default if HEAD?
 			c.Response().SkipBody = true
@@ -217,11 +217,11 @@ func New(config ...Config) fiber.Handler {
 }
 
 // SendFile ...
-func SendFile(c *fiber.Ctx, fs http.FileSystem, path string) error {
+func SendFile(c *woody.Ctx, fs http.FileSystem, path string) error {
 	file, err := fs.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fiber.ErrNotFound
+			return woody.ErrNotFound
 		}
 		return fmt.Errorf("failed to open: %w", err)
 	}
@@ -246,7 +246,7 @@ func SendFile(c *fiber.Ctx, fs http.FileSystem, path string) error {
 
 	// Return forbidden if no index found
 	if stat.IsDir() {
-		return fiber.ErrForbidden
+		return woody.ErrForbidden
 	}
 
 	modTime := stat.ModTime()
@@ -257,15 +257,15 @@ func SendFile(c *fiber.Ctx, fs http.FileSystem, path string) error {
 
 	// Set Last Modified header
 	if !modTime.IsZero() {
-		c.Set(fiber.HeaderLastModified, modTime.UTC().Format(http.TimeFormat))
+		c.Set(woody.HeaderLastModified, modTime.UTC().Format(http.TimeFormat))
 	}
 
 	method := c.Method()
-	if method == fiber.MethodGet {
+	if method == woody.MethodGet {
 		c.Response().SetBodyStream(file, contentLength)
 		return nil
 	}
-	if method == fiber.MethodHead {
+	if method == woody.MethodHead {
 		c.Request().ResetBody()
 		// Fasthttp should skipbody by default if HEAD?
 		c.Response().SkipBody = true

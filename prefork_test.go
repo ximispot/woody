@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"crypto/tls"
@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 )
 
 func Test_App_Prefork_Child_Process(t *testing.T) {

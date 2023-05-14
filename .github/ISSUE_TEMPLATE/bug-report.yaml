@@ -9,9 +9,9 @@ body:
     attributes:
       value: |
         ### Notice
-        **This repository is not related to external or third-part Fiber modules. If you have a problem with them, open an issue under their repos. If you think the problem is related to Fiber, open the issue here.**
-        - Don't forget you can ask your questions in our [Discord server](https://gofiber.io/discord).
-        - If you have a suggestion for a Fiber feature you would like to see, open the issue with the **✏️ Feature Request** template.
+        **This repository is not related to external or third-part Woody modules. If you have a problem with them, open an issue under their repos. If you think the problem is related to Woody, open the issue here.**
+        - Don't forget you can ask your questions in our [Discord server](https://gowoody.io/discord).
+        - If you have a suggestion for a Woody feature you would like to see, open the issue with the **✏️ Feature Request** template.
         - Write your issue with clear and understandable English.
   - type: textarea
     id: description
@@ -40,15 +40,15 @@ body:
     attributes:
       label: Expected Behavior
       description: "A clear and detailed description of what you think should happen."
-      placeholder: "Tell us what Fiber should normally do."
+      placeholder: "Tell us what Woody should normally do."
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: "Fiber Version"
-      description: "Some bugs may be fixed in future Fiber releases, so we have to know your Fiber version."
-      placeholder: "Write your Fiber version. (v2.33.0, v2.34.1...)"
+      label: "Woody Version"
+      description: "Some bugs may be fixed in future Woody releases, so we have to know your Woody version."
+      placeholder: "Write your Woody version. (v2.33.0, v2.34.1...)"
     validations:
       required: true
   - type: textarea
@@ -61,11 +61,11 @@ body:
       value: |
         package main
 
-        import "github.com/gofiber/fiber/v2"
+        import "github.com/gowoody/woody/v2"
         import "log"
 
         func main() {
-          app := fiber.New()
+          app := woody.New()
 
           // Steps to reproduce
 
@@ -77,7 +77,7 @@ body:
       label: "Checklist:"
       description: "By submitting this issue, you confirm that:"
       options:
-        - label: "I agree to follow Fiber's [Code of Conduct](https://github.com/gofiber/fiber/blob/master/.github/CODE_OF_CONDUCT.md)."
+        - label: "I agree to follow Woody's [Code of Conduct](https://github.com/gowoody/woody/blob/master/.github/CODE_OF_CONDUCT.md)."
           required: true
         - label: "I have checked for existing issues that describe my problem prior to opening this one."
           required: true

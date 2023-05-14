@@ -8,9 +8,9 @@ import (
 
 func Test_FunctionName(t *testing.T) {
 	t.Parallel()
-	AssertEqual(t, "github.com/gofiber/fiber/v2/utils.Test_UUID", FunctionName(Test_UUID))
+	AssertEqual(t, "github.com/ximispot/woody/utils.Test_UUID", FunctionName(Test_UUID))
 
-	AssertEqual(t, "github.com/gofiber/fiber/v2/utils.Test_FunctionName.func1", FunctionName(func() {}))
+	AssertEqual(t, "github.com/ximispot/woody/utils.Test_FunctionName.func1", FunctionName(func() {}))
 
 	dummyint := 20
 	AssertEqual(t, "int", FunctionName(dummyint))
@@ -70,7 +70,7 @@ func Test_UUIDv4_Concurrency(t *testing.T) {
 
 func Benchmark_UUID(b *testing.B) {
 	var res string
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = UUID()
 		}
@@ -114,7 +114,7 @@ func Test_ConvertToBytes(t *testing.T) {
 // go test -v -run=^$ -bench=Benchmark_ConvertToBytes -benchmem -count=2
 func Benchmark_ConvertToBytes(b *testing.B) {
 	var res int
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = ConvertToBytes("42B")
 		}

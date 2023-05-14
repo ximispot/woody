@@ -1,5 +1,5 @@
-// Special thanks to @codemicro for moving this to fiber core
-// Original middleware: github.com/codemicro/fiber-cache
+// Special thanks to @codemicro for moving this to woody core
+// Original middleware: github.com/codemicro/woody-cache
 package cache
 
 import (
@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // timestampUpdatePeriod is the period which is used to check the cache expiration.
@@ -48,13 +48,13 @@ var ignoreHeaders = map[string]interface{}{
 }
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
 	// Nothing to cache
 	if int(cfg.Expiration.Seconds()) < 0 {
-		return func(c *fiber.Ctx) error {
+		return func(c *woody.Ctx) error {
 			return c.Next()
 		}
 	}
@@ -89,7 +89,7 @@ func New(config ...Config) fiber.Handler {
 	}
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Refrain from caching
 		if hasRequestDirective(c, noStore) {
 			return c.Next()
@@ -139,7 +139,7 @@ func New(config ...Config) fiber.Handler {
 			c.Response().SetStatusCode(e.status)
 			c.Response().Header.SetContentTypeBytes(e.ctype)
 			if len(e.cencoding) > 0 {
-				c.Response().Header.SetBytesV(fiber.HeaderContentEncoding, e.cencoding)
+				c.Response().Header.SetBytesV(woody.HeaderContentEncoding, e.cencoding)
 			}
 			if e.headers != nil {
 				for k, v := range e.headers {
@@ -149,7 +149,7 @@ func New(config ...Config) fiber.Handler {
 			// Set Cache-Control header if enabled
 			if cfg.CacheControl {
 				maxAge := strconv.FormatUint(e.exp-ts, 10)
-				c.Set(fiber.HeaderCacheControl, "public, max-age="+maxAge)
+				c.Set(woody.HeaderCacheControl, "public, max-age="+maxAge)
 			}
 
 			c.Set(cfg.CacheHeader, cacheHit)
@@ -163,7 +163,7 @@ func New(config ...Config) fiber.Handler {
 		// make sure we're not blocking concurrent requests - do unlock
 		mux.Unlock()
 
-		// Continue stack, return err to Fiber if exist
+		// Continue stack, return err to Woody if exist
 		if err := c.Next(); err != nil {
 			return err
 		}
@@ -198,7 +198,7 @@ func New(config ...Config) fiber.Handler {
 		e.body = utils.CopyBytes(c.Response().Body())
 		e.status = c.Response().StatusCode()
 		e.ctype = utils.CopyBytes(c.Response().Header.ContentType())
-		e.cencoding = utils.CopyBytes(c.Response().Header.Peek(fiber.HeaderContentEncoding))
+		e.cencoding = utils.CopyBytes(c.Response().Header.Peek(woody.HeaderContentEncoding))
 
 		// Store all response headers
 		// (more: https://datatracker.ietf.org/doc/html/rfc2616#section-13.5.1)
@@ -249,6 +249,6 @@ func New(config ...Config) fiber.Handler {
 }
 
 // Check if request has directive
-func hasRequestDirective(c *fiber.Ctx, directive string) bool {
-	return strings.Contains(c.Get(fiber.HeaderCacheControl), directive)
+func hasRequestDirective(c *woody.Ctx, directive string) bool {
+	return strings.Contains(c.Get(woody.HeaderCacheControl), directive)
 }

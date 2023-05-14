@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	cfg := configDefault(config...)
 
 	// Initialize
@@ -21,7 +21,7 @@ func New(config ...Config) fiber.Handler {
 	}
 
 	// Middleware function
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Next request to skip middleware
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()

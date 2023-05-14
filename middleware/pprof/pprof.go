@@ -4,13 +4,12 @@ import (
 	"net/http/pprof"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
-
 	"github.com/valyala/fasthttp/fasthttpadaptor"
+	"github.com/ximispot/woody"
 )
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
@@ -30,7 +29,7 @@ func New(config ...Config) fiber.Handler {
 	)
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -73,7 +72,7 @@ func New(config ...Config) fiber.Handler {
 				path = cfg.Prefix + "/debug/pprof/"
 			}
 
-			return c.Redirect(path, fiber.StatusFound)
+			return c.Redirect(path, woody.StatusFound)
 		}
 		return nil
 	}

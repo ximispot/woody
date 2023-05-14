@@ -28,7 +28,7 @@ func newIndex(dat viewBag) string {
 }
 
 const (
-	defaultTitle = "Fiber Monitor"
+	defaultTitle = "Woody Monitor"
 
 	defaultRefresh    = 3 * time.Second
 	timeoutDiff       = 200 // timeout will be Refresh (in milliseconds) - timeoutDiff

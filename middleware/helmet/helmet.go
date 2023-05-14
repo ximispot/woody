@@ -3,16 +3,16 @@ package helmet
 import (
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Init config
 	cfg := configDefault(config...)
 
 	// Return middleware handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Next request to skip middleware
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -20,15 +20,15 @@ func New(config ...Config) fiber.Handler {
 
 		// Set headers
 		if cfg.XSSProtection != "" {
-			c.Set(fiber.HeaderXXSSProtection, cfg.XSSProtection)
+			c.Set(woody.HeaderXXSSProtection, cfg.XSSProtection)
 		}
 
 		if cfg.ContentTypeNosniff != "" {
-			c.Set(fiber.HeaderXContentTypeOptions, cfg.ContentTypeNosniff)
+			c.Set(woody.HeaderXContentTypeOptions, cfg.ContentTypeNosniff)
 		}
 
 		if cfg.XFrameOptions != "" {
-			c.Set(fiber.HeaderXFrameOptions, cfg.XFrameOptions)
+			c.Set(woody.HeaderXFrameOptions, cfg.XFrameOptions)
 		}
 
 		if cfg.CrossOriginEmbedderPolicy != "" {
@@ -72,21 +72,21 @@ func New(config ...Config) fiber.Handler {
 			if cfg.HSTSPreloadEnabled {
 				subdomains = fmt.Sprintf("%s; preload", subdomains)
 			}
-			c.Set(fiber.HeaderStrictTransportSecurity, fmt.Sprintf("max-age=%d%s", cfg.HSTSMaxAge, subdomains))
+			c.Set(woody.HeaderStrictTransportSecurity, fmt.Sprintf("max-age=%d%s", cfg.HSTSMaxAge, subdomains))
 		}
 
 		// Handle Content-Security-Policy headers
 		if cfg.ContentSecurityPolicy != "" {
 			if cfg.CSPReportOnly {
-				c.Set(fiber.HeaderContentSecurityPolicyReportOnly, cfg.ContentSecurityPolicy)
+				c.Set(woody.HeaderContentSecurityPolicyReportOnly, cfg.ContentSecurityPolicy)
 			} else {
-				c.Set(fiber.HeaderContentSecurityPolicy, cfg.ContentSecurityPolicy)
+				c.Set(woody.HeaderContentSecurityPolicy, cfg.ContentSecurityPolicy)
 			}
 		}
 
 		// Handle Permissions-Policy headers
 		if cfg.PermissionPolicy != "" {
-			c.Set(fiber.HeaderPermissionsPolicy, cfg.PermissionPolicy)
+			c.Set(woody.HeaderPermissionsPolicy, cfg.PermissionPolicy)
 		}
 
 		return c.Next()

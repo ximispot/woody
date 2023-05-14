@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // Config defines the config for middleware.
@@ -15,7 +15,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// KeyLookup is a string in the form of "<source>:<key>" that is used
 	// to create an Extractor that extracts the token from the request.
@@ -67,7 +67,7 @@ type Config struct {
 	// Store is used to store the state of the middleware
 	//
 	// Optional. Default: memory.New()
-	Storage fiber.Storage
+	Storage woody.Storage
 
 	// Context key to store generated CSRF token into context.
 	// If left empty, token will not be stored in context.
@@ -84,22 +84,22 @@ type Config struct {
 	CookieExpires time.Duration
 
 	// Deprecated: Please use Cookie* related fields
-	Cookie *fiber.Cookie
+	Cookie *woody.Cookie
 
 	// Deprecated: Please use KeyLookup
 	TokenLookup string
 
-	// ErrorHandler is executed when an error is returned from fiber.Handler.
+	// ErrorHandler is executed when an error is returned from woody.Handler.
 	//
 	// Optional. Default: DefaultErrorHandler
-	ErrorHandler fiber.ErrorHandler
+	ErrorHandler woody.ErrorHandler
 
 	// Extractor returns the csrf token
 	//
 	// If set this will be used in place of an Extractor based on KeyLookup.
 	//
 	// Optional. Default will create an Extractor based on KeyLookup.
-	Extractor func(c *fiber.Ctx) (string, error)
+	Extractor func(c *woody.Ctx) (string, error)
 }
 
 const HeaderName = "X-Csrf-Token"
@@ -115,9 +115,9 @@ var ConfigDefault = Config{
 	Extractor:      CsrfFromHeader(HeaderName),
 }
 
-// default ErrorHandler that process return error from fiber.Handler
-func defaultErrorHandler(_ *fiber.Ctx, _ error) error {
-	return fiber.ErrForbidden
+// default ErrorHandler that process return error from woody.Handler
+func defaultErrorHandler(_ *woody.Ctx, _ error) error {
+	return woody.ErrForbidden
 }
 
 // Helper function to set default values

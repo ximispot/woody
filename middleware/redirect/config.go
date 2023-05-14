@@ -3,14 +3,14 @@ package redirect
 import (
 	"regexp"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
 type Config struct {
 	// Filter defines a function to skip middleware.
 	// Optional. Default: nil
-	Next func(*fiber.Ctx) bool
+	Next func(*woody.Ctx) bool
 
 	// Rules defines the URL path rewrite rules. The values captured in asterisk can be
 	// retrieved by index e.g. $1, $2 and so on.
@@ -31,7 +31,7 @@ type Config struct {
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{
-	StatusCode: fiber.StatusFound,
+	StatusCode: woody.StatusFound,
 }
 
 // Helper function to set default values

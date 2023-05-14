@@ -1,8 +1,6 @@
 package earlydata
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 const (
 	DefaultHeaderName      = "Early-Data"
@@ -14,35 +12,35 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// IsEarlyData returns whether the request is an early-data request.
 	//
 	// Optional. Default: a function which checks if the "Early-Data" request header equals "1".
-	IsEarlyData func(c *fiber.Ctx) bool
+	IsEarlyData func(c *woody.Ctx) bool
 
 	// AllowEarlyData returns whether the early-data request should be allowed or rejected.
 	//
 	// Optional. Default: a function which rejects the request on unsafe and allows the request on safe HTTP request methods.
-	AllowEarlyData func(c *fiber.Ctx) bool
+	AllowEarlyData func(c *woody.Ctx) bool
 
 	// Error is returned in case an early-data request is rejected.
 	//
-	// Optional. Default: fiber.ErrTooEarly.
+	// Optional. Default: woody.ErrTooEarly.
 	Error error
 }
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{
-	IsEarlyData: func(c *fiber.Ctx) bool {
+	IsEarlyData: func(c *woody.Ctx) bool {
 		return c.Get(DefaultHeaderName) == DefaultHeaderTrueValue
 	},
 
-	AllowEarlyData: func(c *fiber.Ctx) bool {
-		return fiber.IsMethodSafe(c.Method())
+	AllowEarlyData: func(c *woody.Ctx) bool {
+		return woody.IsMethodSafe(c.Method())
 	},
 
-	Error: fiber.ErrTooEarly,
+	Error: woody.ErrTooEarly,
 }
 
 // Helper function to set default values

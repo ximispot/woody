@@ -1,12 +1,12 @@
-package fiber
+package woody
 
 import (
 	"encoding/json"
 	"errors"
 	"testing"
 
-	"github.com/gofiber/fiber/v2/internal/schema"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/internal/schema"
+	"github.com/ximispot/woody/utils"
 )
 
 func TestConversionError(t *testing.T) {

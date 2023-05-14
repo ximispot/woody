@@ -1,4 +1,4 @@
-module github.com/gofiber/fiber/v2
+module github.com/ximispot/woody
 
 go 1.20
 

@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"sort"
@@ -31,8 +31,8 @@ func newMountFields(app *App) *mountFields {
 
 // Mount attaches another app instance as a sub-router along a routing path.
 // It's very useful to split up a large API as many independent routers and
-// compose them as a single service using Mount. The fiber's error handler and
-// any of the fiber's sub apps are added to the application's error handlers
+// compose them as a single service using Mount. The woody's error handler and
+// any of the woody's sub apps are added to the application's error handlers
 // to be invoked on errors that happen within the prefix route.
 func (app *App) Mount(prefix string, subApp *App) Router {
 	prefix = strings.TrimRight(prefix, "/")

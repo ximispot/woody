@@ -3,34 +3,34 @@ id: csrf
 title: CSRF
 ---
 
-CSRF middleware for [Fiber](https://github.com/gofiber/fiber) that provides [Cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by passing a csrf token via cookies. This cookie value will be used to compare against the client csrf token on requests, other than those defined as "safe" by RFC7231 \(GET, HEAD, OPTIONS, or TRACE\). When the csrf token is invalid, this middleware will return the `fiber.ErrForbidden` error. 
+CSRF middleware for [Woody](https://github.com/gowoody/woody) that provides [Cross-site request forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by passing a csrf token via cookies. This cookie value will be used to compare against the client csrf token on requests, other than those defined as "safe" by RFC7231 \(GET, HEAD, OPTIONS, or TRACE\). When the csrf token is invalid, this middleware will return the `woody.ErrForbidden` error. 
 
 CSRF Tokens are generated on GET requests. You can retrieve the CSRF token with `c.Locals(contextKey)`, where `contextKey` is the string you set in the config (see Custom Config below).
 
 When no `csrf_` cookie is set, or the token has expired, a new token will be generated and `csrf_` cookie set.
 
 :::note
-This middleware uses our [Storage](https://github.com/gofiber/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/csrf"
+    "github.com/gowoody/woody/v2"
+    "github.com/ximispot/woody/middleware/csrf"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -43,7 +43,7 @@ app.Use(csrf.New(csrf.Config{
 	CookieSameSite: "Lax",
     Expiration:     1 * time.Hour,
     KeyGenerator:   utils.UUID,
-    Extractor:      func(c *fiber.Ctx) (string, error) { ... },
+    Extractor:      func(c *woody.Ctx) (string, error) { ... },
 }))
 ```
 
@@ -59,7 +59,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 
     // KeyLookup is a string in the form of "<source>:<key>" that is used
     // to create an Extractor that extracts the token from the request.
@@ -111,7 +111,7 @@ type Config struct {
     // Store is used to store the state of the middleware
     //
     // Optional. Default: memory.New()
-    Storage fiber.Storage
+    Storage woody.Storage
 
     // Context key to store generated CSRF token into context.
     // If left empty, token will not be stored in context.
@@ -129,7 +129,7 @@ type Config struct {
     // If set this will be used in place of an Extractor based on KeyLookup.
     //
     // Optional. Default will create an Extractor based on KeyLookup.
-    Extractor func(c *fiber.Ctx) (string, error)
+    Extractor func(c *woody.Ctx) (string, error)
 }
 ```
 
@@ -157,10 +157,10 @@ const (
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gofiber/storage/) package.
+You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gofiber/storage/sqlite3
+storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
 app.Use(csrf.New(csrf.Config{
 	Storage: storage,
 }))

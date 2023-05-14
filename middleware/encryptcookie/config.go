@@ -1,15 +1,13 @@
 package encryptcookie
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 // Config defines the config for middleware.
 type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Array of cookie keys that should not be encrypted.
 	//
@@ -71,7 +69,7 @@ func configDefault(config ...Config) Config {
 	}
 
 	if cfg.Key == "" {
-		panic("fiber: encrypt cookie middleware requires key")
+		panic("woody: encrypt cookie middleware requires key")
 	}
 
 	return cfg

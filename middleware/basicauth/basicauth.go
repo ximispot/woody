@@ -4,24 +4,24 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // New creates a new middleware handler
-func New(config Config) fiber.Handler {
+func New(config Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config)
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
 		}
 
 		// Get authorization header
-		auth := c.Get(fiber.HeaderAuthorization)
+		auth := c.Get(woody.HeaderAuthorization)
 
 		// Check if the header contains content besides "basic".
 		if len(auth) <= 6 || !utils.EqualFold(auth[:6], "basic ") {

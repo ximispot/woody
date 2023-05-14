@@ -1,11 +1,11 @@
-package fiber
+package woody
 
 import (
 	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 )
 
 // go test -race -run Test_Path_parseRoute

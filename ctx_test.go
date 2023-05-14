@@ -1,5 +1,5 @@
 //nolint:bodyclose // Much easier to just ignore memory leaks in tests
-package fiber
+package woody
 
 import (
 	"bufio"
@@ -23,8 +23,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/gofiber/fiber/v2/internal/storage/memory"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/internal/storage/memory"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/bytebufferpool"
 	"github.com/valyala/fasthttp"
@@ -2836,11 +2836,11 @@ func Test_Ctx_RedirectToRouteWithParams(t *testing.T) {
 	defer app.ReleaseCtx(c)
 
 	err := c.RedirectToRoute("user", Map{
-		"name": "fiber",
+		"name": "woody",
 	})
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 302, c.Response().StatusCode())
-	utils.AssertEqual(t, "/user/fiber", string(c.Response().Header.Peek(HeaderLocation)))
+	utils.AssertEqual(t, "/user/woody", string(c.Response().Header.Peek(HeaderLocation)))
 }
 
 // go test -run Test_Ctx_RedirectToRouteWithParams
@@ -2854,7 +2854,7 @@ func Test_Ctx_RedirectToRouteWithQueries(t *testing.T) {
 	defer app.ReleaseCtx(c)
 
 	err := c.RedirectToRoute("user", Map{
-		"name":    "fiber",
+		"name":    "woody",
 		"queries": map[string]string{"data[0][name]": "john", "data[0][age]": "10", "test": "doe"},
 	})
 	utils.AssertEqual(t, nil, err)
@@ -2862,7 +2862,7 @@ func Test_Ctx_RedirectToRouteWithQueries(t *testing.T) {
 	// analysis of query parameters with url parsing, since a map pass is always randomly ordered
 	location, err := url.Parse(string(c.Response().Header.Peek(HeaderLocation)))
 	utils.AssertEqual(t, nil, err, "url.Parse(location)")
-	utils.AssertEqual(t, "/user/fiber", location.Path)
+	utils.AssertEqual(t, "/user/woody", location.Path)
 	utils.AssertEqual(t, url.Values{"data[0][name]": []string{"john"}, "data[0][age]": []string{"10"}, "test": []string{"doe"}}, location.Query())
 }
 
@@ -2877,11 +2877,11 @@ func Test_Ctx_RedirectToRouteWithOptionalParams(t *testing.T) {
 	defer app.ReleaseCtx(c)
 
 	err := c.RedirectToRoute("user", Map{
-		"name": "fiber",
+		"name": "woody",
 	})
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 302, c.Response().StatusCode())
-	utils.AssertEqual(t, "/user/fiber", string(c.Response().Header.Peek(HeaderLocation)))
+	utils.AssertEqual(t, "/user/woody", string(c.Response().Header.Peek(HeaderLocation)))
 }
 
 // go test -run Test_Ctx_RedirectToRouteWithOptionalParamsWithoutValue
@@ -3047,7 +3047,7 @@ func Test_Ctx_RenderWithOverwrittenBind(t *testing.T) {
 	utils.AssertEqual(t, nil, err)
 	defer app.ReleaseCtx(c)
 	err = c.Render("./.github/testdata/index.tmpl", Map{
-		"Title": "Hello from Fiber!",
+		"Title": "Hello from Woody!",
 	})
 	utils.AssertEqual(t, nil, err)
 
@@ -3055,7 +3055,7 @@ func Test_Ctx_RenderWithOverwrittenBind(t *testing.T) {
 	_, _ = buf.WriteString("overwrite") //nolint:errcheck // This will never fail
 	defer bytebufferpool.Put(buf)
 
-	utils.AssertEqual(t, "<h1>Hello from Fiber!</h1>", string(c.Response().Body()))
+	utils.AssertEqual(t, "<h1>Hello from Woody!</h1>", string(c.Response().Body()))
 }
 
 func Test_Ctx_RenderWithBindLocals(t *testing.T) {
@@ -3147,13 +3147,13 @@ func Benchmark_Ctx_RedirectToRoute(b *testing.B) {
 	var err error
 	for n := 0; n < b.N; n++ {
 		err = c.RedirectToRoute("user", Map{
-			"name": "fiber",
+			"name": "woody",
 		})
 	}
 	utils.AssertEqual(b, nil, err)
 
 	utils.AssertEqual(b, 302, c.Response().StatusCode())
-	utils.AssertEqual(b, "/user/fiber", string(c.Response().Header.Peek(HeaderLocation)))
+	utils.AssertEqual(b, "/user/woody", string(c.Response().Header.Peek(HeaderLocation)))
 }
 
 func Benchmark_Ctx_RedirectToRouteWithQueries(b *testing.B) {
@@ -3171,7 +3171,7 @@ func Benchmark_Ctx_RedirectToRouteWithQueries(b *testing.B) {
 	var err error
 	for n := 0; n < b.N; n++ {
 		err = c.RedirectToRoute("user", Map{
-			"name":    "fiber",
+			"name":    "woody",
 			"queries": map[string]string{"a": "a", "b": "b"},
 		})
 	}
@@ -3181,7 +3181,7 @@ func Benchmark_Ctx_RedirectToRouteWithQueries(b *testing.B) {
 	// analysis of query parameters with url parsing, since a map pass is always randomly ordered
 	location, err := url.Parse(string(c.Response().Header.Peek(HeaderLocation)))
 	utils.AssertEqual(b, nil, err, "url.Parse(location)")
-	utils.AssertEqual(b, "/user/fiber", location.Path)
+	utils.AssertEqual(b, "/user/woody", location.Path)
 	utils.AssertEqual(b, url.Values{"a": []string{"a"}, "b": []string{"b"}}, location.Query())
 }
 
@@ -3394,9 +3394,9 @@ func Benchmark_Ctx_Get_Location_From_Route(b *testing.B) {
 	var err error
 	var location string
 	for n := 0; n < b.N; n++ {
-		location, err = c.getLocationFromRoute(app.GetRoute("User"), Map{"name": "fiber"})
+		location, err = c.getLocationFromRoute(app.GetRoute("User"), Map{"name": "woody"})
 	}
-	utils.AssertEqual(b, "/user/fiber", location)
+	utils.AssertEqual(b, "/user/woody", location)
 	utils.AssertEqual(b, nil, err)
 }
 
@@ -3413,13 +3413,13 @@ func Test_Ctx_Get_Location_From_Route_name(t *testing.T) {
 			return c.SendString(c.Params("name"))
 		}).Name("User")
 
-		location, err := c.GetRouteURL("User", Map{"name": "fiber"})
+		location, err := c.GetRouteURL("User", Map{"name": "woody"})
 		utils.AssertEqual(t, nil, err)
-		utils.AssertEqual(t, "/user/fiber", location)
+		utils.AssertEqual(t, "/user/woody", location)
 
-		location, err = c.GetRouteURL("User", Map{"Name": "fiber"})
+		location, err = c.GetRouteURL("User", Map{"Name": "woody"})
 		utils.AssertEqual(t, nil, err)
-		utils.AssertEqual(t, "/user/fiber", location)
+		utils.AssertEqual(t, "/user/woody", location)
 	})
 
 	t.Run("case sensitive", func(t *testing.T) {
@@ -3431,11 +3431,11 @@ func Test_Ctx_Get_Location_From_Route_name(t *testing.T) {
 			return c.SendString(c.Params("name"))
 		}).Name("User")
 
-		location, err := c.GetRouteURL("User", Map{"name": "fiber"})
+		location, err := c.GetRouteURL("User", Map{"name": "woody"})
 		utils.AssertEqual(t, nil, err)
-		utils.AssertEqual(t, "/user/fiber", location)
+		utils.AssertEqual(t, "/user/woody", location)
 
-		location, err = c.GetRouteURL("User", Map{"Name": "fiber"})
+		location, err = c.GetRouteURL("User", Map{"Name": "woody"})
 		utils.AssertEqual(t, nil, err)
 		utils.AssertEqual(t, "/user/", location)
 	})
@@ -3500,7 +3500,7 @@ func Test_Ctx_Render_Engine_Error(t *testing.T) {
 // go test -run Test_Ctx_Render_Go_Template
 func Test_Ctx_Render_Go_Template(t *testing.T) {
 	t.Parallel()
-	file, err := os.CreateTemp(os.TempDir(), "fiber")
+	file, err := os.CreateTemp(os.TempDir(), "woody")
 	utils.AssertEqual(t, nil, err)
 	defer func() {
 		err := os.Remove(file.Name())
@@ -4079,13 +4079,13 @@ func Test_Ctx_ReqHeaderParser(t *testing.T) {
 
 	c.Request().Header.Add("id", "1")
 	c.Request().Header.Add("Name", "John Doe")
-	c.Request().Header.Add("Hobby", "golang,fiber")
+	c.Request().Header.Add("Hobby", "golang,woody")
 	q := new(Header)
 	utils.AssertEqual(t, nil, c.ReqHeaderParser(q))
 	utils.AssertEqual(t, 2, len(q.Hobby))
 
 	c.Request().Header.Del("hobby")
-	c.Request().Header.Add("Hobby", "golang,fiber,go")
+	c.Request().Header.Add("Hobby", "golang,woody,go")
 	q = new(Header)
 	utils.AssertEqual(t, nil, c.ReqHeaderParser(q))
 	utils.AssertEqual(t, 3, len(q.Hobby))
@@ -4109,7 +4109,7 @@ func Test_Ctx_ReqHeaderParser(t *testing.T) {
 	c.Request().Header.Add("id", "2")
 	c.Request().Header.Add("Name", "Jane Doe")
 	c.Request().Header.Del("hobby")
-	c.Request().Header.Add("Hobby", "go,fiber")
+	c.Request().Header.Add("Hobby", "go,woody")
 	c.Request().Header.Add("favouriteDrinks", "milo,coke,pepsi")
 	c.Request().Header.Add("alloc", "")
 	c.Request().Header.Add("no", "1")
@@ -4118,7 +4118,7 @@ func Test_Ctx_ReqHeaderParser(t *testing.T) {
 	h2.Bool = true
 	h2.Name = "hello world"
 	utils.AssertEqual(t, nil, c.ReqHeaderParser(h2))
-	utils.AssertEqual(t, "go,fiber", h2.Hobby)
+	utils.AssertEqual(t, "go,woody", h2.Hobby)
 	utils.AssertEqual(t, true, h2.Bool)
 	utils.AssertEqual(t, "Jane Doe", h2.Name) // check value get overwritten
 	utils.AssertEqual(t, []string{"milo", "coke", "pepsi"}, h2.FavouriteDrinks)
@@ -4398,7 +4398,7 @@ func Benchmark_Ctx_ReqHeaderParser(b *testing.B) {
 
 	c.Request().Header.Add("id", "1")
 	c.Request().Header.Add("Name", "John Doe")
-	c.Request().Header.Add("Hobby", "golang,fiber")
+	c.Request().Header.Add("Hobby", "golang,woody")
 
 	q := new(ReqHeader)
 	b.ReportAllocs()

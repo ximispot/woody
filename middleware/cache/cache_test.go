@@ -1,5 +1,5 @@
-// Special thanks to @codemicro for moving this to fiber core
-// Original middleware: github.com/codemicro/fiber-cache
+// Special thanks to @codemicro for moving this to woody core
+// Original middleware: github.com/codemicro/woody-cache
 package cache
 
 import (
@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/storage/memory"
-	"github.com/gofiber/fiber/v2/middleware/etag"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/storage/memory"
+	"github.com/ximispot/woody/middleware/etag"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -24,36 +24,36 @@ import (
 func Test_Cache_CacheControl(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		CacheControl: true,
 		Expiration:   10 * time.Second,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
-	_, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	_, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, "public, max-age=10", resp.Header.Get(fiber.HeaderCacheControl))
+	utils.AssertEqual(t, "public, max-age=10", resp.Header.Get(woody.HeaderCacheControl))
 }
 
 func Test_Cache_Expired(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{Expiration: 2 * time.Second}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(fmt.Sprintf("%d", time.Now().UnixNano()))
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -61,7 +61,7 @@ func Test_Cache_Expired(t *testing.T) {
 	// Sleep until the cache is expired
 	time.Sleep(3 * time.Second)
 
-	respCached, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	respCached, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	bodyCached, err := io.ReadAll(respCached.Body)
 	utils.AssertEqual(t, nil, err)
@@ -71,7 +71,7 @@ func Test_Cache_Expired(t *testing.T) {
 	}
 
 	// Next response should be also cached
-	respCachedNextRound, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	respCachedNextRound, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	bodyCachedNextRound, err := io.ReadAll(respCachedNextRound.Body)
 	utils.AssertEqual(t, nil, err)
@@ -84,19 +84,19 @@ func Test_Cache_Expired(t *testing.T) {
 func Test_Cache(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		now := fmt.Sprintf("%d", time.Now().UnixNano())
 		return c.SendString(now)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 
-	cachedReq := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	cachedReq := httptest.NewRequest(woody.MethodGet, "/", nil)
 	cachedResp, err := app.Test(cachedReq)
 	utils.AssertEqual(t, nil, err)
 
@@ -112,15 +112,15 @@ func Test_Cache(t *testing.T) {
 func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("id", "1"))
 	})
 
 	// Request id = 1
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
@@ -130,7 +130,7 @@ func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 	// Response cached, entry id = 1
 
 	// Request id = 2 without Cache-Control: no-cache
-	cachedReq := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
+	cachedReq := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
 	cachedResp, err := app.Test(cachedReq)
 	utils.AssertEqual(t, nil, err)
 	cachedBody, err := io.ReadAll(cachedResp.Body)
@@ -140,8 +140,8 @@ func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 	// Response not cached, returns cached response, entry id = 1
 
 	// Request id = 2 with Cache-Control: no-cache
-	noCacheReq := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	noCacheReq.Header.Set(fiber.HeaderCacheControl, noCache)
+	noCacheReq := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	noCacheReq.Header.Set(woody.HeaderCacheControl, noCache)
 	noCacheResp, err := app.Test(noCacheReq)
 	utils.AssertEqual(t, nil, err)
 	noCacheBody, err := io.ReadAll(noCacheResp.Body)
@@ -152,8 +152,8 @@ func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 
 	/* Check Test_Cache_WithETagAndNoCacheRequestDirective */
 	// Request id = 2 with Cache-Control: no-cache again
-	noCacheReq1 := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	noCacheReq1.Header.Set(fiber.HeaderCacheControl, noCache)
+	noCacheReq1 := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	noCacheReq1.Header.Set(woody.HeaderCacheControl, noCache)
 	noCacheResp1, err := app.Test(noCacheReq1)
 	utils.AssertEqual(t, nil, err)
 	noCacheBody1, err := io.ReadAll(noCacheResp1.Body)
@@ -163,7 +163,7 @@ func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 	// Response cached, returns updated response, entry = 2
 
 	// Request id = 1 without Cache-Control: no-cache
-	cachedReq1 := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	cachedReq1 := httptest.NewRequest(woody.MethodGet, "/", nil)
 	cachedResp1, err := app.Test(cachedReq1)
 	utils.AssertEqual(t, nil, err)
 	cachedBody1, err := io.ReadAll(cachedResp1.Body)
@@ -177,65 +177,65 @@ func Test_Cache_WithNoCacheRequestDirective(t *testing.T) {
 func Test_Cache_WithETagAndNoCacheRequestDirective(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(
 		etag.New(),
 		New(),
 	)
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("id", "1"))
 	})
 
 	// Request id = 1
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, resp.Header.Get("X-Cache"))
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode)
 	// Response cached, entry id = 1
 
 	// If response status 200
 	etagToken := resp.Header.Get("Etag")
 
 	// Request id = 2 with ETag but without Cache-Control: no-cache
-	cachedReq := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	cachedReq.Header.Set(fiber.HeaderIfNoneMatch, etagToken)
+	cachedReq := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	cachedReq.Header.Set(woody.HeaderIfNoneMatch, etagToken)
 	cachedResp, err := app.Test(cachedReq)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheHit, cachedResp.Header.Get("X-Cache"))
-	utils.AssertEqual(t, fiber.StatusNotModified, cachedResp.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotModified, cachedResp.StatusCode)
 	// Response not cached, returns cached response, entry id = 1, status not modified
 
 	// Request id = 2 with ETag and Cache-Control: no-cache
-	noCacheReq := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	noCacheReq.Header.Set(fiber.HeaderCacheControl, noCache)
-	noCacheReq.Header.Set(fiber.HeaderIfNoneMatch, etagToken)
+	noCacheReq := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	noCacheReq.Header.Set(woody.HeaderCacheControl, noCache)
+	noCacheReq.Header.Set(woody.HeaderIfNoneMatch, etagToken)
 	noCacheResp, err := app.Test(noCacheReq)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, noCacheResp.Header.Get("X-Cache"))
-	utils.AssertEqual(t, fiber.StatusOK, noCacheResp.StatusCode)
+	utils.AssertEqual(t, woody.StatusOK, noCacheResp.StatusCode)
 	// Response cached, returns updated response, entry id = 2
 
 	// If response status 200
 	etagToken = noCacheResp.Header.Get("Etag")
 
 	// Request id = 2 with ETag and Cache-Control: no-cache again
-	noCacheReq1 := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	noCacheReq1.Header.Set(fiber.HeaderCacheControl, noCache)
-	noCacheReq1.Header.Set(fiber.HeaderIfNoneMatch, etagToken)
+	noCacheReq1 := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	noCacheReq1.Header.Set(woody.HeaderCacheControl, noCache)
+	noCacheReq1.Header.Set(woody.HeaderIfNoneMatch, etagToken)
 	noCacheResp1, err := app.Test(noCacheReq1)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, noCacheResp1.Header.Get("X-Cache"))
-	utils.AssertEqual(t, fiber.StatusNotModified, noCacheResp1.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotModified, noCacheResp1.StatusCode)
 	// Response cached, returns updated response, entry id = 2, status not modified
 
 	// Request id = 1 without ETag and Cache-Control: no-cache
-	cachedReq1 := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	cachedReq1 := httptest.NewRequest(woody.MethodGet, "/", nil)
 	cachedResp1, err := app.Test(cachedReq1)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheHit, cachedResp1.Header.Get("X-Cache"))
-	utils.AssertEqual(t, fiber.StatusOK, cachedResp1.StatusCode)
+	utils.AssertEqual(t, woody.StatusOK, cachedResp1.StatusCode)
 	// Response not cached, returns cached response, entry id = 2
 }
 
@@ -243,16 +243,16 @@ func Test_Cache_WithETagAndNoCacheRequestDirective(t *testing.T) {
 func Test_Cache_WithNoStoreRequestDirective(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("id", "1"))
 	})
 
 	// Request id = 2
-	noStoreReq := httptest.NewRequest(fiber.MethodGet, "/?id=2", nil)
-	noStoreReq.Header.Set(fiber.HeaderCacheControl, noStore)
+	noStoreReq := httptest.NewRequest(woody.MethodGet, "/?id=2", nil)
+	noStoreReq.Header.Set(woody.HeaderCacheControl, noStore)
 	noStoreResp, err := app.Test(noStoreReq)
 	utils.AssertEqual(t, nil, err)
 	noStoreBody, err := io.ReadAll(noStoreResp.Body)
@@ -264,21 +264,21 @@ func Test_Cache_WithNoStoreRequestDirective(t *testing.T) {
 func Test_Cache_WithSeveralRequests(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		CacheControl: true,
 		Expiration:   10 * time.Second,
 	}))
 
-	app.Get("/:id", func(c *fiber.Ctx) error {
+	app.Get("/:id", func(c *woody.Ctx) error {
 		return c.SendString(c.Params("id"))
 	})
 
 	for runs := 0; runs < 10; runs++ {
 		for i := 0; i < 10; i++ {
 			func(id int) {
-				rsp, err := app.Test(httptest.NewRequest(fiber.MethodGet, fmt.Sprintf("/%d", id), nil))
+				rsp, err := app.Test(httptest.NewRequest(woody.MethodGet, fmt.Sprintf("/%d", id), nil))
 				utils.AssertEqual(t, nil, err)
 
 				defer func(body io.ReadCloser) {
@@ -302,20 +302,20 @@ func Test_Cache_WithSeveralRequests(t *testing.T) {
 func Test_Cache_Invalid_Expiration(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	cache := New(Config{Expiration: 0 * time.Second})
 	app.Use(cache)
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		now := fmt.Sprintf("%d", time.Now().UnixNano())
 		return c.SendString(now)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 
-	cachedReq := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	cachedReq := httptest.NewRequest(woody.MethodGet, "/", nil)
 	cachedResp, err := app.Test(cachedReq)
 	utils.AssertEqual(t, nil, err)
 
@@ -330,37 +330,37 @@ func Test_Cache_Invalid_Expiration(t *testing.T) {
 func Test_Cache_Get(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Post("/", func(c *fiber.Ctx) error {
+	app.Post("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	app.Get("/get", func(c *fiber.Ctx) error {
+	app.Get("/get", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/?cache=123", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodPost, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodPost, "/?cache=12345", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodPost, "/?cache=12345", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "12345", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/get?cache=123", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/get?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/get?cache=12345", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/get?cache=12345", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -370,39 +370,39 @@ func Test_Cache_Get(t *testing.T) {
 func Test_Cache_Post(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		Methods: []string{fiber.MethodPost},
+		Methods: []string{woody.MethodPost},
 	}))
 
-	app.Post("/", func(c *fiber.Ctx) error {
+	app.Post("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	app.Get("/get", func(c *fiber.Ctx) error {
+	app.Get("/get", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/?cache=123", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodPost, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodPost, "/?cache=12345", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodPost, "/?cache=12345", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/get?cache=123", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/get?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(body))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/get?cache=12345", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/get?cache=12345", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err = io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -412,22 +412,22 @@ func Test_Cache_Post(t *testing.T) {
 func Test_Cache_NothingToCache(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{Expiration: -(time.Second * 1)}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(time.Now().String())
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 
 	time.Sleep(500 * time.Millisecond)
 
-	respCached, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	respCached, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	bodyCached, err := io.ReadAll(respCached.Body)
 	utils.AssertEqual(t, nil, err)
@@ -440,58 +440,58 @@ func Test_Cache_NothingToCache(t *testing.T) {
 func Test_Cache_CustomNext(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		Next: func(c *fiber.Ctx) bool {
-			return c.Response().StatusCode() != fiber.StatusOK
+		Next: func(c *woody.Ctx) bool {
+			return c.Response().StatusCode() != woody.StatusOK
 		},
 		CacheControl: true,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(time.Now().String())
 	})
 
-	app.Get("/error", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusInternalServerError).SendString(time.Now().String())
+	app.Get("/error", func(c *woody.Ctx) error {
+		return c.Status(woody.StatusInternalServerError).SendString(time.Now().String())
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
 
-	respCached, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	respCached, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	bodyCached, err := io.ReadAll(respCached.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, bytes.Equal(body, bodyCached))
-	utils.AssertEqual(t, true, respCached.Header.Get(fiber.HeaderCacheControl) != "")
+	utils.AssertEqual(t, true, respCached.Header.Get(woody.HeaderCacheControl) != "")
 
-	_, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/error", nil))
+	_, err = app.Test(httptest.NewRequest(woody.MethodGet, "/error", nil))
 	utils.AssertEqual(t, nil, err)
 
-	errRespCached, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/error", nil))
+	errRespCached, err := app.Test(httptest.NewRequest(woody.MethodGet, "/error", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, true, errRespCached.Header.Get(fiber.HeaderCacheControl) == "")
+	utils.AssertEqual(t, true, errRespCached.Header.Get(woody.HeaderCacheControl) == "")
 }
 
 func Test_CustomKey(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	var called bool
-	app.Use(New(Config{KeyGenerator: func(c *fiber.Ctx) string {
+	app.Use(New(Config{KeyGenerator: func(c *woody.Ctx) string {
 		called = true
 		return utils.CopyString(c.Path())
 	}}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("hi")
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	_, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, called)
@@ -500,10 +500,10 @@ func Test_CustomKey(t *testing.T) {
 func Test_CustomExpiration(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	var called bool
 	var newCacheTime int
-	app.Use(New(Config{ExpirationGenerator: func(c *fiber.Ctx, cfg *Config) time.Duration {
+	app.Use(New(Config{ExpirationGenerator: func(c *woody.Ctx, cfg *Config) time.Duration {
 		called = true
 		var err error
 		newCacheTime, err = strconv.Atoi(c.GetRespHeader("Cache-Time", "600"))
@@ -511,13 +511,13 @@ func Test_CustomExpiration(t *testing.T) {
 		return time.Second * time.Duration(newCacheTime)
 	}}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		c.Response().Header.Add("Cache-Time", "1")
 		now := fmt.Sprintf("%d", time.Now().UnixNano())
 		return c.SendString(now)
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, true, called)
 	utils.AssertEqual(t, 1, newCacheTime)
@@ -525,7 +525,7 @@ func Test_CustomExpiration(t *testing.T) {
 	// Sleep until the cache is expired
 	time.Sleep(1 * time.Second)
 
-	cachedResp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	cachedResp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 
 	body, err := io.ReadAll(resp.Body)
@@ -538,7 +538,7 @@ func Test_CustomExpiration(t *testing.T) {
 	}
 
 	// Next response should be cached
-	cachedRespNextRound, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	cachedRespNextRound, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	cachedBodyNextRound, err := io.ReadAll(cachedRespNextRound.Body)
 	utils.AssertEqual(t, nil, err)
@@ -551,22 +551,22 @@ func Test_CustomExpiration(t *testing.T) {
 func Test_AdditionalE2EResponseHeaders(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		StoreResponseHeaders: true,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		c.Response().Header.Add("X-Foobar", "foobar")
 		return c.SendString("hi")
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "foobar", resp.Header.Get("X-Foobar"))
 
-	req = httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req = httptest.NewRequest(woody.MethodGet, "/", nil)
 	resp, err = app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "foobar", resp.Header.Get("X-Foobar"))
@@ -575,40 +575,40 @@ func Test_AdditionalE2EResponseHeaders(t *testing.T) {
 func Test_CacheHeader(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Expiration: 10 * time.Second,
-		Next: func(c *fiber.Ctx) bool {
-			return c.Response().StatusCode() != fiber.StatusOK
+		Next: func(c *woody.Ctx) bool {
+			return c.Response().StatusCode() != woody.StatusOK
 		},
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Post("/", func(c *fiber.Ctx) error {
+	app.Post("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	app.Get("/error", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusInternalServerError).SendString(time.Now().String())
+	app.Get("/error", func(c *woody.Ctx) error {
+		return c.Status(woody.StatusInternalServerError).SendString(time.Now().String())
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, resp.Header.Get("X-Cache"))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheHit, resp.Header.Get("X-Cache"))
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodPost, "/?cache=12345", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodPost, "/?cache=12345", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheUnreachable, resp.Header.Get("X-Cache"))
 
-	errRespCached, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/error", nil))
+	errRespCached, err := app.Test(httptest.NewRequest(woody.MethodGet, "/error", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheUnreachable, errRespCached.Header.Get("X-Cache"))
 }
@@ -616,20 +616,20 @@ func Test_CacheHeader(t *testing.T) {
 func Test_Cache_WithHead(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		now := fmt.Sprintf("%d", time.Now().UnixNano())
 		return c.SendString(now)
 	})
 
-	req := httptest.NewRequest(fiber.MethodHead, "/", nil)
+	req := httptest.NewRequest(woody.MethodHead, "/", nil)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, resp.Header.Get("X-Cache"))
 
-	cachedReq := httptest.NewRequest(fiber.MethodHead, "/", nil)
+	cachedReq := httptest.NewRequest(woody.MethodHead, "/", nil)
 	cachedResp, err := app.Test(cachedReq)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheHit, cachedResp.Header.Get("X-Cache"))
@@ -645,34 +645,34 @@ func Test_Cache_WithHead(t *testing.T) {
 func Test_Cache_WithHeadThenGet(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Query("cache"))
 	})
 
-	headResp, err := app.Test(httptest.NewRequest(fiber.MethodHead, "/?cache=123", nil))
+	headResp, err := app.Test(httptest.NewRequest(woody.MethodHead, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	headBody, err := io.ReadAll(headResp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "", string(headBody))
 	utils.AssertEqual(t, cacheMiss, headResp.Header.Get("X-Cache"))
 
-	headResp, err = app.Test(httptest.NewRequest(fiber.MethodHead, "/?cache=123", nil))
+	headResp, err = app.Test(httptest.NewRequest(woody.MethodHead, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	headBody, err = io.ReadAll(headResp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "", string(headBody))
 	utils.AssertEqual(t, cacheHit, headResp.Header.Get("X-Cache"))
 
-	getResp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/?cache=123", nil))
+	getResp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	getBody, err := io.ReadAll(getResp.Body)
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, "123", string(getBody))
 	utils.AssertEqual(t, cacheMiss, getResp.Header.Get("X-Cache"))
 
-	getResp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/?cache=123", nil))
+	getResp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/?cache=123", nil))
 	utils.AssertEqual(t, nil, err)
 	getBody, err = io.ReadAll(getResp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -683,17 +683,17 @@ func Test_Cache_WithHeadThenGet(t *testing.T) {
 func Test_CustomCacheHeader(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		CacheHeader: "Cache-Status",
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, cacheMiss, resp.Header.Get("Cache-Status"))
 }
@@ -701,9 +701,9 @@ func Test_CustomCacheHeader(t *testing.T) {
 // Because time points are updated once every X milliseconds, entries in tests can often have
 // equal expiration times and thus be in an random order. This closure hands out increasing
 // time intervals to maintain strong ascending order of expiration
-func stableAscendingExpiration() func(c1 *fiber.Ctx, c2 *Config) time.Duration {
+func stableAscendingExpiration() func(c1 *woody.Ctx, c2 *Config) time.Duration {
 	i := 0
-	return func(c1 *fiber.Ctx, c2 *Config) time.Duration {
+	return func(c1 *woody.Ctx, c2 *Config) time.Duration {
 		i++
 		return time.Hour * time.Duration(i)
 	}
@@ -712,13 +712,13 @@ func stableAscendingExpiration() func(c1 *fiber.Ctx, c2 *Config) time.Duration {
 func Test_Cache_MaxBytesOrder(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		MaxBytes:            2,
 		ExpirationGenerator: stableAscendingExpiration(),
 	}))
 
-	app.Get("/*", func(c *fiber.Ctx) error {
+	app.Get("/*", func(c *woody.Ctx) error {
 		return c.SendString("1")
 	})
 
@@ -740,7 +740,7 @@ func Test_Cache_MaxBytesOrder(t *testing.T) {
 	}
 
 	for idx, tcase := range cases {
-		rsp, err := app.Test(httptest.NewRequest(fiber.MethodGet, tcase[0], nil))
+		rsp, err := app.Test(httptest.NewRequest(woody.MethodGet, tcase[0], nil))
 		utils.AssertEqual(t, nil, err)
 		utils.AssertEqual(t, tcase[1], rsp.Header.Get("X-Cache"), fmt.Sprintf("Case %v", idx))
 	}
@@ -749,14 +749,14 @@ func Test_Cache_MaxBytesOrder(t *testing.T) {
 func Test_Cache_MaxBytesSizes(t *testing.T) {
 	t.Parallel()
 
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		MaxBytes:            7,
 		ExpirationGenerator: stableAscendingExpiration(),
 	}))
 
-	app.Get("/*", func(c *fiber.Ctx) error {
+	app.Get("/*", func(c *woody.Ctx) error {
 		path := c.Context().URI().LastPathSegment()
 		size, err := strconv.Atoi(string(path))
 		utils.AssertEqual(t, nil, err)
@@ -775,7 +775,7 @@ func Test_Cache_MaxBytesSizes(t *testing.T) {
 	}
 
 	for idx, tcase := range cases {
-		rsp, err := app.Test(httptest.NewRequest(fiber.MethodGet, tcase[0], nil))
+		rsp, err := app.Test(httptest.NewRequest(woody.MethodGet, tcase[0], nil))
 		utils.AssertEqual(t, nil, err)
 		utils.AssertEqual(t, tcase[1], rsp.Header.Get("X-Cache"), fmt.Sprintf("Case %v", idx))
 	}
@@ -783,19 +783,19 @@ func Test_Cache_MaxBytesSizes(t *testing.T) {
 
 // go test -v -run=^$ -bench=Benchmark_Cache -benchmem -count=4
 func Benchmark_Cache(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/demo", func(c *fiber.Ctx) error {
+	app.Get("/demo", func(c *woody.Ctx) error {
 		data, _ := os.ReadFile("../../.github/README.md") //nolint:errcheck // We're inside a benchmark
-		return c.Status(fiber.StatusTeapot).Send(data)
+		return c.Status(woody.StatusTeapot).Send(data)
 	})
 
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/demo")
 
 	b.ReportAllocs()
@@ -805,27 +805,27 @@ func Benchmark_Cache(b *testing.B) {
 		h(fctx)
 	}
 
-	utils.AssertEqual(b, fiber.StatusTeapot, fctx.Response.Header.StatusCode())
+	utils.AssertEqual(b, woody.StatusTeapot, fctx.Response.Header.StatusCode())
 	utils.AssertEqual(b, true, len(fctx.Response.Body()) > 30000)
 }
 
 // go test -v -run=^$ -bench=Benchmark_Cache_Storage -benchmem -count=4
 func Benchmark_Cache_Storage(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		Storage: memory.New(),
 	}))
 
-	app.Get("/demo", func(c *fiber.Ctx) error {
+	app.Get("/demo", func(c *woody.Ctx) error {
 		data, _ := os.ReadFile("../../.github/README.md") //nolint:errcheck // We're inside a benchmark
-		return c.Status(fiber.StatusTeapot).Send(data)
+		return c.Status(woody.StatusTeapot).Send(data)
 	})
 
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/demo")
 
 	b.ReportAllocs()
@@ -835,17 +835,17 @@ func Benchmark_Cache_Storage(b *testing.B) {
 		h(fctx)
 	}
 
-	utils.AssertEqual(b, fiber.StatusTeapot, fctx.Response.Header.StatusCode())
+	utils.AssertEqual(b, woody.StatusTeapot, fctx.Response.Header.StatusCode())
 	utils.AssertEqual(b, true, len(fctx.Response.Body()) > 30000)
 }
 
 func Benchmark_Cache_AdditionalHeaders(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		StoreResponseHeaders: true,
 	}))
 
-	app.Get("/demo", func(c *fiber.Ctx) error {
+	app.Get("/demo", func(c *woody.Ctx) error {
 		c.Response().Header.Add("X-Foobar", "foobar")
 		return c.SendStatus(418)
 	})
@@ -853,7 +853,7 @@ func Benchmark_Cache_AdditionalHeaders(b *testing.B) {
 	h := app.Handler()
 
 	fctx := &fasthttp.RequestCtx{}
-	fctx.Request.Header.SetMethod(fiber.MethodGet)
+	fctx.Request.Header.SetMethod(woody.MethodGet)
 	fctx.Request.SetRequestURI("/demo")
 
 	b.ReportAllocs()
@@ -863,7 +863,7 @@ func Benchmark_Cache_AdditionalHeaders(b *testing.B) {
 		h(fctx)
 	}
 
-	utils.AssertEqual(b, fiber.StatusTeapot, fctx.Response.Header.StatusCode())
+	utils.AssertEqual(b, woody.StatusTeapot, fctx.Response.Header.StatusCode())
 	utils.AssertEqual(b, []byte("foobar"), fctx.Response.Header.Peek("X-Foobar"))
 }
 
@@ -876,16 +876,16 @@ func Benchmark_Cache_MaxSize(b *testing.B) {
 	names := []string{"Disabled", "Unlim", "LowBounded"}
 	for i, size := range cases {
 		b.Run(names[i], func(b *testing.B) {
-			app := fiber.New()
+			app := woody.New()
 			app.Use(New(Config{MaxBytes: size}))
 
-			app.Get("/*", func(c *fiber.Ctx) error {
-				return c.Status(fiber.StatusTeapot).SendString("1")
+			app.Get("/*", func(c *woody.Ctx) error {
+				return c.Status(woody.StatusTeapot).SendString("1")
 			})
 
 			h := app.Handler()
 			fctx := &fasthttp.RequestCtx{}
-			fctx.Request.Header.SetMethod(fiber.MethodGet)
+			fctx.Request.Header.SetMethod(woody.MethodGet)
 
 			b.ReportAllocs()
 			b.ResetTimer()
@@ -895,7 +895,7 @@ func Benchmark_Cache_MaxSize(b *testing.B) {
 				h(fctx)
 			}
 
-			utils.AssertEqual(b, fiber.StatusTeapot, fctx.Response.Header.StatusCode())
+			utils.AssertEqual(b, woody.StatusTeapot, fctx.Response.Header.StatusCode())
 		})
 	}
 }

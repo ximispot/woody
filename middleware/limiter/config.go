@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
@@ -12,7 +12,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Max number of recent connections during `Expiration` seconds before sending a 429 response
 	//
@@ -21,10 +21,10 @@ type Config struct {
 
 	// KeyGenerator allows you to generate custom keys, by default c.IP() is used
 	//
-	// Default: func(c *fiber.Ctx) string {
+	// Default: func(c *woody.Ctx) string {
 	//   return c.IP()
 	// }
-	KeyGenerator func(*fiber.Ctx) string
+	KeyGenerator func(*woody.Ctx) string
 
 	// Expiration is the time on how long to keep records of requests in memory
 	//
@@ -33,10 +33,10 @@ type Config struct {
 
 	// LimitReached is called when a request hits the limit
 	//
-	// Default: func(c *fiber.Ctx) error {
-	//   return c.SendStatus(fiber.StatusTooManyRequests)
+	// Default: func(c *woody.Ctx) error {
+	//   return c.SendStatus(woody.StatusTooManyRequests)
 	// }
-	LimitReached fiber.Handler
+	LimitReached woody.Handler
 
 	// When set to true, requests with StatusCode >= 400 won't be counted.
 	//
@@ -51,7 +51,7 @@ type Config struct {
 	// Store is used to store the state of the middleware
 	//
 	// Default: an in memory store for this process only
-	Storage fiber.Storage
+	Storage woody.Storage
 
 	// LimiterMiddleware is the struct that implements a limiter middleware.
 	//
@@ -62,21 +62,21 @@ type Config struct {
 	Duration time.Duration
 
 	// Deprecated: Use Storage instead
-	Store fiber.Storage
+	Store woody.Storage
 
 	// Deprecated: Use KeyGenerator instead
-	Key func(*fiber.Ctx) string
+	Key func(*woody.Ctx) string
 }
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{
 	Max:        5,
 	Expiration: 1 * time.Minute,
-	KeyGenerator: func(c *fiber.Ctx) string {
+	KeyGenerator: func(c *woody.Ctx) string {
 		return c.IP()
 	},
-	LimitReached: func(c *fiber.Ctx) error {
-		return c.SendStatus(fiber.StatusTooManyRequests)
+	LimitReached: func(c *woody.Ctx) error {
+		return c.SendStatus(woody.StatusTooManyRequests)
 	},
 	SkipFailedRequests:     false,
 	SkipSuccessfulRequests: false,

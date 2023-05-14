@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/storage/memory"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/storage/memory"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -18,10 +18,10 @@ func Test_Session(t *testing.T) {
 	// session store
 	store := New()
 
-	// fiber instance
-	app := fiber.New()
+	// woody instance
+	app := woody.New()
 
-	// fiber context
+	// woody context
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
 
@@ -103,10 +103,10 @@ func Test_Session_Types(t *testing.T) {
 	// session store
 	store := New()
 
-	// fiber instance
-	app := fiber.New()
+	// woody instance
+	app := woody.New()
 
-	// fiber context
+	// woody context
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
 
@@ -210,9 +210,9 @@ func Test_Session_Store_Reset(t *testing.T) {
 	t.Parallel()
 	// session store
 	store := New()
-	// fiber instance
-	app := fiber.New()
-	// fiber context
+	// woody instance
+	app := woody.New()
+	// woody context
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
 
@@ -243,9 +243,9 @@ func Test_Session_Save(t *testing.T) {
 	t.Run("save to cookie", func(t *testing.T) {
 		// session store
 		store := New()
-		// fiber instance
-		app := fiber.New()
-		// fiber context
+		// woody instance
+		app := woody.New()
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// get session
@@ -264,9 +264,9 @@ func Test_Session_Save(t *testing.T) {
 		store := New(Config{
 			KeyLookup: "header:session_id",
 		})
-		// fiber instance
-		app := fiber.New()
-		// fiber context
+		// woody instance
+		app := woody.New()
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// get session
@@ -290,9 +290,9 @@ func Test_Session_Save_Expiration(t *testing.T) {
 		t.Parallel()
 		// session store
 		store := New()
-		// fiber instance
-		app := fiber.New()
-		// fiber context
+		// woody instance
+		app := woody.New()
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// get session
@@ -331,9 +331,9 @@ func Test_Session_Reset(t *testing.T) {
 		t.Parallel()
 		// session store
 		store := New()
-		// fiber instance
-		app := fiber.New()
-		// fiber context
+		// woody instance
+		app := woody.New()
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// get session
@@ -352,9 +352,9 @@ func Test_Session_Reset(t *testing.T) {
 		store := New(Config{
 			KeyLookup: "header:session_id",
 		})
-		// fiber instance
-		app := fiber.New()
-		// fiber context
+		// woody instance
+		app := woody.New()
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// get session
@@ -391,9 +391,9 @@ func Test_Session_Cookie(t *testing.T) {
 	t.Parallel()
 	// session store
 	store := New()
-	// fiber instance
-	app := fiber.New()
-	// fiber context
+	// woody instance
+	app := woody.New()
+	// woody context
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
 
@@ -410,9 +410,9 @@ func Test_Session_Cookie(t *testing.T) {
 func Test_Session_Cookie_In_Response(t *testing.T) {
 	t.Parallel()
 	store := New()
-	app := fiber.New()
+	app := woody.New()
 
-	// fiber context
+	// woody context
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
 
@@ -433,11 +433,11 @@ func Test_Session_Cookie_In_Response(t *testing.T) {
 }
 
 // go test -run Test_Session_Deletes_Single_Key
-// Regression: https://github.com/gofiber/fiber/issues/1365
+// Regression: https://github.com/gowoody/woody/issues/1365
 func Test_Session_Deletes_Single_Key(t *testing.T) {
 	t.Parallel()
 	store := New()
-	app := fiber.New()
+	app := woody.New()
 
 	ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(ctx)
@@ -461,17 +461,17 @@ func Test_Session_Deletes_Single_Key(t *testing.T) {
 }
 
 // go test -run Test_Session_Regenerate
-// Regression: https://github.com/gofiber/fiber/issues/1395
+// Regression: https://github.com/gowoody/woody/issues/1395
 func Test_Session_Regenerate(t *testing.T) {
 	t.Parallel()
-	// fiber instance
-	app := fiber.New()
+	// woody instance
+	app := woody.New()
 	t.Run("set fresh to be true when regenerating a session", func(t *testing.T) {
 		// session store
 		store := New()
 		// a random session uuid
 		originalSessionUUIDString := ""
-		// fiber context
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 
@@ -505,7 +505,7 @@ func Test_Session_Regenerate(t *testing.T) {
 
 // go test -v -run=^$ -bench=Benchmark_Session -benchmem -count=4
 func Benchmark_Session(b *testing.B) {
-	app, store := fiber.New(), New()
+	app, store := woody.New(), New()
 	c := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(c)
 	c.Request().Header.SetCookie(store.sessionName, "12356789")

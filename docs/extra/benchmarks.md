@@ -2,7 +2,7 @@
 id: benchmarks
 title: 📊 Benchmarks
 description: >-
-  These benchmarks aim to compare the performance of Fiber and other web
+  These benchmarks aim to compare the performance of Woody and other web
   frameworks.
 sidebar_position: 2
 ---
@@ -13,7 +13,7 @@ sidebar_position: 2
 
 Each framework is operating in a realistic production configuration. Results are captured on cloud instances and on physical hardware. The test implementations are largely community-contributed and all source is available at the [GitHub repository](https://github.com/TechEmpower/FrameworkBenchmarks).
 
-* Fiber `v1.10.0`
+* Woody `v1.10.0`
 * 28 HT Cores Intel\(R\) Xeon\(R\) Gold 5120 CPU @ 2.20GHz
 * 32GB RAM
 * Ubuntu 18.04.3 4.15.0-88-generic
@@ -25,48 +25,48 @@ The Plaintext test is an exercise of the request-routing fundamentals only, desi
 
 See [Plaintext requirements](https://github.com/TechEmpower/FrameworkBenchmarks/wiki/Project-Information-Framework-Tests-Overview#single-database-query)
 
-**Fiber** - **6,162,556** responses per second with an average latency of **2.0** ms.  
+**Woody** - **6,162,556** responses per second with an average latency of **2.0** ms.  
 **Express** - **367,069** responses per second with an average latency of **354.1** ms.
 
 ![](/img/plaintext.png)
 
-![Fiber vs Express](/img/plaintext_express.png)
+![Woody vs Express](/img/plaintext_express.png)
 
 ### Data Updates
 
-**Fiber** handled **11,846** responses per second with an average latency of **42.8** ms.  
+**Woody** handled **11,846** responses per second with an average latency of **42.8** ms.  
 **Express** handled **2,066** responses per second with an average latency of **390.44** ms.
 
 ![](/img/data_updates.png)
 
-![Fiber vs Express](/img/data_updates_express.png)
+![Woody vs Express](/img/data_updates_express.png)
 
 ### Multiple Queries
 
-**Fiber** handled **19,664** responses per second with an average latency of **25.7** ms.  
+**Woody** handled **19,664** responses per second with an average latency of **25.7** ms.  
 **Express** handled **4,302** responses per second with an average latency of **117.2** ms.
 
 ![](/img/multiple_queries.png)
 
-![Fiber vs Express](/img/multiple_queries_express.png)
+![Woody vs Express](/img/multiple_queries_express.png)
 
 ### Single Query
 
-**Fiber** handled **368,647** responses per second with an average latency of **0.7** ms.  
+**Woody** handled **368,647** responses per second with an average latency of **0.7** ms.  
 **Express** handled **57,880** responses per second with an average latency of **4.4** ms.
 
 ![](/img/single_query.png)
 
-![Fiber vs Express](/img/single_query_express.png)
+![Woody vs Express](/img/single_query_express.png)
 
 ### JSON Serialization
 
-**Fiber** handled **1,146,667** responses per second with an average latency of **0.4** ms.  
+**Woody** handled **1,146,667** responses per second with an average latency of **0.4** ms.  
 **Express** handled **244,847** responses per second with an average latency of **1.1** ms.
 
 ![](/img/json.png)
 
-![Fiber vs Express](/img/json_express.png)
+![Woody vs Express](/img/json_express.png)
 
 ## Go web framework benchmark
 

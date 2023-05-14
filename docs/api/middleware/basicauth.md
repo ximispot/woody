@@ -3,26 +3,26 @@ id: basicauth
 title: BasicAuth
 ---
 
-Basic Authentication middleware for [Fiber](https://github.com/gofiber/fiber) that provides an HTTP basic authentication. It calls the next handler for valid credentials and [401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401) or a custom response for missing or invalid credentials.
+Basic Authentication middleware for [Woody](https://github.com/gowoody/woody) that provides an HTTP basic authentication. It calls the next handler for valid credentials and [401 Unauthorized](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401) or a custom response for missing or invalid credentials.
 
 ## Signatures
 
 ```go
-func New(config Config) fiber.Handler
+func New(config Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/basicauth"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/basicauth"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Provide a minimal config
@@ -49,7 +49,7 @@ app.Use(basicauth.New(basicauth.Config{
         }
         return false
     },
-    Unauthorized: func(c *fiber.Ctx) error {
+    Unauthorized: func(c *woody.Ctx) error {
         return c.SendFile("./unauthorized.html")
     },
     ContextUsername: "_user",
@@ -65,7 +65,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 
     // Users defines the allowed credentials
     //
@@ -92,7 +92,7 @@ type Config struct {
     // By default it will return with a 401 Unauthorized and the correct WWW-Auth header
     //
     // Optional. Default: nil
-    Unauthorized fiber.Handler
+    Unauthorized woody.Handler
 
     // ContextUser is the key to store the username in Locals
     //

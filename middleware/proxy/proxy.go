@@ -9,20 +9,20 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
 
 // New is deprecated
-func New(config Config) fiber.Handler {
+func New(config Config) woody.Handler {
 	log.Printf("[Warning] - [PROXY] proxy.New is deprecated, please use proxy.Balancer instead\n")
 	return Balancer(config)
 }
 
 // Balancer creates a load balancer among multiple upstream servers
-func Balancer(config Config) fiber.Handler {
+func Balancer(config Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config)
 
@@ -63,7 +63,7 @@ func Balancer(config Config) fiber.Handler {
 	}
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -74,7 +74,7 @@ func Balancer(config Config) fiber.Handler {
 		res := c.Response()
 
 		// Don't proxy "Connection" header
-		req.Header.Del(fiber.HeaderConnection)
+		req.Header.Del(woody.HeaderConnection)
 
 		// Modify request
 		if cfg.ModifyRequest != nil {
@@ -91,7 +91,7 @@ func Balancer(config Config) fiber.Handler {
 		}
 
 		// Don't proxy "Connection" header
-		res.Header.Del(fiber.HeaderConnection)
+		res.Header.Del(woody.HeaderConnection)
 
 		// Modify response
 		if cfg.ModifyResponse != nil {
@@ -130,16 +130,16 @@ func WithClient(cli *fasthttp.Client) {
 }
 
 // Forward performs the given http request and fills the given http response.
-// This method will return an fiber.Handler
-func Forward(addr string, clients ...*fasthttp.Client) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+// This method will return an woody.Handler
+func Forward(addr string, clients ...*fasthttp.Client) woody.Handler {
+	return func(c *woody.Ctx) error {
 		return Do(c, addr, clients...)
 	}
 }
 
 // Do performs the given http request and fills the given http response.
-// This method can be used within a fiber.Handler
-func Do(c *fiber.Ctx, addr string, clients ...*fasthttp.Client) error {
+// This method can be used within a woody.Handler
+func Do(c *woody.Ctx, addr string, clients ...*fasthttp.Client) error {
 	return doAction(c, addr, func(cli *fasthttp.Client, req *fasthttp.Request, resp *fasthttp.Response) error {
 		return cli.Do(req, resp)
 	}, clients...)
@@ -147,31 +147,31 @@ func Do(c *fiber.Ctx, addr string, clients ...*fasthttp.Client) error {
 
 // DoRedirects performs the given http request and fills the given http response, following up to maxRedirectsCount redirects.
 // When the redirect count exceeds maxRedirectsCount, ErrTooManyRedirects is returned.
-// This method can be used within a fiber.Handler
-func DoRedirects(c *fiber.Ctx, addr string, maxRedirectsCount int, clients ...*fasthttp.Client) error {
+// This method can be used within a woody.Handler
+func DoRedirects(c *woody.Ctx, addr string, maxRedirectsCount int, clients ...*fasthttp.Client) error {
 	return doAction(c, addr, func(cli *fasthttp.Client, req *fasthttp.Request, resp *fasthttp.Response) error {
 		return cli.DoRedirects(req, resp, maxRedirectsCount)
 	}, clients...)
 }
 
 // DoDeadline performs the given request and waits for response until the given deadline.
-// This method can be used within a fiber.Handler
-func DoDeadline(c *fiber.Ctx, addr string, deadline time.Time, clients ...*fasthttp.Client) error {
+// This method can be used within a woody.Handler
+func DoDeadline(c *woody.Ctx, addr string, deadline time.Time, clients ...*fasthttp.Client) error {
 	return doAction(c, addr, func(cli *fasthttp.Client, req *fasthttp.Request, resp *fasthttp.Response) error {
 		return cli.DoDeadline(req, resp, deadline)
 	}, clients...)
 }
 
 // DoTimeout performs the given request and waits for response during the given timeout duration.
-// This method can be used within a fiber.Handler
-func DoTimeout(c *fiber.Ctx, addr string, timeout time.Duration, clients ...*fasthttp.Client) error {
+// This method can be used within a woody.Handler
+func DoTimeout(c *woody.Ctx, addr string, timeout time.Duration, clients ...*fasthttp.Client) error {
 	return doAction(c, addr, func(cli *fasthttp.Client, req *fasthttp.Request, resp *fasthttp.Response) error {
 		return cli.DoTimeout(req, resp, timeout)
 	}, clients...)
 }
 
 func doAction(
-	c *fiber.Ctx,
+	c *woody.Ctx,
 	addr string,
 	action func(cli *fasthttp.Client, req *fasthttp.Request, resp *fasthttp.Response) error,
 	clients ...*fasthttp.Client,
@@ -195,16 +195,16 @@ func doAction(
 	copiedURL := utils.CopyString(addr)
 	req.SetRequestURI(copiedURL)
 	// NOTE: if req.isTLS is true, SetRequestURI keeps the scheme as https.
-	// Reference: https://github.com/gofiber/fiber/issues/1762
+	// Reference: https://github.com/gowoody/woody/issues/1762
 	if scheme := getScheme(utils.UnsafeBytes(copiedURL)); len(scheme) > 0 {
 		req.URI().SetSchemeBytes(scheme)
 	}
 
-	req.Header.Del(fiber.HeaderConnection)
+	req.Header.Del(woody.HeaderConnection)
 	if err := action(cli, req, res); err != nil {
 		return err
 	}
-	res.Header.Del(fiber.HeaderConnection)
+	res.Header.Del(woody.HeaderConnection)
 	return nil
 }
 
@@ -217,9 +217,9 @@ func getScheme(uri []byte) []byte {
 }
 
 // DomainForward performs an http request based on the given domain and populates the given http response.
-// This method will return an fiber.Handler
-func DomainForward(hostname, addr string, clients ...*fasthttp.Client) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+// This method will return an woody.Handler
+func DomainForward(hostname, addr string, clients ...*fasthttp.Client) woody.Handler {
+	return func(c *woody.Ctx) error {
 		host := string(c.Request().Host())
 		if host == hostname {
 			return Do(c, addr+c.OriginalURL(), clients...)
@@ -250,13 +250,13 @@ func (r *roundrobin) get() string {
 }
 
 // BalancerForward Forward performs the given http request with round robin algorithm to server and fills the given http response.
-// This method will return an fiber.Handler
-func BalancerForward(servers []string, clients ...*fasthttp.Client) fiber.Handler {
+// This method will return an woody.Handler
+func BalancerForward(servers []string, clients ...*fasthttp.Client) woody.Handler {
 	r := &roundrobin{
 		current: 0,
 		pool:    servers,
 	}
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		server := r.get()
 		if !strings.HasPrefix(server, "http") {
 			server = "http://" + server

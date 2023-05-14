@@ -3,10 +3,10 @@ id: earlydata
 title: EarlyData
 ---
 
-The Early Data middleware for [Fiber](https://github.com/gofiber/fiber) adds support for TLS 1.3's early data ("0-RTT") feature.
+The Early Data middleware for [Woody](https://github.com/gowoody/woody) adds support for TLS 1.3's early data ("0-RTT") feature.
 Citing [RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446#section-2-3), when a client and server share a PSK, TLS 1.3 allows clients to send data on the first flight ("early data") to speed up the request, effectively reducing the regular 1-RTT request to a 0-RTT request.
 
-Make sure to enable fiber's `EnableTrustedProxyCheck` config option before using this middleware in order to not trust bogus HTTP request headers of the client.
+Make sure to enable woody's `EnableTrustedProxyCheck` config option before using this middleware in order to not trust bogus HTTP request headers of the client.
 
 Also be aware that enabling support for early data in your reverse proxy (e.g. nginx, as done with a simple `ssl_early_data on;`) makes requests replayable. Refer to the following documents before continuing:
 
@@ -19,21 +19,21 @@ Safe HTTP methods — `GET`, `HEAD`, `OPTIONS` and `TRACE` — should not modify
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/earlydata"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/earlydata"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -41,7 +41,7 @@ app.Use(earlydata.New())
 
 // Or extend your config for customization
 app.Use(earlydata.New(earlydata.Config{
-	Error: fiber.ErrTooEarly,
+	Error: woody.ErrTooEarly,
 	// ...
 }))
 ```
@@ -54,21 +54,21 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// IsEarlyData returns whether the request is an early-data request.
 	//
 	// Optional. Default: a function which checks if the "Early-Data" request header equals "1".
-	IsEarlyData func(c *fiber.Ctx) bool
+	IsEarlyData func(c *woody.Ctx) bool
 
 	// AllowEarlyData returns whether the early-data request should be allowed or rejected.
 	//
 	// Optional. Default: a function which rejects the request on unsafe and allows the request on safe HTTP request methods.
-	AllowEarlyData func(c *fiber.Ctx) bool
+	AllowEarlyData func(c *woody.Ctx) bool
 
 	// Error is returned in case an early-data request is rejected.
 	//
-	// Optional. Default: fiber.ErrTooEarly.
+	// Optional. Default: woody.ErrTooEarly.
 	Error error
 }
 ```
@@ -77,15 +77,15 @@ type Config struct {
 
 ```go
 var ConfigDefault = Config{
-	IsEarlyData: func(c *fiber.Ctx) bool {
+	IsEarlyData: func(c *woody.Ctx) bool {
 		return c.Get(DefaultHeaderName) == DefaultHeaderTrueValue
 	},
 
-	AllowEarlyData: func(c *fiber.Ctx) bool {
-		return fiber.IsMethodSafe(c.Method())
+	AllowEarlyData: func(c *woody.Ctx) bool {
+		return woody.IsMethodSafe(c.Method())
 	},
 
-	Error: fiber.ErrTooEarly,
+	Error: woody.ErrTooEarly,
 }
 ```
 

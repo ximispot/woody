@@ -3,10 +3,10 @@ id: session
 title: Session
 ---
 
-Session middleware for [Fiber](https://github.com/gofiber/fiber).
+Session middleware for [Woody](https://github.com/gowoody/woody).
 
 :::note
-This middleware uses our [Storage](https://github.com/gofiber/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
+This middleware uses our [Storage](https://github.com/gowoody/storage) package to support various databases through a single interface. The default configuration for this middleware saves data to memory, see the examples below for other databases.
 :::
 
 ## Signatures
@@ -14,7 +14,7 @@ This middleware uses our [Storage](https://github.com/gofiber/storage) package t
 ```go
 func New(config ...Config) *Store
 func (s *Store) RegisterType(i interface{})
-func (s *Store) Get(c *fiber.Ctx) (*Session, error)
+func (s *Store) Get(c *woody.Ctx) (*Session, error)
 func (s *Store) Reset() error
 
 func (s *Session) Get(key string) interface{}
@@ -33,22 +33,22 @@ Storing `interface{}` values are limited to built-ins Go types.
 :::
 
 ## Examples
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/session"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/session"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
 // This stores all of your app's sessions
 store := session.New()
 
-app.Get("/", func(c *fiber.Ctx) error {
+app.Get("/", func(c *woody.Ctx) error {
     // Get session from storage
     sess, err := store.Get(c)
     if err != nil {
@@ -95,7 +95,7 @@ type Config struct {
 
 	// Storage interface to store the session data
 	// Optional. Default value memory.New()
-	Storage fiber.Storage
+	Storage woody.Storage
 
 	// KeyLookup is a string in the form of "<source>:<name>" that is used
 	// to extract session id from the request.
@@ -167,10 +167,10 @@ const (
 
 ### Custom Storage/Database
 
-You can use any storage from our [storage](https://github.com/gofiber/storage/) package.
+You can use any storage from our [storage](https://github.com/gowoody/storage/) package.
 
 ```go
-storage := sqlite3.New() // From github.com/gofiber/storage/sqlite3
+storage := sqlite3.New() // From github.com/gowoody/storage/sqlite3
 store := session.New(session.Config{
 	Storage: storage,
 })

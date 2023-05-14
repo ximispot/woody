@@ -1,7 +1,7 @@
 ---
 id: client
 title: 🌎 Client
-description: The Client struct represents the Fiber HTTP Client.
+description: The Client struct represents the Woody HTTP Client.
 sidebar_position: 5
 ---
 
@@ -105,7 +105,7 @@ func (a *Agent) UserAgentBytes(userAgent []byte) *Agent
 ```
 
 ```go title="Example"
-agent.UserAgent("fiber")
+agent.UserAgent("woody")
 // ...
 ```
 
@@ -137,7 +137,7 @@ func (a *Agent) RefererBytes(referer []byte) *Agent
 ```
 
 ```go title="Example"
-agent.Referer("https://docs.gofiber.io")
+agent.Referer("https://docs.gowoody.io")
 // ...
 ```
 
@@ -235,7 +235,7 @@ func (a *Agent) JSON(v interface{}) *Agent
 ```
 
 ```go title="Example"
-agent.JSON(fiber.Map{"success": true})
+agent.JSON(woody.Map{"success": true})
 // ...
 ```
 
@@ -248,7 +248,7 @@ func (a *Agent) XML(v interface{}) *Agent
 ```
 
 ```go title="Example"
-agent.XML(fiber.Map{"success": true})
+agent.XML(woody.Map{"success": true})
 // ...
 ```
 
@@ -294,7 +294,7 @@ agent.MultipartForm(args)
 ReleaseArgs(args)
 ```
 
-Fiber provides several methods for sending files. Note that they must be called before `MultipartForm`.
+Woody provides several methods for sending files. Note that they must be called before `MultipartForm`.
 
 #### Boundary
 
@@ -560,7 +560,7 @@ func (a *Agent) RetryIf(retryIf RetryIfFunc) *Agent
 ```
 
 ```go title="Example"
-agent.Get("https://example.com").RetryIf(func (req *fiber.Request) bool {
+agent.Get("https://example.com").RetryIf(func (req *woody.Request) bool {
     return req.URI() == "https://example.com"
 })
 // ...

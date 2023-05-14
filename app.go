@@ -1,7 +1,4 @@
-// Package fiber is an Express inspired web framework built on top of Fasthttp,
-// the fastest HTTP engine for Go. Designed to ease things up for fast
-// development with zero memory allocation and performance in mind.
-package fiber
+package woody
 
 import (
 	"bufio"
@@ -20,13 +17,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
-
 	"github.com/valyala/fasthttp"
+	"github.com/ximispot/woody/utils"
 )
 
-// Version of current fiber package
-const Version = "2.45.0"
+const Version = "0.1.0"
 
 // Handler defines a function to serve HTTP requests.
 type Handler = func(*Ctx) error
@@ -61,17 +56,17 @@ type Storage interface {
 // ErrorHandler defines a function that will process all errors
 // returned from any handlers in the stack
 //
-//	cfg := fiber.Config{}
+//	cfg := woody.Config{}
 //	cfg.ErrorHandler = func(c *Ctx, err error) error {
 //	 code := StatusInternalServerError
-//	 var e *fiber.Error
+//	 var e *woody.Error
 //	 if errors.As(err, &e) {
 //	   code = e.Code
 //	 }
 //	 c.Set(HeaderContentType, MIMETextPlainCharsetUTF8)
 //	 return c.Status(code).SendString(err.Error())
 //	}
-//	app := fiber.New(cfg)
+//	app := woody.New(cfg)
 type ErrorHandler = func(*Ctx, error) error
 
 // Error represents an error that occurred while handling a request.
@@ -80,7 +75,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-// App denotes the Fiber application.
+// App denotes the Woody application.
 type App struct {
 	mutex sync.Mutex
 	// Route stack divided by HTTP methods
@@ -183,7 +178,7 @@ type Config struct {
 	// Default: ""
 	ViewsLayout string `json:"views_layout"`
 
-	// PassLocalsToViews Enables passing of the locals set on a fiber.Ctx to the template engine
+	// PassLocalsToViews Enables passing of the locals set on a woody.Ctx to the template engine
 	//
 	// Default: false
 	PassLocalsToViews bool `json:"pass_locals_to_views"`
@@ -223,7 +218,7 @@ type Config struct {
 	// CompressedFileSuffix adds suffix to the original file name and
 	// tries saving the resulting compressed file under the new file name.
 	//
-	// Default: ".fiber.gz"
+	// Default: ".woody.gz"
 	CompressedFileSuffix string `json:"compressed_file_suffix"`
 
 	// ProxyHeader will enable c.IP() to return the value of the given header key
@@ -242,7 +237,7 @@ type Config struct {
 	// Default: false
 	GETOnly bool `json:"get_only"`
 
-	// ErrorHandler is executed when an error is returned from fiber.Handler.
+	// ErrorHandler is executed when an error is returned from woody.Handler.
 	//
 	// Default: DefaultErrorHandler
 	ErrorHandler ErrorHandler `json:"-"`
@@ -269,7 +264,7 @@ type Config struct {
 	// Default: false
 	DisableHeaderNormalizing bool `json:"disable_header_normalizing"`
 
-	// When set to true, it will not print out the «Fiber» ASCII art and listening address.
+	// When set to true, it will not print out the «Woody» ASCII art and listening address.
 	//
 	// Default: false
 	DisableStartupMessage bool `json:"disable_startup_message"`
@@ -310,21 +305,21 @@ type Config struct {
 	// Default: false
 	// RedirectFixedPath bool
 
-	// When set by an external client of Fiber it will use the provided implementation of a
+	// When set by an external client of Woody it will use the provided implementation of a
 	// JSONMarshal
 	//
 	// Allowing for flexibility in using another json library for encoding
 	// Default: json.Marshal
 	JSONEncoder utils.JSONMarshal `json:"-"`
 
-	// When set by an external client of Fiber it will use the provided implementation of a
+	// When set by an external client of Woody it will use the provided implementation of a
 	// JSONUnmarshal
 	//
 	// Allowing for flexibility in using another json library for decoding
 	// Default: json.Unmarshal
 	JSONDecoder utils.JSONUnmarshal `json:"-"`
 
-	// XMLEncoder set by an external client of Fiber it will use the provided implementation of a
+	// XMLEncoder set by an external client of Woody it will use the provided implementation of a
 	// XMLMarshal
 	//
 	// Allowing for flexibility in using another XML library for encoding
@@ -343,7 +338,7 @@ type Config struct {
 	// But when you’re behind a proxy, the actual host may be stored in an X-Forwarded-Host header.
 	//
 	// If you are behind a proxy, you should enable TrustedProxyCheck to prevent header spoofing.
-	// If you enable EnableTrustedProxyCheck and leave TrustedProxies empty Fiber will skip
+	// If you enable EnableTrustedProxyCheck and leave TrustedProxies empty Woody will skip
 	// all headers that could be spoofed.
 	// If request ip in TrustedProxies whitelist then:
 	//   1. c.Protocol() get value from X-Forwarded-Proto, X-Forwarded-Protocol, X-Forwarded-Ssl or X-Url-Scheme header
@@ -391,7 +386,6 @@ type Config struct {
 // Static defines configuration options when defining static assets.
 type Static struct {
 	// When set to true, the server tries minimizing CPU usage by caching compressed files.
-	// This works differently than the github.com/gofiber/compression middleware.
 	// Optional. Default value false
 	Compress bool `json:"compress"`
 
@@ -448,7 +442,7 @@ const (
 	DefaultConcurrency          = 256 * 1024
 	DefaultReadBufferSize       = 4096
 	DefaultWriteBufferSize      = 4096
-	DefaultCompressedFileSuffix = ".fiber.gz"
+	DefaultCompressedFileSuffix = ".woody.gz"
 )
 
 // HTTP methods enabled by default
@@ -475,15 +469,15 @@ func DefaultErrorHandler(c *Ctx, err error) error {
 	return c.Status(code).SendString(err.Error())
 }
 
-// New creates a new Fiber named instance.
+// New creates a new Woody named instance.
 //
-//	app := fiber.New()
+//	app := woody.New()
 //
 // You can pass optional configuration options by passing a Config struct:
 //
-//	app := fiber.New(fiber.Config{
+//	app := woody.New(woody.Config{
 //	    Prefork: true,
-//	    ServerHeader: "Fiber",
+//	    ServerHeader: "Woody",
 //	})
 func New(config ...Config) *App {
 	// Create a new app
@@ -655,13 +649,13 @@ func (app *App) GetRoutes(filterUseOption ...bool) []Route {
 // Use registers a middleware route that will match requests
 // with the provided prefix (which is optional and defaults to "/").
 //
-//	app.Use(func(c *fiber.Ctx) error {
+//	app.Use(func(c *woody.Ctx) error {
 //	     return c.Next()
 //	})
-//	app.Use("/api", func(c *fiber.Ctx) error {
+//	app.Use("/api", func(c *woody.Ctx) error {
 //	     return c.Next()
 //	})
-//	app.Use("/api", handler, func(c *fiber.Ctx) error {
+//	app.Use("/api", handler, func(c *woody.Ctx) error {
 //	     return c.Next()
 //	})
 //
@@ -1010,11 +1004,6 @@ func (app *App) init() *App {
 	return app
 }
 
-// ErrorHandler is the application's method in charge of finding the
-// appropriate handler for the given request. It searches any mounted
-// sub fibers by their prefixes and if it finds a match, it uses that
-// error handler. Otherwise it uses the configured error handler for
-// the app, which if not set is the DefaultErrorHandler.
 func (app *App) ErrorHandler(ctx *Ctx, err error) error {
 	var (
 		mountedErrHandler  ErrorHandler
@@ -1042,7 +1031,7 @@ func (app *App) ErrorHandler(ctx *Ctx, err error) error {
 }
 
 // serverErrorHandler is a wrapper around the application's error handler method
-// user for the fasthttp server configuration. It maps a set of fasthttp errors to fiber
+// user for the fasthttp server configuration. It maps a set of fasthttp errors to woody
 // errors before calling the application's error handler method.
 func (app *App) serverErrorHandler(fctx *fasthttp.RequestCtx, err error) {
 	c := app.AcquireCtx(fctx)

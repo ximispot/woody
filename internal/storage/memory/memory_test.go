@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 )
 
 var testStore = New()
@@ -143,7 +143,7 @@ func Benchmark_Storage_Memory(b *testing.B) {
 	value := []byte("joe")
 
 	ttl := 2 * time.Second
-	b.Run("fiber_memory", func(b *testing.B) {
+	b.Run("woody_memory", func(b *testing.B) {
 		d := New()
 		b.ReportAllocs()
 		b.ResetTimer()

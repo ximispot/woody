@@ -1,8 +1,6 @@
 package limiter
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 const (
 	// X-RateLimit-* headers
@@ -12,11 +10,11 @@ const (
 )
 
 type LimiterHandler interface {
-	New(config Config) fiber.Handler
+	New(config Config) woody.Handler
 }
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 

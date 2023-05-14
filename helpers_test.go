@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"fmt"
@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
-
 	"github.com/valyala/fasthttp"
+	"github.com/ximispot/woody/utils"
 )
 
 // go test -v -run=Test_Utils_ -count=3

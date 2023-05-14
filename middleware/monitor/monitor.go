@@ -6,12 +6,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/gopsutil/cpu"
-	"github.com/gofiber/fiber/v2/internal/gopsutil/load"
-	"github.com/gofiber/fiber/v2/internal/gopsutil/mem"
-	"github.com/gofiber/fiber/v2/internal/gopsutil/net"
-	"github.com/gofiber/fiber/v2/internal/gopsutil/process"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/gopsutil/cpu"
+	"github.com/ximispot/woody/internal/gopsutil/load"
+	"github.com/ximispot/woody/internal/gopsutil/mem"
+	"github.com/ximispot/woody/internal/gopsutil/net"
+	"github.com/ximispot/woody/internal/gopsutil/process"
 )
 
 type stats struct {
@@ -52,7 +52,7 @@ var (
 )
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
@@ -73,16 +73,16 @@ func New(config ...Config) fiber.Handler {
 
 	// Return new handler
 	//nolint:errcheck // Ignore the type-assertion errors
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
 		}
 
-		if c.Method() != fiber.MethodGet {
-			return fiber.ErrMethodNotAllowed
+		if c.Method() != woody.MethodGet {
+			return woody.ErrMethodNotAllowed
 		}
-		if c.Get(fiber.HeaderAccept) == fiber.MIMEApplicationJSON || cfg.APIOnly {
+		if c.Get(woody.HeaderAccept) == woody.MIMEApplicationJSON || cfg.APIOnly {
 			mutex.Lock()
 			data.PID.CPU, _ = monitPIDCPU.Load().(float64)
 			data.PID.RAM, _ = monitPIDRAM.Load().(uint64)
@@ -94,10 +94,10 @@ func New(config ...Config) fiber.Handler {
 			data.OS.LoadAvg, _ = monitOSLoadAvg.Load().(float64)
 			data.OS.Conns, _ = monitOSConns.Load().(int)
 			mutex.Unlock()
-			return c.Status(fiber.StatusOK).JSON(data)
+			return c.Status(woody.StatusOK).JSON(data)
 		}
-		c.Set(fiber.HeaderContentType, fiber.MIMETextHTMLCharsetUTF8)
-		return c.Status(fiber.StatusOK).SendString(cfg.index)
+		c.Set(woody.HeaderContentType, woody.MIMETextHTMLCharsetUTF8)
+		return c.Status(woody.StatusOK).SendString(cfg.index)
 	}
 }
 

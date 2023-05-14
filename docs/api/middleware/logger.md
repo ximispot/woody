@@ -3,20 +3,20 @@ id: logger
 title: Logger
 ---
 
-Logger middleware for [Fiber](https://github.com/gofiber/fiber) that logs HTTP request/response details.
+Logger middleware for [Woody](https://github.com/gowoody/woody) that logs HTTP request/response details.
 
 ## Signatures
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/logger"
 )
 ```
 
@@ -25,7 +25,7 @@ The order of registration plays a role. Only all routes that are registered afte
 The middleware should therefore be one of the first to be registered.
 :::
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -64,7 +64,7 @@ app.Use(logger.New(logger.Config{
 // Add Custom Tags
 app.Use(logger.New(logger.Config{
 	CustomTags: map[string]logger.LogFunc{
-		"custom_tag": func(output logger.Buffer, c *fiber.Ctx, data *logger.Data, extraParam string) (int, error) {
+		"custom_tag": func(output logger.Buffer, c *woody.Ctx, data *logger.Data, extraParam string) (int, error) {
 			return output.WriteString("it is a custom tag")
 		},
 	},
@@ -74,8 +74,8 @@ app.Use(logger.New(logger.Config{
 app.Use(logger.New(logger.Config{
 	TimeFormat: time.RFC3339Nano,
 	TimeZone:   "Asia/Shanghai",
-	Done: func(c *fiber.Ctx, logString []byte) {
-		if c.Response().StatusCode() != fiber.StatusOK {
+	Done: func(c *woody.Ctx, logString []byte) {
+		if c.Response().StatusCode() != woody.StatusOK {
 			reporter.SendToSlack(logString) 
 		}
 	},
@@ -89,13 +89,13 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Done is a function that is called after the log string for a request is written to Output,
 	// and pass the log string as parameter.
 	//
 	// Optional. Default: nil
-	Done func(c *fiber.Ctx, logString []byte)
+	Done func(c *woody.Ctx, logString []byte)
 
 	// tagFunctions defines the custom tag action
 	//
@@ -131,7 +131,7 @@ type Config struct {
 	enableLatency    bool
 	timeZoneLocation *time.Location
 }
-type LogFunc func(buf logger.Buffer, c *fiber.Ctx, data *logger.Data, extraParam string) (int, error)
+type LogFunc func(buf logger.Buffer, c *woody.Ctx, data *logger.Data, extraParam string) (int, error)
 ```
 ## Default Config
 ```go

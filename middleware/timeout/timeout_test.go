@@ -8,16 +8,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // go test -run Test_WithContextTimeout
 func Test_WithContextTimeout(t *testing.T) {
 	t.Parallel()
-	// fiber instance
-	app := fiber.New()
-	h := NewWithContext(func(c *fiber.Ctx) error {
+	// woody instance
+	app := woody.New()
+	h := NewWithContext(func(c *woody.Ctx) error {
 		sleepTime, err := time.ParseDuration(c.Params("sleepTime") + "ms")
 		utils.AssertEqual(t, nil, err)
 		if err := sleepWithContext(c.UserContext(), sleepTime, context.DeadlineExceeded); err != nil {
@@ -27,14 +27,14 @@ func Test_WithContextTimeout(t *testing.T) {
 	}, 100*time.Millisecond)
 	app.Get("/test/:sleepTime", h)
 	testTimeout := func(timeoutStr string) {
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/test/"+timeoutStr, nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/test/"+timeoutStr, nil))
 		utils.AssertEqual(t, nil, err, "app.Test(req)")
-		utils.AssertEqual(t, fiber.StatusRequestTimeout, resp.StatusCode, "Status code")
+		utils.AssertEqual(t, woody.StatusRequestTimeout, resp.StatusCode, "Status code")
 	}
 	testSucces := func(timeoutStr string) {
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/test/"+timeoutStr, nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/test/"+timeoutStr, nil))
 		utils.AssertEqual(t, nil, err, "app.Test(req)")
-		utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
+		utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
 	}
 	testTimeout("300")
 	testTimeout("500")
@@ -47,9 +47,9 @@ var ErrFooTimeOut = errors.New("foo context canceled")
 // go test -run Test_WithContextTimeoutWithCustomError
 func Test_WithContextTimeoutWithCustomError(t *testing.T) {
 	t.Parallel()
-	// fiber instance
-	app := fiber.New()
-	h := NewWithContext(func(c *fiber.Ctx) error {
+	// woody instance
+	app := woody.New()
+	h := NewWithContext(func(c *woody.Ctx) error {
 		sleepTime, err := time.ParseDuration(c.Params("sleepTime") + "ms")
 		utils.AssertEqual(t, nil, err)
 		if err := sleepWithContext(c.UserContext(), sleepTime, ErrFooTimeOut); err != nil {
@@ -59,14 +59,14 @@ func Test_WithContextTimeoutWithCustomError(t *testing.T) {
 	}, 100*time.Millisecond, ErrFooTimeOut)
 	app.Get("/test/:sleepTime", h)
 	testTimeout := func(timeoutStr string) {
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/test/"+timeoutStr, nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/test/"+timeoutStr, nil))
 		utils.AssertEqual(t, nil, err, "app.Test(req)")
-		utils.AssertEqual(t, fiber.StatusRequestTimeout, resp.StatusCode, "Status code")
+		utils.AssertEqual(t, woody.StatusRequestTimeout, resp.StatusCode, "Status code")
 	}
 	testSucces := func(timeoutStr string) {
-		resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/test/"+timeoutStr, nil))
+		resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/test/"+timeoutStr, nil))
 		utils.AssertEqual(t, nil, err, "app.Test(req)")
-		utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
+		utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
 	}
 	testTimeout("300")
 	testTimeout("500")

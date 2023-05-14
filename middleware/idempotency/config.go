@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/storage/memory"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/storage/memory"
 )
 
 var ErrInvalidIdempotencyKey = errors.New("invalid idempotency key")
@@ -16,7 +16,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: a function which skips the middleware on safe HTTP request method.
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Lifetime is the maximum lifetime of an idempotency key.
 	//
@@ -45,14 +45,14 @@ type Config struct {
 	// Storage stores response data by idempotency key.
 	//
 	// Optional. Default: an in-memory storage for this process only.
-	Storage fiber.Storage
+	Storage woody.Storage
 }
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{
-	Next: func(c *fiber.Ctx) bool {
+	Next: func(c *woody.Ctx) bool {
 		// Skip middleware if the request was done using a safe HTTP method
-		return fiber.IsMethodSafe(c.Method())
+		return woody.IsMethodSafe(c.Method())
 	},
 
 	Lifetime: 30 * time.Minute,

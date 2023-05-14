@@ -3,31 +3,31 @@ id: expvar
 title: ExpVar
 ---
 
-Expvar middleware for [Fiber](https://github.com/gofiber/fiber) that serves via its HTTP server runtime exposed variants in the JSON format. The package is typically only imported for the side effect of registering its HTTP handlers. The handled path is `/debug/vars`.
+Expvar middleware for [Woody](https://github.com/gowoody/woody) that serves via its HTTP server runtime exposed variants in the JSON format. The package is typically only imported for the side effect of registering its HTTP handlers. The handled path is `/debug/vars`.
 
 ## Signatures
 
 ```go
-func New() fiber.Handler
+func New() woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  expvarmw "github.com/gofiber/fiber/v2/middleware/expvar"
+  "github.com/gowoody/woody/v2"
+  expvarmw "github.com/ximispot/woody/middleware/expvar"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 ```go
 var count = expvar.NewInt("count")
 
 app.Use(expvarmw.New())
-app.Get("/", func(c *fiber.Ctx) error {
+app.Get("/", func(c *woody.Ctx) error {
     count.Add(1)
 
     return c.SendString(fmt.Sprintf("hello expvar count %d", count.Value()))
@@ -64,7 +64,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 }
 ```
 

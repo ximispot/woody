@@ -9,7 +9,7 @@ Rewrite middleware rewrites the URL path based on provided rules. It can be help
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ### Examples
@@ -17,12 +17,12 @@ func New(config ...Config) fiber.Handler
 package main
 
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/rewrite"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/rewrite"
 )
 
 func main() {
-  app := fiber.New()
+  app := woody.New()
   
   app.Use(rewrite.New(rewrite.Config{
     Rules: map[string]string{
@@ -31,10 +31,10 @@ func main() {
     },
   }))
   
-  app.Get("/new", func(c *fiber.Ctx) error {
+  app.Get("/new", func(c *woody.Ctx) error {
     return c.SendString("Hello, World!")
   })
-  app.Get("/new/*", func(c *fiber.Ctx) error {
+  app.Get("/new/*", func(c *woody.Ctx) error {
     return c.SendString("Wildcard: " + c.Params("*"))
   })
   

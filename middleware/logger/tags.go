@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Logger variables
@@ -54,114 +54,114 @@ const (
 func createTagMap(cfg *Config) map[string]LogFunc {
 	// Set default tags
 	tagFunctions := map[string]LogFunc{
-		TagReferer: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
-			return output.WriteString(c.Get(fiber.HeaderReferer))
+		TagReferer: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
+			return output.WriteString(c.Get(woody.HeaderReferer))
 		},
-		TagProtocol: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagProtocol: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Protocol())
 		},
-		TagPort: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagPort: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Port())
 		},
-		TagIP: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagIP: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.IP())
 		},
-		TagIPs: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
-			return output.WriteString(c.Get(fiber.HeaderXForwardedFor))
+		TagIPs: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
+			return output.WriteString(c.Get(woody.HeaderXForwardedFor))
 		},
-		TagHost: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagHost: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Hostname())
 		},
-		TagPath: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagPath: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Path())
 		},
-		TagURL: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagURL: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.OriginalURL())
 		},
-		TagUA: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
-			return output.WriteString(c.Get(fiber.HeaderUserAgent))
+		TagUA: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
+			return output.WriteString(c.Get(woody.HeaderUserAgent))
 		},
-		TagBody: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagBody: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.Write(c.Body())
 		},
-		TagBytesReceived: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagBytesReceived: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return appendInt(output, len(c.Request().Body()))
 		},
-		TagBytesSent: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagBytesSent: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			if c.Response().Header.ContentLength() < 0 {
 				return appendInt(output, 0)
 			}
 			return appendInt(output, len(c.Response().Body()))
 		},
-		TagRoute: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagRoute: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Route().Path)
 		},
-		TagResBody: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagResBody: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.Write(c.Response().Body())
 		},
-		TagReqHeaders: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagReqHeaders: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			reqHeaders := make([]string, 0)
 			for k, v := range c.GetReqHeaders() {
 				reqHeaders = append(reqHeaders, k+"="+v)
 			}
 			return output.Write([]byte(strings.Join(reqHeaders, "&")))
 		},
-		TagQueryStringParams: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagQueryStringParams: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Request().URI().QueryArgs().String())
 		},
 
-		TagBlack: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagBlack: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Black)
 		},
-		TagRed: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagRed: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Red)
 		},
-		TagGreen: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagGreen: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Green)
 		},
-		TagYellow: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagYellow: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Yellow)
 		},
-		TagBlue: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagBlue: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Blue)
 		},
-		TagMagenta: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagMagenta: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Magenta)
 		},
-		TagCyan: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagCyan: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Cyan)
 		},
-		TagWhite: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagWhite: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.White)
 		},
-		TagReset: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagReset: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.App().Config().ColorScheme.Reset)
 		},
-		TagError: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagError: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			if data.ChainErr != nil {
 				return output.WriteString(data.ChainErr.Error())
 			}
 			return output.WriteString("-")
 		},
-		TagReqHeader: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagReqHeader: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Get(extraParam))
 		},
-		TagHeader: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagHeader: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Get(extraParam))
 		},
-		TagRespHeader: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagRespHeader: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.GetRespHeader(extraParam))
 		},
-		TagQuery: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagQuery: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Query(extraParam))
 		},
-		TagForm: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagForm: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.FormValue(extraParam))
 		},
-		TagCookie: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagCookie: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(c.Cookies(extraParam))
 		},
-		TagLocals: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagLocals: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			switch v := c.Locals(extraParam).(type) {
 			case []byte:
 				return output.Write(v)
@@ -173,28 +173,28 @@ func createTagMap(cfg *Config) map[string]LogFunc {
 				return output.WriteString(fmt.Sprintf("%v", v))
 			}
 		},
-		TagStatus: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagStatus: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			if cfg.enableColors {
 				colors := c.App().Config().ColorScheme
 				return output.WriteString(fmt.Sprintf("%s %3d %s", statusColor(c.Response().StatusCode(), colors), c.Response().StatusCode(), colors.Reset))
 			}
 			return appendInt(output, c.Response().StatusCode())
 		},
-		TagMethod: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagMethod: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			if cfg.enableColors {
 				colors := c.App().Config().ColorScheme
 				return output.WriteString(fmt.Sprintf("%s %-7s %s", methodColor(c.Method(), colors), c.Method(), colors.Reset))
 			}
 			return output.WriteString(c.Method())
 		},
-		TagPid: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagPid: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(data.Pid)
 		},
-		TagLatency: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagLatency: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			latency := data.Stop.Sub(data.Start)
 			return output.WriteString(fmt.Sprintf("%7v", latency))
 		},
-		TagTime: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
+		TagTime: func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error) {
 			return output.WriteString(data.Timestamp.Load().(string)) //nolint:forcetypeassert // We always store a string in here
 		},
 	}

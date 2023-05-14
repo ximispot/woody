@@ -7,7 +7,7 @@ sidebar_position: 6
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-With Fiber v2.30.0, you can execute custom user functions when to run some methods. Here is a list of this hooks:
+With Woody v2.30.0, you can execute custom user functions when to run some methods. Here is a list of this hooks:
 - [OnRoute](#onroute)
 - [OnName](#onname)
 - [OnGroup](#ongroup)
@@ -19,7 +19,7 @@ With Fiber v2.30.0, you can execute custom user functions when to run some metho
 
 ## Constants
 ```go
-// Handlers define a function to create hooks for Fiber.
+// Handlers define a function to create hooks for Woody.
 type OnRouteHandler = func(Route) error
 type OnNameHandler = OnRouteHandler
 type OnGroupHandler = func(Group) error
@@ -59,33 +59,33 @@ package main
 import (
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/woody/v2"
 )
 
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString(c.Route().Name)
 	}).Name("index")
 
-	app.Hooks().OnName(func(r fiber.Route) error {
+	app.Hooks().OnName(func(r woody.Route) error {
 		fmt.Print("Name: " + r.Name + ", ")
 
 		return nil
 	})
 
-	app.Hooks().OnName(func(r fiber.Route) error {
+	app.Hooks().OnName(func(r woody.Route) error {
 		fmt.Print("Method: " + r.Method + "\n")
 
 		return nil
 	})
 
-	app.Get("/add/user", func(c *fiber.Ctx) error {
+	app.Get("/add/user", func(c *woody.Ctx) error {
 		return c.SendString(c.Route().Name)
 	}).Name("addUser")
 
-	app.Delete("/destroy/user", func(c *fiber.Ctx) error {
+	app.Delete("/destroy/user", func(c *woody.Ctx) error {
 		return c.SendString(c.Route().Name)
 	}).Name("destroyUser")
 
@@ -160,7 +160,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/woody/v2"
 )
 
 func main() {
@@ -170,7 +170,7 @@ func main() {
 	subApp := New()
 	subApp.Get("/test", testSimpleHandler)
 
-	subApp.Hooks().OnMount(func(parent *fiber.App) error {
+	subApp.Hooks().OnMount(func(parent *woody.App) error {
 		fmt.Print("Mount path of parent app: "+parent.MountPath())
 		// ...
 

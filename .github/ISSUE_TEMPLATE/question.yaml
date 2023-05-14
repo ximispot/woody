@@ -9,9 +9,9 @@ body:
     attributes:
       value: |
         ### Notice
-        - Don't forget you can ask your questions in our [Discord server](https://gofiber.io/discord).
+        - Don't forget you can ask your questions in our [Discord server](https://gowoody.io/discord).
         - If you think this is just a bug, open the issue with the **☢️ Bug Report** template.
-        - If you have a suggestion for a Fiber feature you would like to see, open the issue with the **✏️ Feature Request** template.
+        - If you have a suggestion for a Woody feature you would like to see, open the issue with the **✏️ Feature Request** template.
         - Write your issue with clear and understandable English.
   - type: textarea
     id: description
@@ -31,11 +31,11 @@ body:
       value: |
         package main
 
-        import "github.com/gofiber/fiber/v2"
+        import "github.com/gowoody/woody/v2"
         import "log"
 
         func main() {
-          app := fiber.New()
+          app := woody.New()
 
           // An example to describe the question
 
@@ -47,7 +47,7 @@ body:
       label: "Checklist:"
       description: "By submitting this issue, you confirm that:"
       options:
-        - label: "I agree to follow Fiber's [Code of Conduct](https://github.com/gofiber/fiber/blob/master/.github/CODE_OF_CONDUCT.md)."
+        - label: "I agree to follow Woody's [Code of Conduct](https://github.com/gowoody/woody/blob/master/.github/CODE_OF_CONDUCT.md)."
           required: true
         - label: "I have checked for existing issues that describe my questions prior to opening this one."
           required: true

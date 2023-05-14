@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -16,7 +16,7 @@ import (
 type Session struct {
 	id         string        // session id
 	fresh      bool          // if new session
-	ctx        *fiber.Ctx    // fiber context
+	ctx        *woody.Ctx    // woody context
 	config     *Store        // store configuration
 	data       *data         // key value data
 	byteBuffer *bytes.Buffer // byte buffer for the en- and decode

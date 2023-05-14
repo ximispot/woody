@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 var filedata []byte
@@ -25,22 +25,22 @@ func init() {
 // go test -run Test_Compress_Gzip
 func Test_Compress_Gzip(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
+	app.Get("/", func(c *woody.Ctx) error {
+		c.Set(woody.HeaderContentType, woody.MIMETextPlainCharsetUTF8)
 		return c.Send(filedata)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Set("Accept-Encoding", "gzip")
 
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "gzip", resp.Header.Get(fiber.HeaderContentEncoding))
+	utils.AssertEqual(t, "gzip", resp.Header.Get(woody.HeaderContentEncoding))
 
 	// Validate that the file size has shrunk
 	body, err := io.ReadAll(resp.Body)
@@ -55,22 +55,22 @@ func Test_Compress_Different_Level(t *testing.T) {
 	for _, level := range levels {
 		t.Run(fmt.Sprintf("level %d", level), func(t *testing.T) {
 			t.Parallel()
-			app := fiber.New()
+			app := woody.New()
 
 			app.Use(New(Config{Level: level}))
 
-			app.Get("/", func(c *fiber.Ctx) error {
-				c.Set(fiber.HeaderContentType, fiber.MIMETextPlainCharsetUTF8)
+			app.Get("/", func(c *woody.Ctx) error {
+				c.Set(woody.HeaderContentType, woody.MIMETextPlainCharsetUTF8)
 				return c.Send(filedata)
 			})
 
-			req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+			req := httptest.NewRequest(woody.MethodGet, "/", nil)
 			req.Header.Set("Accept-Encoding", "gzip")
 
 			resp, err := app.Test(req)
 			utils.AssertEqual(t, nil, err, "app.Test(req)")
 			utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
-			utils.AssertEqual(t, "gzip", resp.Header.Get(fiber.HeaderContentEncoding))
+			utils.AssertEqual(t, "gzip", resp.Header.Get(woody.HeaderContentEncoding))
 
 			// Validate that the file size has shrunk
 			body, err := io.ReadAll(resp.Body)
@@ -82,21 +82,21 @@ func Test_Compress_Different_Level(t *testing.T) {
 
 func Test_Compress_Deflate(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.Send(filedata)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Set("Accept-Encoding", "deflate")
 
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "deflate", resp.Header.Get(fiber.HeaderContentEncoding))
+	utils.AssertEqual(t, "deflate", resp.Header.Get(woody.HeaderContentEncoding))
 
 	// Validate that the file size has shrunk
 	body, err := io.ReadAll(resp.Body)
@@ -106,21 +106,21 @@ func Test_Compress_Deflate(t *testing.T) {
 
 func Test_Compress_Brotli(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.Send(filedata)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Set("Accept-Encoding", "br")
 
 	resp, err := app.Test(req, 10000)
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "br", resp.Header.Get(fiber.HeaderContentEncoding))
+	utils.AssertEqual(t, "br", resp.Header.Get(woody.HeaderContentEncoding))
 
 	// Validate that the file size has shrunk
 	body, err := io.ReadAll(resp.Body)
@@ -130,21 +130,21 @@ func Test_Compress_Brotli(t *testing.T) {
 
 func Test_Compress_Disabled(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{Level: LevelDisabled}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.Send(filedata)
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Set("Accept-Encoding", "br")
 
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "", resp.Header.Get(fiber.HeaderContentEncoding))
+	utils.AssertEqual(t, "", resp.Header.Get(woody.HeaderContentEncoding))
 
 	// Validate the file size is not shrunk
 	body, err := io.ReadAll(resp.Body)
@@ -154,21 +154,21 @@ func Test_Compress_Disabled(t *testing.T) {
 
 func Test_Compress_Next_Error(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return errors.New("next error")
 	})
 
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Set("Accept-Encoding", "gzip")
 
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 500, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "", resp.Header.Get(fiber.HeaderContentEncoding))
+	utils.AssertEqual(t, "", resp.Header.Get(woody.HeaderContentEncoding))
 
 	body, err := io.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
@@ -178,14 +178,14 @@ func Test_Compress_Next_Error(t *testing.T) {
 // go test -run Test_Compress_Next
 func Test_Compress_Next(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusNotFound, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotFound, resp.StatusCode)
 }

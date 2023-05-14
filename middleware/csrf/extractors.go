@@ -3,7 +3,7 @@ package csrf
 import (
 	"errors"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 var (
@@ -15,8 +15,8 @@ var (
 )
 
 // csrfFromParam returns a function that extracts token from the url param string.
-func CsrfFromParam(param string) func(c *fiber.Ctx) (string, error) {
-	return func(c *fiber.Ctx) (string, error) {
+func CsrfFromParam(param string) func(c *woody.Ctx) (string, error) {
+	return func(c *woody.Ctx) (string, error) {
 		token := c.Params(param)
 		if token == "" {
 			return "", errMissingParam
@@ -26,8 +26,8 @@ func CsrfFromParam(param string) func(c *fiber.Ctx) (string, error) {
 }
 
 // csrfFromForm returns a function that extracts a token from a multipart-form.
-func CsrfFromForm(param string) func(c *fiber.Ctx) (string, error) {
-	return func(c *fiber.Ctx) (string, error) {
+func CsrfFromForm(param string) func(c *woody.Ctx) (string, error) {
+	return func(c *woody.Ctx) (string, error) {
 		token := c.FormValue(param)
 		if token == "" {
 			return "", errMissingForm
@@ -37,8 +37,8 @@ func CsrfFromForm(param string) func(c *fiber.Ctx) (string, error) {
 }
 
 // csrfFromCookie returns a function that extracts token from the cookie header.
-func CsrfFromCookie(param string) func(c *fiber.Ctx) (string, error) {
-	return func(c *fiber.Ctx) (string, error) {
+func CsrfFromCookie(param string) func(c *woody.Ctx) (string, error) {
+	return func(c *woody.Ctx) (string, error) {
 		token := c.Cookies(param)
 		if token == "" {
 			return "", errMissingCookie
@@ -48,8 +48,8 @@ func CsrfFromCookie(param string) func(c *fiber.Ctx) (string, error) {
 }
 
 // csrfFromHeader returns a function that extracts token from the request header.
-func CsrfFromHeader(param string) func(c *fiber.Ctx) (string, error) {
-	return func(c *fiber.Ctx) (string, error) {
+func CsrfFromHeader(param string) func(c *woody.Ctx) (string, error) {
+	return func(c *woody.Ctx) (string, error) {
 		token := c.Get(param)
 		if token == "" {
 			return "", errMissingHeader
@@ -59,8 +59,8 @@ func CsrfFromHeader(param string) func(c *fiber.Ctx) (string, error) {
 }
 
 // csrfFromQuery returns a function that extracts token from the query string.
-func CsrfFromQuery(param string) func(c *fiber.Ctx) (string, error) {
-	return func(c *fiber.Ctx) (string, error) {
+func CsrfFromQuery(param string) func(c *woody.Ctx) (string, error) {
+	return func(c *woody.Ctx) (string, error) {
 		token := c.Query(param)
 		if token == "" {
 			return "", errMissingQuery

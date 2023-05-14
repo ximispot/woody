@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
@@ -23,23 +23,23 @@ func (envVar *EnvVar) set(key, val string) {
 	envVar.Vars[key] = val
 }
 
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	var cfg Config
 	if len(config) > 0 {
 		cfg = config[0]
 	}
 
-	return func(c *fiber.Ctx) error {
-		if c.Method() != fiber.MethodGet {
-			return fiber.ErrMethodNotAllowed
+	return func(c *woody.Ctx) error {
+		if c.Method() != woody.MethodGet {
+			return woody.ErrMethodNotAllowed
 		}
 
 		envVar := newEnvVar(cfg)
 		varsByte, err := c.App().Config().JSONEncoder(envVar)
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+			return c.Status(woody.StatusInternalServerError).SendString(err.Error())
 		}
-		c.Set(fiber.HeaderContentType, fiber.MIMEApplicationJSONCharsetUTF8)
+		c.Set(woody.HeaderContentType, woody.MIMEApplicationJSONCharsetUTF8)
 		return c.Send(varsByte)
 	}
 }

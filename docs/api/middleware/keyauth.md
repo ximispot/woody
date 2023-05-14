@@ -8,7 +8,7 @@ Key auth middleware provides a key based authentication.
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
@@ -19,15 +19,15 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/keyauth"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/keyauth"
 )
 
 var (
 	apiKey = "correct horse battery staple"
 )
 
-func validateAPIKey(c *fiber.Ctx, key string) (bool, error) {
+func validateAPIKey(c *woody.Ctx, key string) (bool, error) {
 	hashedAPIKey := sha256.Sum256([]byte(apiKey))
 	hashedKey := sha256.Sum256([]byte(key))
 
@@ -38,7 +38,7 @@ func validateAPIKey(c *fiber.Ctx, key string) (bool, error) {
 }
 
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
 	// note that the keyauth middleware needs to be defined before the routes are defined!
 	app.Use(keyauth.New(keyauth.Config{
@@ -46,7 +46,7 @@ func main() {
 		Validator:  validateAPIKey,
 	}))
 
-		app.Get("/", func(c *fiber.Ctx) error {
+		app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated!")
 	})
 
@@ -68,7 +68,7 @@ curl --cookie "access_token=Clearly A Wrong Key" http://localhost:3000
 #>  missing or malformed API Key
 ```
 
-For a more detailed example, see also the [`github.com/gofiber/recipes`](https://github.com/gofiber/recipes) repository and specifically the `fiber-envoy-extauthz` repository and the [`keyauth example`](https://github.com/gofiber/recipes/blob/master/fiber-envoy-extauthz/authz/main.go) code.
+For a more detailed example, see also the [`github.com/gowoody/recipes`](https://github.com/gowoody/recipes) repository and specifically the `woody-envoy-extauthz` repository and the [`keyauth example`](https://github.com/gowoody/recipes/blob/master/woody-envoy-extauthz/authz/main.go) code.
 
 
 ### Authenticate only certain endpoints
@@ -81,8 +81,8 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/keyauth"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/keyauth"
 	"regexp"
 	"strings"
 )
@@ -95,7 +95,7 @@ var (
 	}
 )
 
-func validateAPIKey(c *fiber.Ctx, key string) (bool, error) {
+func validateAPIKey(c *woody.Ctx, key string) (bool, error) {
 	hashedAPIKey := sha256.Sum256([]byte(apiKey))
 	hashedKey := sha256.Sum256([]byte(key))
 
@@ -105,7 +105,7 @@ func validateAPIKey(c *fiber.Ctx, key string) (bool, error) {
 	return false, keyauth.ErrMissingOrMalformedAPIKey
 }
 
-func authFilter(c *fiber.Ctx) bool {
+func authFilter(c *woody.Ctx) bool {
 	originalURL := strings.ToLower(c.OriginalURL())
 
 	for _, pattern := range protectedURLs {
@@ -117,7 +117,7 @@ func authFilter(c *fiber.Ctx) bool {
 }
 
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(keyauth.New(keyauth.Config{
 		Next:    authFilter,
@@ -125,13 +125,13 @@ func main() {
 		Validator: validateAPIKey,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Welcome")
 	})
-	app.Get("/authenticated", func(c *fiber.Ctx) error {
+	app.Get("/authenticated", func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated!")
 	})
-	app.Get("/auth2", func(c *fiber.Ctx) error {
+	app.Get("/auth2", func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated 2!")
 	})
 
@@ -163,8 +163,8 @@ package main
 import (
 	"crypto/sha256"
 	"crypto/subtle"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/keyauth"
+	"github.com/gowoody/woody/v2"
+	"github.com/ximispot/woody/middleware/keyauth"
 )
 
 const (
@@ -172,10 +172,10 @@ const (
 )
 
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
 	authMiddleware := keyauth.New(keyauth.Config{
-		Validator:  func(c *fiber.Ctx, key string) (bool, error) {
+		Validator:  func(c *woody.Ctx, key string) (bool, error) {
 			hashedAPIKey := sha256.Sum256([]byte(apiKey))
 			hashedKey := sha256.Sum256([]byte(key))
 
@@ -186,11 +186,11 @@ func main() {
 		},
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Welcome")
 	})
 
-	app.Get("/allowed",  authMiddleware, func(c *fiber.Ctx) error {
+	app.Get("/allowed",  authMiddleware, func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated!")
 	})
 
@@ -217,16 +217,16 @@ curl --header "Authorization: Bearer my-super-secret-key"  http://localhost:3000
 type Config struct {
 	// Next defines a function to skip middleware.
 	// Optional. Default: nil
-	Next func(*fiber.Ctx) bool
+	Next func(*woody.Ctx) bool
 
 	// SuccessHandler defines a function which is executed for a valid key.
 	// Optional. Default: nil
-	SuccessHandler fiber.Handler
+	SuccessHandler woody.Handler
 
 	// ErrorHandler defines a function which is executed for an invalid key.
 	// It may be used to define a custom error.
 	// Optional. Default: 401 Invalid or expired key
-	ErrorHandler fiber.ErrorHandler
+	ErrorHandler woody.ErrorHandler
 
 	// KeyLookup is a string in the form of "<source>:<name>" that is used
 	// to extract key from the request.
@@ -244,7 +244,7 @@ type Config struct {
 	AuthScheme string
 
 	// Validator is a function to validate key.
-	Validator func(*fiber.Ctx, string) (bool, error)
+	Validator func(*woody.Ctx, string) (bool, error)
 
 	// Context key to store the bearertoken from the token into context.
 	// Optional. Default: "token".
@@ -256,16 +256,16 @@ type Config struct {
 
 ```go
 var ConfigDefault = Config{
-	SuccessHandler: func(c *fiber.Ctx) error {
+	SuccessHandler: func(c *woody.Ctx) error {
 		return c.Next()
 	},
-	ErrorHandler: func(c *fiber.Ctx, err error) error {
+	ErrorHandler: func(c *woody.Ctx, err error) error {
 		if err == ErrMissingOrMalformedAPIKey {
-			return c.Status(fiber.StatusUnauthorized).SendString(err.Error())
+			return c.Status(woody.StatusUnauthorized).SendString(err.Error())
 		}
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid or expired API Key")
+		return c.Status(woody.StatusUnauthorized).SendString("Invalid or expired API Key")
 	},
-	KeyLookup:  "header:" + fiber.HeaderAuthorization,
+	KeyLookup:  "header:" + woody.HeaderAuthorization,
 	AuthScheme: "Bearer",
 	ContextKey: "token",
 }

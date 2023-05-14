@@ -9,8 +9,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 func TestEnvVarStructWithExportVarsExcludeVars(t *testing.T) {
@@ -56,12 +56,12 @@ func TestEnvVarHandler(t *testing.T) {
 		})
 	utils.AssertEqual(t, nil, err)
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use("/envvars", New(Config{
 		ExportVars: map[string]string{"testKey": ""},
 	}))
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, "http://localhost/envvars", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, "http://localhost/envvars", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -73,17 +73,17 @@ func TestEnvVarHandler(t *testing.T) {
 }
 
 func TestEnvVarHandlerNotMatched(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 	app.Use("/envvars", New(Config{
 		ExportVars: map[string]string{"testKey": ""},
 	}))
 
-	app.Get("/another-path", func(ctx *fiber.Ctx) error {
+	app.Get("/another-path", func(ctx *woody.Ctx) error {
 		utils.AssertEqual(t, nil, ctx.SendString("OK"))
 		return nil
 	})
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, "http://localhost/another-path", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, "http://localhost/another-path", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -102,10 +102,10 @@ func TestEnvVarHandlerDefaultConfig(t *testing.T) {
 		utils.AssertEqual(t, nil, err)
 	}()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use("/envvars", New())
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, "http://localhost/envvars", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, "http://localhost/envvars", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -120,14 +120,14 @@ func TestEnvVarHandlerDefaultConfig(t *testing.T) {
 }
 
 func TestEnvVarHandlerMethod(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 	app.Use("/envvars", New())
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodPost, "http://localhost/envvars", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodPost, "http://localhost/envvars", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusMethodNotAllowed, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusMethodNotAllowed, resp.StatusCode)
 }
 
 func TestEnvVarHandlerSpecialValue(t *testing.T) {
@@ -140,11 +140,11 @@ func TestEnvVarHandlerSpecialValue(t *testing.T) {
 		utils.AssertEqual(t, nil, err)
 	}()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use("/envvars", New())
 	app.Use("/envvars/export", New(Config{ExportVars: map[string]string{testEnvKey: ""}}))
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, "http://localhost/envvars", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, "http://localhost/envvars", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -157,7 +157,7 @@ func TestEnvVarHandlerSpecialValue(t *testing.T) {
 	val := envVars.Vars[testEnvKey]
 	utils.AssertEqual(t, fakeBase64, val)
 
-	req, err = http.NewRequestWithContext(context.Background(), fiber.MethodGet, "http://localhost/envvars/export", nil)
+	req, err = http.NewRequestWithContext(context.Background(), woody.MethodGet, "http://localhost/envvars/export", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err = app.Test(req)
 	utils.AssertEqual(t, nil, err)

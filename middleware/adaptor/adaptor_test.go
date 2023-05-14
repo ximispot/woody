@@ -11,12 +11,12 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
+	"github.com/ximispot/woody"
 )
 
 func Test_HTTPHandler(t *testing.T) {
-	expectedMethod := fiber.MethodPost
+	expectedMethod := woody.MethodPost
 	expectedProto := "HTTP/1.1"
 	expectedProtoMajor := 1
 	expectedProtoMinor := 1
@@ -93,8 +93,8 @@ func Test_HTTPHandler(t *testing.T) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "request body is %q", body)
 	}
-	fiberH := HTTPHandlerFunc(http.HandlerFunc(nethttpH))
-	fiberH = setFiberContextValueMiddleware(fiberH, expectedContextKey, expectedContextValue)
+	woodyH := HTTPHandlerFunc(http.HandlerFunc(nethttpH))
+	woodyH = setWoodyContextValueMiddleware(woodyH, expectedContextKey, expectedContextValue)
 
 	var fctx fasthttp.RequestCtx
 	var req fasthttp.Request
@@ -112,11 +112,11 @@ func Test_HTTPHandler(t *testing.T) {
 		t.Fatalf("unexpected error: %s", err)
 	}
 	fctx.Init(&req, remoteAddr, nil)
-	app := fiber.New()
+	app := woody.New()
 	ctx := app.AcquireCtx(&fctx)
 	defer app.ReleaseCtx(ctx)
 
-	err = fiberH(ctx)
+	err = woodyH(ctx)
 	if err != nil {
 		t.Fatalf("unexpected error: %s", err)
 	}
@@ -126,8 +126,8 @@ func Test_HTTPHandler(t *testing.T) {
 	}
 
 	resp := &fctx.Response
-	if resp.StatusCode() != fiber.StatusBadRequest {
-		t.Fatalf("unexpected statusCode: %d. Expecting %d", resp.StatusCode(), fiber.StatusBadRequest)
+	if resp.StatusCode() != woody.StatusBadRequest {
+		t.Fatalf("unexpected statusCode: %d. Expecting %d", resp.StatusCode(), woody.StatusBadRequest)
 	}
 	if string(resp.Header.Peek("Header1")) != "value1" {
 		t.Fatalf("unexpected header value: %q. Expecting %q", resp.Header.Peek("Header1"), "value1")
@@ -193,9 +193,9 @@ func Test_HTTPMiddleware(t *testing.T) {
 		})
 	}
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(HTTPMiddleware(nethttpMW))
-	app.Post("/", func(c *fiber.Ctx) error {
+	app.Post("/", func(c *woody.Ctx) error {
 		value := c.Context().Value(TestContextKey)
 		val, ok := value.(string)
 		if !ok {
@@ -212,7 +212,7 @@ func Test_HTTPMiddleware(t *testing.T) {
 			}
 			c.Set("context_second_okay", val)
 		}
-		return c.SendStatus(fiber.StatusOK)
+		return c.SendStatus(woody.StatusOK)
 	})
 
 	for _, tt := range tests {
@@ -229,7 +229,7 @@ func Test_HTTPMiddleware(t *testing.T) {
 		}
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodPost, "/", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodPost, "/", nil)
 	if err != nil {
 		t.Fatalf(`%s: %s`, t.Name(), err)
 	}
@@ -245,26 +245,26 @@ func Test_HTTPMiddleware(t *testing.T) {
 	}
 }
 
-func Test_FiberHandler(t *testing.T) {
-	testFiberToHandlerFunc(t, false)
+func Test_WoodyHandler(t *testing.T) {
+	testWoodyToHandlerFunc(t, false)
 }
 
-func Test_FiberApp(t *testing.T) {
-	testFiberToHandlerFunc(t, false, fiber.New())
+func Test_WoodyApp(t *testing.T) {
+	testWoodyToHandlerFunc(t, false, woody.New())
 }
 
-func Test_FiberHandlerDefaultPort(t *testing.T) {
-	testFiberToHandlerFunc(t, true)
+func Test_WoodyHandlerDefaultPort(t *testing.T) {
+	testWoodyToHandlerFunc(t, true)
 }
 
-func Test_FiberAppDefaultPort(t *testing.T) {
-	testFiberToHandlerFunc(t, true, fiber.New())
+func Test_WoodyAppDefaultPort(t *testing.T) {
+	testWoodyToHandlerFunc(t, true, woody.New())
 }
 
-func testFiberToHandlerFunc(t *testing.T, checkDefaultPort bool, app ...*fiber.App) {
+func testWoodyToHandlerFunc(t *testing.T, checkDefaultPort bool, app ...*woody.App) {
 	t.Helper()
 
-	expectedMethod := fiber.MethodPost
+	expectedMethod := woody.MethodPost
 	expectedRequestURI := "/foo/bar?baz=123"
 	expectedBody := "body 123 foo bar baz"
 	expectedContentLength := len(expectedBody)
@@ -284,7 +284,7 @@ func testFiberToHandlerFunc(t *testing.T, checkDefaultPort bool, app ...*fiber.A
 	}
 
 	callsCount := 0
-	fiberH := func(c *fiber.Ctx) error {
+	woodyH := func(c *woody.Ctx) error {
 		callsCount++
 		if c.Method() != expectedMethod {
 			t.Fatalf("unexpected method %q. Expecting %q", c.Method(), expectedMethod)
@@ -320,17 +320,17 @@ func testFiberToHandlerFunc(t *testing.T, checkDefaultPort bool, app ...*fiber.A
 
 		c.Set("Header1", "value1")
 		c.Set("Header2", "value2")
-		c.Status(fiber.StatusBadRequest)
+		c.Status(woody.StatusBadRequest)
 		_, err := c.Write([]byte(fmt.Sprintf("request body is %q", body)))
 		return err
 	}
 
 	var handlerFunc http.HandlerFunc
 	if len(app) > 0 {
-		app[0].Post("/foo/bar", fiberH)
-		handlerFunc = FiberApp(app[0])
+		app[0].Post("/foo/bar", woodyH)
+		handlerFunc = WoodyApp(app[0])
 	} else {
-		handlerFunc = FiberHandlerFunc(fiberH)
+		handlerFunc = WoodyHandlerFunc(woodyH)
 	}
 
 	var r http.Request
@@ -369,20 +369,20 @@ func testFiberToHandlerFunc(t *testing.T, checkDefaultPort bool, app ...*fiber.A
 	}
 }
 
-func setFiberContextValueMiddleware(next fiber.Handler, key string, value interface{}) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+func setWoodyContextValueMiddleware(next woody.Handler, key string, value interface{}) woody.Handler {
+	return func(c *woody.Ctx) error {
 		c.Locals(key, value)
 		return next(c)
 	}
 }
 
-func Test_FiberHandler_RequestNilBody(t *testing.T) {
-	expectedMethod := fiber.MethodGet
+func Test_WoodyHandler_RequestNilBody(t *testing.T) {
+	expectedMethod := woody.MethodGet
 	expectedRequestURI := "/foo/bar"
 	expectedContentLength := 0
 
 	callsCount := 0
-	fiberH := func(c *fiber.Ctx) error {
+	woodyH := func(c *woody.Ctx) error {
 		callsCount++
 		if c.Method() != expectedMethod {
 			t.Fatalf("unexpected method %q. Expecting %q", c.Method(), expectedMethod)
@@ -398,7 +398,7 @@ func Test_FiberHandler_RequestNilBody(t *testing.T) {
 		_, err := c.Write([]byte("request body is nil"))
 		return err
 	}
-	nethttpH := FiberHandler(fiberH)
+	nethttpH := WoodyHandler(woodyH)
 
 	var r http.Request
 

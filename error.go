@@ -1,9 +1,9 @@
-package fiber
+package woody
 
 import (
 	errors "encoding/json"
 
-	"github.com/gofiber/fiber/v2/internal/schema"
+	"github.com/ximispot/woody/internal/schema"
 )
 
 type (

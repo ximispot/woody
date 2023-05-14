@@ -1,10 +1,4 @@
-// ⚡️ Fiber is an Express inspired web framework written in Go with ☕️
-// 📄 Github Repository: https://github.com/gofiber/fiber
-// 📌 API Documentation: https://docs.gofiber.io
-// ⚠️ This path parser was inspired by ucarion/urlpath (MIT License).
-// 💖 Maintained and modified for Fiber by @renewerner87
-
-package fiber
+package woody
 
 import (
 	"regexp"
@@ -13,8 +7,8 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/gofiber/fiber/v2/utils"
 	"github.com/google/uuid"
+	"github.com/ximispot/woody/utils"
 )
 
 // routeParser holds the path segments and param names
@@ -113,7 +107,7 @@ var (
 	parameterConstraintDataSeparatorChars = []byte{paramConstraintDataSeparator}
 )
 
-// RoutePatternMatch checks if a given path matches a Fiber route pattern.
+// RoutePatternMatch checks if a given path matches a Woody route pattern.
 func RoutePatternMatch(path, pattern string, cfg ...Config) bool {
 	// See logic in (*Route).match and (*App).register
 	var ctxParams [maxParams]string

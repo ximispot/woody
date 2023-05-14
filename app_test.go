@@ -1,5 +1,4 @@
-//nolint:bodyclose // Much easier to just ignore memory leaks in tests
-package fiber
+package woody
 
 import (
 	"bytes"
@@ -19,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttputil"
@@ -947,9 +946,9 @@ func Test_App_Static_Download(t *testing.T) {
 	c := app.AcquireCtx(&fasthttp.RequestCtx{})
 	defer app.ReleaseCtx(c)
 
-	app.Static("/fiber.png", "./.github/testdata/fs/img/fiber.png", Static{Download: true})
+	app.Static("/woody.png", "./.github/testdata/fs/img/woody.png", Static{Download: true})
 
-	resp, err := app.Test(httptest.NewRequest(MethodGet, "/fiber.png", nil))
+	resp, err := app.Test(httptest.NewRequest(MethodGet, "/woody.png", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
 	utils.AssertEqual(t, 200, resp.StatusCode, "Status code")
 	utils.AssertEqual(t, false, resp.Header.Get(HeaderContentLength) == "")

@@ -3,22 +3,22 @@ id: adaptor
 title: Adaptor
 ---
 
-Converter for net/http handlers to/from Fiber request handlers, special thanks to [@arsmn](https://github.com/arsmn)!
+Converter for net/http handlers to/from Woody request handlers, special thanks to [@arsmn](https://github.com/arsmn)!
 
 ## Signatures
 | Name | Signature | Description
 | :--- | :--- | :---
-| HTTPHandler | `HTTPHandler(h http.Handler) fiber.Handler` | http.Handler -> fiber.Handler
-| HTTPHandlerFunc | `HTTPHandlerFunc(h http.HandlerFunc) fiber.Handler` | http.HandlerFunc -> fiber.Handler
-| HTTPMiddleware | `HTTPHandlerFunc(mw func(http.Handler) http.Handler) fiber.Handler` | func(http.Handler) http.Handler -> fiber.Handler
-| FiberHandler | `FiberHandler(h fiber.Handler) http.Handler` | fiber.Handler -> http.Handler
-| FiberHandlerFunc | `FiberHandlerFunc(h fiber.Handler) http.HandlerFunc` | fiber.Handler -> http.HandlerFunc
-| FiberApp | `FiberApp(app *fiber.App) http.HandlerFunc` | Fiber app -> http.HandlerFunc
-| CopyContextToFiberContex | `CopyContextToFiberContext(context interface{}, requestContext *fasthttp.RequestCtx)` | context.Context -> fasthttp.RequestCtx
+| HTTPHandler | `HTTPHandler(h http.Handler) woody.Handler` | http.Handler -> woody.Handler
+| HTTPHandlerFunc | `HTTPHandlerFunc(h http.HandlerFunc) woody.Handler` | http.HandlerFunc -> woody.Handler
+| HTTPMiddleware | `HTTPHandlerFunc(mw func(http.Handler) http.Handler) woody.Handler` | func(http.Handler) http.Handler -> woody.Handler
+| WoodyHandler | `WoodyHandler(h woody.Handler) http.Handler` | woody.Handler -> http.Handler
+| WoodyHandlerFunc | `WoodyHandlerFunc(h woody.Handler) http.HandlerFunc` | woody.Handler -> http.HandlerFunc
+| WoodyApp | `WoodyApp(app *woody.App) http.HandlerFunc` | Woody app -> http.HandlerFunc
+| CopyContextToWoodyContex | `CopyContextToWoodyContext(context interface{}, requestContext *fasthttp.RequestCtx)` | context.Context -> fasthttp.RequestCtx
 
 ## Examples
 
-### net/http to Fiber
+### net/http to Woody
 ```go
 package main
 
@@ -26,18 +26,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gofiber/v2/middleware/adaptor"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/v2/middleware/adaptor"
+	"github.com/gowoody/woody/v2"
 )
 
 func main() {
-	// New fiber app
-	app := fiber.New()
+	// New woody app
+	app := woody.New()
 
-	// http.Handler -> fiber.Handler
+	// http.Handler -> woody.Handler
 	app.Get("/", adaptor.HTTPHandler(handler(greet)))
 
-	// http.HandlerFunc -> fiber.Handler
+	// http.HandlerFunc -> woody.Handler
 	app.Get("/func", adaptor.HTTPHandlerFunc(greet))
 
 	// Listen on port 3000
@@ -53,7 +53,7 @@ func greet(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-### net/http middleware to Fiber
+### net/http middleware to Woody
 ```go
 package main
 
@@ -61,15 +61,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gofiber/v2/middleware/adaptor"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/v2/middleware/adaptor"
+	"github.com/gowoody/woody/v2"
 )
 
 func main() {
-	// New fiber app
-	app := fiber.New()
+	// New woody app
+	app := woody.New()
 
-	// http middleware -> fiber.Handler
+	// http middleware -> woody.Handler
 	app.Use(adaptor.HTTPMiddleware(logMiddleware))
 
 	// Listen on port 3000
@@ -84,52 +84,52 @@ func logMiddleware(next http.Handler) http.Handler {
 }
 ```
 
-### Fiber Handler to net/http
+### Woody Handler to net/http
 ```go
 package main
 
 import (
 	"net/http"
 
-	"github.com/gofiber/v2/middleware/adaptor"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/v2/middleware/adaptor"
+	"github.com/gowoody/woody/v2"
 )
 
 func main() {
-	// fiber.Handler -> http.Handler
-	http.Handle("/", adaptor.FiberHandler(greet))
+	// woody.Handler -> http.Handler
+	http.Handle("/", adaptor.WoodyHandler(greet))
 
-  	// fiber.Handler -> http.HandlerFunc
-	http.HandleFunc("/func", adaptor.FiberHandlerFunc(greet))
+  	// woody.Handler -> http.HandlerFunc
+	http.HandleFunc("/func", adaptor.WoodyHandlerFunc(greet))
 
 	// Listen on port 3000
 	http.ListenAndServe(":3000", nil)
 }
 
-func greet(c *fiber.Ctx) error {
+func greet(c *woody.Ctx) error {
 	return c.SendString("Hello World!")
 }
 ```
 
-### Fiber App to net/http
+### Woody App to net/http
 ```go
 package main
 
 import (
-	"github.com/gofiber/v2/middleware/adaptor"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gowoody/v2/middleware/adaptor"
+	"github.com/gowoody/woody/v2"
 	"net/http"
 )
 func main() {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Get("/greet", greet)
 
 	// Listen on port 3000
-	http.ListenAndServe(":3000", adaptor.FiberApp(app))
+	http.ListenAndServe(":3000", adaptor.WoodyApp(app))
 }
 
-func greet(c *fiber.Ctx) error {
+func greet(c *woody.Ctx) error {
 	return c.SendString("Hello World!")
 }
 ```

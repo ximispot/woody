@@ -4,13 +4,13 @@ import (
 	"errors"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 var errTokenNotFound = errors.New("csrf token not found")
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := configDefault(config...)
 
@@ -20,7 +20,7 @@ func New(config ...Config) fiber.Handler {
 	dummyValue := []byte{'+'}
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -30,7 +30,7 @@ func New(config ...Config) fiber.Handler {
 
 		// Action depends on the HTTP method
 		switch c.Method() {
-		case fiber.MethodGet, fiber.MethodHead, fiber.MethodOptions, fiber.MethodTrace:
+		case woody.MethodGet, woody.MethodHead, woody.MethodOptions, woody.MethodTrace:
 			// Declare empty token and try to get existing CSRF from cookie
 			token = c.Cookies(cfg.CookieName)
 		default:
@@ -45,7 +45,7 @@ func New(config ...Config) fiber.Handler {
 			// if token does not exist in Storage
 			if manager.getRaw(token) == nil {
 				// Expire cookie
-				c.Cookie(&fiber.Cookie{
+				c.Cookie(&woody.Cookie{
 					Name:        cfg.CookieName,
 					Domain:      cfg.CookieDomain,
 					Path:        cfg.CookiePath,
@@ -69,7 +69,7 @@ func New(config ...Config) fiber.Handler {
 		manager.setRaw(token, dummyValue, cfg.Expiration)
 
 		// Create cookie to pass token to client
-		cookie := &fiber.Cookie{
+		cookie := &woody.Cookie{
 			Name:        cfg.CookieName,
 			Value:       token,
 			Domain:      cfg.CookieDomain,
@@ -85,7 +85,7 @@ func New(config ...Config) fiber.Handler {
 
 		// Protect clients from caching the response by telling the browser
 		// a new header value is generated
-		c.Vary(fiber.HeaderCookie)
+		c.Vary(woody.HeaderCookie)
 
 		// Store token in context if set
 		if cfg.ContextKey != "" {

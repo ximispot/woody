@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -18,31 +18,31 @@ import (
 // go test -run Test_Middleware_Favicon
 func Test_Middleware_Favicon(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return nil
 	})
 
 	// Skip Favicon middleware
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodGet, "/favicon.ico", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodGet, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusNoContent, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, woody.StatusNoContent, resp.StatusCode, "Status code")
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodOptions, "/favicon.ico", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodOptions, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
 
-	resp, err = app.Test(httptest.NewRequest(fiber.MethodPut, "/favicon.ico", nil))
+	resp, err = app.Test(httptest.NewRequest(woody.MethodPut, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusMethodNotAllowed, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, strings.Join([]string{fiber.MethodGet, fiber.MethodHead, fiber.MethodOptions}, ", "), resp.Header.Get(fiber.HeaderAllow))
+	utils.AssertEqual(t, woody.StatusMethodNotAllowed, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, strings.Join([]string{woody.MethodGet, woody.MethodHead, woody.MethodOptions}, ", "), resp.Header.Get(woody.HeaderAllow))
 }
 
 // go test -run Test_Middleware_Favicon_Not_Found
@@ -54,7 +54,7 @@ func Test_Middleware_Favicon_Not_Found(t *testing.T) {
 		}
 	}()
 
-	fiber.New().Use(New(Config{
+	woody.New().Use(New(Config{
 		File: "non-exist.ico",
 	}))
 }
@@ -62,46 +62,46 @@ func Test_Middleware_Favicon_Not_Found(t *testing.T) {
 // go test -run Test_Middleware_Favicon_Found
 func Test_Middleware_Favicon_Found(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		File: "../../.github/testdata/favicon.ico",
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return nil
 	})
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/favicon.ico", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(fiber.HeaderContentType))
-	utils.AssertEqual(t, "public, max-age=31536000", resp.Header.Get(fiber.HeaderCacheControl), "CacheControl Control")
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(woody.HeaderContentType))
+	utils.AssertEqual(t, "public, max-age=31536000", resp.Header.Get(woody.HeaderCacheControl), "CacheControl Control")
 }
 
 // go test -run Test_Custom_Favicon_Url
 func Test_Custom_Favicon_Url(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 	const customURL = "/favicon.svg"
 	app.Use(New(Config{
 		File: "../../.github/testdata/favicon.ico",
 		URL:  customURL,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return nil
 	})
 
 	resp, err := app.Test(httptest.NewRequest(http.MethodGet, customURL, nil))
 
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(fiber.HeaderContentType))
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(woody.HeaderContentType))
 }
 
 // mockFS wraps local filesystem for the purposes of
 // Test_Middleware_Favicon_FileSystem located below
-// TODO use os.Dir if fiber upgrades to 1.16
+// TODO use os.Dir if woody upgrades to 1.16
 type mockFS struct{}
 
 func (mockFS) Open(name string) (http.File, error) {
@@ -120,42 +120,42 @@ func (mockFS) Open(name string) (http.File, error) {
 // go test -run Test_Middleware_Favicon_FileSystem
 func Test_Middleware_Favicon_FileSystem(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		File:       "../../.github/testdata/favicon.ico",
 		FileSystem: mockFS{},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/favicon.ico", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(fiber.HeaderContentType))
-	utils.AssertEqual(t, "public, max-age=31536000", resp.Header.Get(fiber.HeaderCacheControl), "CacheControl Control")
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(woody.HeaderContentType))
+	utils.AssertEqual(t, "public, max-age=31536000", resp.Header.Get(woody.HeaderCacheControl), "CacheControl Control")
 }
 
 // go test -run Test_Middleware_Favicon_CacheControl
 func Test_Middleware_Favicon_CacheControl(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		CacheControl: "public, max-age=100",
 		File:         "../../.github/testdata/favicon.ico",
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/favicon.ico", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/favicon.ico", nil))
 	utils.AssertEqual(t, nil, err, "app.Test(req)")
-	utils.AssertEqual(t, fiber.StatusOK, resp.StatusCode, "Status code")
-	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(fiber.HeaderContentType))
-	utils.AssertEqual(t, "public, max-age=100", resp.Header.Get(fiber.HeaderCacheControl), "CacheControl Control")
+	utils.AssertEqual(t, woody.StatusOK, resp.StatusCode, "Status code")
+	utils.AssertEqual(t, "image/x-icon", resp.Header.Get(woody.HeaderContentType))
+	utils.AssertEqual(t, "public, max-age=100", resp.Header.Get(woody.HeaderCacheControl), "CacheControl Control")
 }
 
 // go test -v -run=^$ -bench=Benchmark_Middleware_Favicon -benchmem -count=4
 func Benchmark_Middleware_Favicon(b *testing.B) {
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return nil
 	})
 	handler := app.Handler()
@@ -173,14 +173,14 @@ func Benchmark_Middleware_Favicon(b *testing.B) {
 // go test -run Test_Favicon_Next
 func Test_Favicon_Next(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusNotFound, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotFound, resp.StatusCode)
 }

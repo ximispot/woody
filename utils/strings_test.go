@@ -14,12 +14,12 @@ func Test_ToUpper(t *testing.T) {
 const (
 	largeStr = "/RePos/GoFiBer/FibEr/iSsues/187643/CoMmEnts/RePos/GoFiBer/FibEr/iSsues/CoMmEnts"
 	upperStr = "/REPOS/GOFIBER/FIBER/ISSUES/187643/COMMENTS/REPOS/GOFIBER/FIBER/ISSUES/COMMENTS"
-	lowerStr = "/repos/gofiber/fiber/issues/187643/comments/repos/gofiber/fiber/issues/comments"
+	lowerStr = "/repos/gowoody/woody/issues/187643/comments/repos/gowoody/woody/issues/comments"
 )
 
 func Benchmark_ToUpper(b *testing.B) {
 	var res string
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = ToUpper(largeStr)
 		}
@@ -49,7 +49,7 @@ func Test_ToLower(t *testing.T) {
 
 func Benchmark_ToLower(b *testing.B) {
 	var res string
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = ToLower(largeStr)
 		}
@@ -84,7 +84,7 @@ func Test_TrimRight(t *testing.T) {
 func Benchmark_TrimRight(b *testing.B) {
 	var res string
 
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = TrimRight("foobar  ", ' ')
 		}
@@ -119,7 +119,7 @@ func Test_TrimLeft(t *testing.T) {
 func Benchmark_TrimLeft(b *testing.B) {
 	var res string
 
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = TrimLeft("  foobar", ' ')
 		}
@@ -157,7 +157,7 @@ func Test_Trim(t *testing.T) {
 func Benchmark_Trim(b *testing.B) {
 	var res string
 
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = Trim("  foobar   ", ' ')
 		}
@@ -180,7 +180,7 @@ func Benchmark_Trim(b *testing.B) {
 // go test -v -run=^$ -bench=Benchmark_EqualFold -benchmem -count=4
 func Benchmark_EqualFold(b *testing.B) {
 	var res bool
-	b.Run("fiber", func(b *testing.B) {
+	b.Run("woody", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			res = EqualFold(upperStr, lowerStr)
 		}

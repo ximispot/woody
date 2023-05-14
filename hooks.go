@@ -1,10 +1,10 @@
-package fiber
+package woody
 
 import (
 	"log"
 )
 
-// OnRouteHandler Handlers define a function to create hooks for Fiber.
+// OnRouteHandler Handlers define a function to create hooks for Woody.
 type (
 	OnRouteHandler     = func(Route) error
 	OnNameHandler      = OnRouteHandler

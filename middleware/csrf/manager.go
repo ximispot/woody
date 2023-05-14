@@ -4,9 +4,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/internal/memory"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/internal/memory"
+	"github.com/ximispot/woody/utils"
 )
 
 // go:generate msgp
@@ -17,10 +17,10 @@ type item struct{}
 type manager struct {
 	pool    sync.Pool
 	memory  *memory.Storage
-	storage fiber.Storage
+	storage woody.Storage
 }
 
-func newManager(storage fiber.Storage) *manager {
+func newManager(storage woody.Storage) *manager {
 	// Create new storage handler
 	manager := &manager{
 		pool: sync.Pool{

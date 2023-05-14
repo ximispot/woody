@@ -3,26 +3,26 @@ id: compress
 title: Compress
 ---
 
-Compression middleware for [Fiber](https://github.com/gofiber/fiber) that will compress the response using `gzip`, `deflate` and `brotli` compression depending on the [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) header.
+Compression middleware for [Woody](https://github.com/gowoody/woody) that will compress the response using `gzip`, `deflate` and `brotli` compression depending on the [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) header.
 
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/compress"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/compress"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config
@@ -35,7 +35,7 @@ app.Use(compress.New(compress.Config{
 
 // Skip middleware for specific routes
 app.Use(compress.New(compress.Config{
-  Next:  func(c *fiber.Ctx) bool {
+  Next:  func(c *woody.Ctx) bool {
     return c.Path() == "/dont_compress"
   },
   Level: compress.LevelBestSpeed, // 1
@@ -50,7 +50,7 @@ type Config struct {
     // Next defines a function to skip this middleware when returned true.
     //
     // Optional. Default: nil
-    Next func(c *fiber.Ctx) bool
+    Next func(c *woody.Ctx) bool
 
     // Level determines the compression algoritm
     //

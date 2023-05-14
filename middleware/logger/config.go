@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
@@ -14,13 +14,13 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Done is a function that is called after the log string for a request is written to Output,
 	// and pass the log string as parameter.
 	//
 	// Optional. Default: nil
-	Done func(c *fiber.Ctx, logString []byte)
+	Done func(c *woody.Ctx, logString []byte)
 
 	// tagFunctions defines the custom tag action
 	//
@@ -76,7 +76,7 @@ type Buffer interface {
 	String() string
 }
 
-type LogFunc func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error)
+type LogFunc func(output Buffer, c *woody.Ctx, data *Data, extraParam string) (int, error)
 
 // ConfigDefault is the default config
 var ConfigDefault = Config{

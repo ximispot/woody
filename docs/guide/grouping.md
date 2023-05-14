@@ -5,7 +5,7 @@ sidebar_position: 2
 ---
 
 :::info
-In general, the Group functionality in Fiber behaves similarly to ExpressJS. Groups are declared virtually and all routes declared within the group are flattened into a single list with a prefix, which is then checked by the framework in the order it was declared. This means that the behavior of Group in Fiber is identical to that of ExpressJS.
+In general, the Group functionality in Woody behaves similarly to ExpressJS. Groups are declared virtually and all routes declared within the group are flattened into a single list with a prefix, which is then checked by the framework in the order it was declared. This means that the behavior of Group in Woody is identical to that of ExpressJS.
 :::
 
 ## Paths
@@ -14,7 +14,7 @@ Like **Routing**, groups can also have paths that belong to a cluster.
 
 ```go
 func main() {
-  app := fiber.New()
+  app := woody.New()
 
   api := app.Group("/api", middleware) // /api
 
@@ -34,7 +34,7 @@ A **Group** of paths can have an optional handler.
 
 ```go
 func main() {
-  app := fiber.New()
+  app := woody.New()
 
   api := app.Group("/api")      // /api
 
@@ -60,14 +60,14 @@ Group handlers can also be used as a routing path but they must have **Next** ad
 
 ```go
 func main() {
-    app := fiber.New()
+    app := woody.New()
 
-    handler := func(c *fiber.Ctx) error {
-        return c.SendStatus(fiber.StatusOK)
+    handler := func(c *woody.Ctx) error {
+        return c.SendStatus(woody.StatusOK)
     }
     api := app.Group("/api") // /api
 
-    v1 := api.Group("/v1", func(c *fiber.Ctx) error { // middleware for /api/v1
+    v1 := api.Group("/v1", func(c *woody.Ctx) error { // middleware for /api/v1
         c.Set("Version", "v1")
         return c.Next()
     })

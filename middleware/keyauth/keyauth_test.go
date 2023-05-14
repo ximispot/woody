@@ -10,8 +10,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 const CorrectKey = "specials: !$%,.#\"!?~`<>@$^*(){}[]|/\\123"
@@ -57,14 +57,14 @@ func TestAuthSources(t *testing.T) {
 	for _, authSource := range testSources {
 		t.Run(authSource, func(t *testing.T) {
 			for _, test := range tests {
-				// setup the fiber endpoint
+				// setup the woody endpoint
 				// note that if UnescapePath: false (the default)
 				// escaped characters (such as `\"`) will not be handled correctly in the tests
-				app := fiber.New(fiber.Config{UnescapePath: true})
+				app := woody.New(woody.Config{UnescapePath: true})
 
 				authMiddleware := New(Config{
 					KeyLookup: authSource + ":" + test.authTokenName,
-					Validator: func(c *fiber.Ctx, key string) (bool, error) {
+					Validator: func(c *woody.Ctx, key string) (bool, error) {
 						if key == CorrectKey {
 							return true, nil
 						}
@@ -81,13 +81,13 @@ func TestAuthSources(t *testing.T) {
 					app.Use(authMiddleware)
 				}
 
-				app.Get(route, func(c *fiber.Ctx) error {
+				app.Get(route, func(c *woody.Ctx) error {
 					return c.SendString("Success!")
 				})
 
 				// construct the test HTTP request
 				var req *http.Request
-				req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, test.route, nil)
+				req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, test.route, nil)
 				utils.AssertEqual(t, err, nil)
 
 				// setup the apikey for the different auth schemes
@@ -132,16 +132,16 @@ func TestAuthSources(t *testing.T) {
 }
 
 func TestMultipleKeyAuth(t *testing.T) {
-	// setup the fiber endpoint
-	app := fiber.New()
+	// setup the woody endpoint
+	app := woody.New()
 
 	// setup keyauth for /auth1
 	app.Use(New(Config{
-		Next: func(c *fiber.Ctx) bool {
+		Next: func(c *woody.Ctx) bool {
 			return c.OriginalURL() != "/auth1"
 		},
 		KeyLookup: "header:key",
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == "password1" {
 				return true, nil
 			}
@@ -151,11 +151,11 @@ func TestMultipleKeyAuth(t *testing.T) {
 
 	// setup keyauth for /auth2
 	app.Use(New(Config{
-		Next: func(c *fiber.Ctx) bool {
+		Next: func(c *woody.Ctx) bool {
 			return c.OriginalURL() != "/auth2"
 		},
 		KeyLookup: "header:key",
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == "password2" {
 				return true, nil
 			}
@@ -163,15 +163,15 @@ func TestMultipleKeyAuth(t *testing.T) {
 		},
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("No auth needed!")
 	})
 
-	app.Get("/auth1", func(c *fiber.Ctx) error {
+	app.Get("/auth1", func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated for auth1!")
 	})
 
-	app.Get("/auth2", func(c *fiber.Ctx) error {
+	app.Get("/auth2", func(c *woody.Ctx) error {
 		return c.SendString("Successfully authenticated for auth2!")
 	})
 
@@ -242,7 +242,7 @@ func TestMultipleKeyAuth(t *testing.T) {
 	// run the tests
 	for _, test := range tests {
 		var req *http.Request
-		req, err := http.NewRequestWithContext(context.Background(), fiber.MethodGet, test.route, nil)
+		req, err := http.NewRequestWithContext(context.Background(), woody.MethodGet, test.route, nil)
 		utils.AssertEqual(t, err, nil)
 		if test.APIKey != "" {
 			req.Header.Set("key", test.APIKey)
@@ -263,16 +263,16 @@ func TestMultipleKeyAuth(t *testing.T) {
 }
 
 func TestCustomSuccessAndFailureHandlers(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		SuccessHandler: func(c *fiber.Ctx) error {
-			return c.Status(fiber.StatusOK).SendString("API key is valid and request was handled by custom success handler")
+		SuccessHandler: func(c *woody.Ctx) error {
+			return c.Status(woody.StatusOK).SendString("API key is valid and request was handled by custom success handler")
 		},
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return c.Status(fiber.StatusUnauthorized).SendString("API key is invalid and request was handled by custom error handler")
+		ErrorHandler: func(c *woody.Ctx, err error) error {
+			return c.Status(woody.StatusUnauthorized).SendString("API key is invalid and request was handled by custom error handler")
 		},
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == CorrectKey {
 				return true, nil
 			}
@@ -281,13 +281,13 @@ func TestCustomSuccessAndFailureHandlers(t *testing.T) {
 	}))
 
 	// Define a test handler that should not be called
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		t.Error("Test handler should not be called")
 		return nil
 	})
 
 	// Create a request without an API key and send it to the app
-	res, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	res, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, err, nil)
 
 	// Read the response body into a string
@@ -299,7 +299,7 @@ func TestCustomSuccessAndFailureHandlers(t *testing.T) {
 	utils.AssertEqual(t, string(body), "API key is invalid and request was handled by custom error handler")
 
 	// Create a request with a valid API key in the Authorization header
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", CorrectKey))
 
 	// Send the request to the app
@@ -316,13 +316,13 @@ func TestCustomSuccessAndFailureHandlers(t *testing.T) {
 }
 
 func TestCustomNextFunc(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
-		Next: func(c *fiber.Ctx) bool {
+		Next: func(c *woody.Ctx) bool {
 			return c.Path() == "/allowed"
 		},
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == CorrectKey {
 				return true, nil
 			}
@@ -331,12 +331,12 @@ func TestCustomNextFunc(t *testing.T) {
 	}))
 
 	// Define a test handler
-	app.Get("/allowed", func(c *fiber.Ctx) error {
+	app.Get("/allowed", func(c *woody.Ctx) error {
 		return c.SendString("API key is valid and request was allowed by custom filter")
 	})
 
 	// Create a request with the "/allowed" path and send it to the app
-	req := httptest.NewRequest(fiber.MethodGet, "/allowed", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/allowed", nil)
 	res, err := app.Test(req)
 	utils.AssertEqual(t, err, nil)
 
@@ -349,7 +349,7 @@ func TestCustomNextFunc(t *testing.T) {
 	utils.AssertEqual(t, string(body), "API key is valid and request was allowed by custom filter")
 
 	// Create a request with a different path and send it to the app without correct key
-	req = httptest.NewRequest(fiber.MethodGet, "/not-allowed", nil)
+	req = httptest.NewRequest(woody.MethodGet, "/not-allowed", nil)
 	res, err = app.Test(req)
 	utils.AssertEqual(t, err, nil)
 
@@ -362,7 +362,7 @@ func TestCustomNextFunc(t *testing.T) {
 	utils.AssertEqual(t, string(body), ErrMissingOrMalformedAPIKey.Error())
 
 	// Create a request with a different path and send it to the app with correct key
-	req = httptest.NewRequest(fiber.MethodGet, "/not-allowed", nil)
+	req = httptest.NewRequest(woody.MethodGet, "/not-allowed", nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", CorrectKey))
 
 	res, err = app.Test(req)
@@ -378,11 +378,11 @@ func TestCustomNextFunc(t *testing.T) {
 }
 
 func TestAuthSchemeToken(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		AuthScheme: "Token",
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == CorrectKey {
 				return true, nil
 			}
@@ -391,12 +391,12 @@ func TestAuthSchemeToken(t *testing.T) {
 	}))
 
 	// Define a test handler
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("API key is valid")
 	})
 
 	// Create a request with a valid API key in the "Token" Authorization header
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Token %s", CorrectKey))
 
 	// Send the request to the app
@@ -413,12 +413,12 @@ func TestAuthSchemeToken(t *testing.T) {
 }
 
 func TestAuthSchemeBasic(t *testing.T) {
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use(New(Config{
 		KeyLookup:  "header:Authorization",
 		AuthScheme: "Basic",
-		Validator: func(c *fiber.Ctx, key string) (bool, error) {
+		Validator: func(c *woody.Ctx, key string) (bool, error) {
 			if key == CorrectKey {
 				return true, nil
 			}
@@ -427,12 +427,12 @@ func TestAuthSchemeBasic(t *testing.T) {
 	}))
 
 	// Define a test handler
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("API key is valid")
 	})
 
 	// Create a request without an API key and  Send the request to the app
-	res, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	res, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, err, nil)
 
 	// Read the response body into a string
@@ -444,7 +444,7 @@ func TestAuthSchemeBasic(t *testing.T) {
 	utils.AssertEqual(t, string(body), ErrMissingOrMalformedAPIKey.Error())
 
 	// Create a request with a valid API key in the "Authorization" header using the "Basic" scheme
-	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req := httptest.NewRequest(woody.MethodGet, "/", nil)
 	req.Header.Add("Authorization", fmt.Sprintf("Basic %s", CorrectKey))
 
 	// Send the request to the app

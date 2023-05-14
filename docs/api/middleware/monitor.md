@@ -3,7 +3,7 @@ id: monitor
 title: Monitor
 ---
 
-Monitor middleware for [Fiber](https://github.com/gofiber/fiber) that reports server metrics, inspired by [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor)
+Monitor middleware for [Woody](https://github.com/gowoody/woody) that reports server metrics, inspired by [express-status-monitor](https://github.com/RafalWilinski/express-status-monitor)
 
 :::caution
 
@@ -15,20 +15,20 @@ Monitor is still in beta, API might change in the future!
 
 ### Signatures
 ```go
-func New() fiber.Handler
+func New() woody.Handler
 ```
 
 ### Examples
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/monitor"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/monitor"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 ```go
 // Initialize default config (Assign the middleware to /metrics)
 app.Get("/metrics", monitor.New())
@@ -53,7 +53,7 @@ You can also access the API endpoint with
 type Config struct {
 	// Metrics page title
 	//
-	// Optional. Default: "Fiber Monitor"
+	// Optional. Default: "Woody Monitor"
 	Title string
 
 	// Refresh period
@@ -69,7 +69,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Custom HTML Code to Head Section(Before End)
 	//

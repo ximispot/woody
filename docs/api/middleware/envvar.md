@@ -3,26 +3,26 @@ id: envvar
 title: EnvVar
 ---
 
-EnvVar middleware for [Fiber](https://github.com/gofiber/fiber) that can be used to expose environment variables with various options.
+EnvVar middleware for [Woody](https://github.com/gowoody/woody) that can be used to expose environment variables with various options.
 
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
 
-Import the middleware package that is part of the Fiber web framework
+Import the middleware package that is part of the Woody web framework
 
 ```go
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/envvar"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/envvar"
 )
 ```
 
-After you initiate your Fiber app, you can use the following possibilities:
+After you initiate your Woody app, you can use the following possibilities:
 
 ```go
 // Initialize default config

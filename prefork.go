@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"crypto/tls"
@@ -98,7 +98,7 @@ func (app *App) prefork(network, addr string, tlsConfig *tls.Config) error {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
-		// add fiber prefork child flag into child proc env
+		// add woody prefork child flag into child proc env
 		cmd.Env = append(os.Environ(),
 			fmt.Sprintf("%s=%s", envPreforkChildKey, envPreforkChildVal),
 		)

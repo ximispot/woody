@@ -3,8 +3,8 @@ package basicauth
 import (
 	"crypto/subtle"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // Config defines the config for middleware.
@@ -12,7 +12,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Users defines the allowed credentials
 	//
@@ -39,7 +39,7 @@ type Config struct {
 	// By default it will return with a 401 Unauthorized and the correct WWW-Auth header
 	//
 	// Optional. Default: nil
-	Unauthorized fiber.Handler
+	Unauthorized woody.Handler
 
 	// ContextUser is the key to store the username in Locals
 	//
@@ -90,9 +90,9 @@ func configDefault(config ...Config) Config {
 		}
 	}
 	if cfg.Unauthorized == nil {
-		cfg.Unauthorized = func(c *fiber.Ctx) error {
-			c.Set(fiber.HeaderWWWAuthenticate, "basic realm="+cfg.Realm)
-			return c.SendStatus(fiber.StatusUnauthorized)
+		cfg.Unauthorized = func(c *woody.Ctx) error {
+			c.Set(woody.HeaderWWWAuthenticate, "basic realm="+cfg.Realm)
+			return c.SendStatus(woody.StatusUnauthorized)
 		}
 	}
 	if cfg.ContextUsername == "" {

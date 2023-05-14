@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )

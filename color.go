@@ -1,6 +1,6 @@
-package fiber
+package woody
 
-// Colors is a struct to define custom colors for Fiber app and middlewares.
+// Colors is a struct to define custom colors for Woody app and middlewares.
 type Colors struct {
 	// Black color.
 	//

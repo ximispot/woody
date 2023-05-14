@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"bytes"
@@ -15,7 +15,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/bytebufferpool"
 	"github.com/valyala/fasthttp"

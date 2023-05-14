@@ -1,7 +1,7 @@
 ---
 id: templates
 title: 📝 Templates
-description: Fiber supports server-side template engines.
+description: Woody supports server-side template engines.
 sidebar_position: 3
 ---
 
@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 ## Template interfaces
 
-Fiber provides a Views interface to provide your own template engine:
+Woody provides a Views interface to provide your own template engine:
 
 <Tabs>
 <TabItem value="views" label="Views">
@@ -24,11 +24,11 @@ type Views interface {
 </TabItem>
 </Tabs>
 
-`Views` interface contains a `Load` and `Render` method, `Load` is executed by Fiber on app initialization to load/parse the templates.
+`Views` interface contains a `Load` and `Render` method, `Load` is executed by Woody on app initialization to load/parse the templates.
 
 ```go
-// Pass engine to Fiber's Views Engine
-app := fiber.New(fiber.Config{
+// Pass engine to Woody's Views Engine
+app := woody.New(woody.Config{
     Views: engine,
     // Views Layout is the global layout for all template render until override on Render function.
     ViewsLayout: "layouts/main"
@@ -36,11 +36,11 @@ app := fiber.New(fiber.Config{
 ```
 
 The `Render` method is linked to the [**ctx.Render\(\)**](../api/ctx.md#render) function that accepts a template name and binding data. It will use global layout if layout is not being defined in `Render` function.
-If the Fiber config option `PassLocalsToViews` is enabled, then all locals set using `ctx.Locals(key, value)` will be passed to the template.
+If the Woody config option `PassLocalsToViews` is enabled, then all locals set using `ctx.Locals(key, value)` will be passed to the template.
 
 ```go
-app.Get("/", func(c *fiber.Ctx) error {
-    return c.Render("index", fiber.Map{
+app.Get("/", func(c *woody.Ctx) error {
+    return c.Render("index", woody.Map{
         "hello": "world",
     });
 })
@@ -48,16 +48,16 @@ app.Get("/", func(c *fiber.Ctx) error {
 
 ## Engines
 
-Fiber team maintains [templates](https://github.com/gofiber/template) package that provides wrappers for multiple template engines:
+Woody team maintains [templates](https://github.com/gowoody/template) package that provides wrappers for multiple template engines:
 
-* [html](https://github.com/gofiber/template/tree/master/html)
-* [ace](https://github.com/gofiber/template/tree/master/ace)
-* [amber](https://github.com/gofiber/template/tree/master/amber)
-* [django](https://github.com/gofiber/template/tree/master/django)
-* [handlebars](https://github.com/gofiber/template/tree/master/handlebars)
-* [jet](https://github.com/gofiber/template/tree/master/jet)
-* [mustache](https://github.com/gofiber/template/tree/master/mustache)
-* [pug](https://github.com/gofiber/template/tree/master/pug)
+* [html](https://github.com/gowoody/template/tree/master/html)
+* [ace](https://github.com/gowoody/template/tree/master/ace)
+* [amber](https://github.com/gowoody/template/tree/master/amber)
+* [django](https://github.com/gowoody/template/tree/master/django)
+* [handlebars](https://github.com/gowoody/template/tree/master/handlebars)
+* [jet](https://github.com/gowoody/template/tree/master/jet)
+* [mustache](https://github.com/gowoody/template/tree/master/mustache)
+* [pug](https://github.com/gowoody/template/tree/master/pug)
 
 <Tabs>
 <TabItem value="example" label="Example">
@@ -67,8 +67,8 @@ package main
 
 import (
     "log"
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/template/html"
+    "github.com/gowoody/woody/v2"
+    "github.com/gowoody/template/html"
 )
 
 func main() {
@@ -78,12 +78,12 @@ func main() {
     // Create a new engine with django
 	// engine := django.New("./views", ".django")
 
-    app := fiber.New(fiber.Config{
+    app := woody.New(woody.Config{
         Views: engine,
     })
-    app.Get("/", func(c *fiber.Ctx) error {
+    app.Get("/", func(c *woody.Ctx) error {
         // Render index template
-        return c.Render("index", fiber.Map{
+        return c.Render("index", woody.Map{
             "Title": "Hello, World!",
         })
     })

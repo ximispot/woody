@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -15,14 +15,14 @@ func TestStore_getSessionID(t *testing.T) {
 	t.Parallel()
 	expectedID := "test-session-id"
 
-	// fiber instance
-	app := fiber.New()
+	// woody instance
+	app := woody.New()
 
 	t.Run("from cookie", func(t *testing.T) {
 		t.Parallel()
 		// session store
 		store := New()
-		// fiber context
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// set cookie
@@ -37,7 +37,7 @@ func TestStore_getSessionID(t *testing.T) {
 		store := New(Config{
 			KeyLookup: "header:session_id",
 		})
-		// fiber context
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// set header
@@ -52,7 +52,7 @@ func TestStore_getSessionID(t *testing.T) {
 		store := New(Config{
 			KeyLookup: "query:session_id",
 		})
-		// fiber context
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// set url parameter
@@ -63,17 +63,17 @@ func TestStore_getSessionID(t *testing.T) {
 }
 
 // go test -run TestStore_Get
-// Regression: https://github.com/gofiber/fiber/issues/1408
+// Regression: https://github.com/gowoody/woody/issues/1408
 func TestStore_Get(t *testing.T) {
 	t.Parallel()
 	unexpectedID := "test-session-id"
-	// fiber instance
-	app := fiber.New()
+	// woody instance
+	app := woody.New()
 	t.Run("session should persisted even session is invalid", func(t *testing.T) {
 		t.Parallel()
 		// session store
 		store := New()
-		// fiber context
+		// woody context
 		ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
 		defer app.ReleaseCtx(ctx)
 		// set cookie

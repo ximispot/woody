@@ -1,19 +1,17 @@
 package pprof
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/ximispot/woody"
 
 // Config defines the config for middleware.
 type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// Prefix defines a URL prefix added before "/debug/pprof".
 	// Note that it should start with (but not end with) a slash.
-	// Example: "/federated-fiber"
+	// Example: "/federated-woody"
 	//
 	// Optional. Default: ""
 	Prefix string

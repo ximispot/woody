@@ -7,28 +7,28 @@ import (
 	"reflect"
 	"unsafe"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
-// HTTPHandlerFunc wraps net/http handler func to fiber handler
-func HTTPHandlerFunc(h http.HandlerFunc) fiber.Handler {
+// HTTPHandlerFunc wraps net/http handler func to woody handler
+func HTTPHandlerFunc(h http.HandlerFunc) woody.Handler {
 	return HTTPHandler(h)
 }
 
-// HTTPHandler wraps net/http handler to fiber handler
-func HTTPHandler(h http.Handler) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+// HTTPHandler wraps net/http handler to woody handler
+func HTTPHandler(h http.Handler) woody.Handler {
+	return func(c *woody.Ctx) error {
 		handler := fasthttpadaptor.NewFastHTTPHandler(h)
 		handler(c.Context())
 		return nil
 	}
 }
 
-// CopyContextToFiberContext copies the values of context.Context to a fasthttp.RequestCtx
-func CopyContextToFiberContext(context interface{}, requestContext *fasthttp.RequestCtx) {
+// CopyContextToWoodyContext copies the values of context.Context to a fasthttp.RequestCtx
+func CopyContextToWoodyContext(context interface{}, requestContext *fasthttp.RequestCtx) {
 	contextValues := reflect.ValueOf(context).Elem()
 	contextKeys := reflect.TypeOf(context).Elem()
 	if contextKeys.Kind() == reflect.Struct {
@@ -43,7 +43,7 @@ func CopyContextToFiberContext(context interface{}, requestContext *fasthttp.Req
 			if reflectField.Name == "noCopy" {
 				break
 			} else if reflectField.Name == "Context" {
-				CopyContextToFiberContext(reflectValue.Interface(), requestContext)
+				CopyContextToWoodyContext(reflectValue.Interface(), requestContext)
 			} else if reflectField.Name == "key" {
 				lastKey = reflectValue.Interface()
 			} else if lastKey != nil && reflectField.Name == "val" {
@@ -55,9 +55,9 @@ func CopyContextToFiberContext(context interface{}, requestContext *fasthttp.Req
 	}
 }
 
-// HTTPMiddleware wraps net/http middleware to fiber middleware
-func HTTPMiddleware(mw func(http.Handler) http.Handler) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+// HTTPMiddleware wraps net/http middleware to woody middleware
+func HTTPMiddleware(mw func(http.Handler) http.Handler) woody.Handler {
+	return func(c *woody.Ctx) error {
 		var next bool
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			next = true
@@ -70,7 +70,7 @@ func HTTPMiddleware(mw func(http.Handler) http.Handler) fiber.Handler {
 					c.Request().Header.Set(key, v)
 				}
 			}
-			CopyContextToFiberContext(r.Context(), c.Context())
+			CopyContextToWoodyContext(r.Context(), c.Context())
 		})
 
 		if err := HTTPHandler(mw(nextHandler))(c); err != nil {
@@ -84,22 +84,22 @@ func HTTPMiddleware(mw func(http.Handler) http.Handler) fiber.Handler {
 	}
 }
 
-// FiberHandler wraps fiber handler to net/http handler
-func FiberHandler(h fiber.Handler) http.Handler {
-	return FiberHandlerFunc(h)
+// WoodyHandler wraps woody handler to net/http handler
+func WoodyHandler(h woody.Handler) http.Handler {
+	return WoodyHandlerFunc(h)
 }
 
-// FiberHandlerFunc wraps fiber handler to net/http handler func
-func FiberHandlerFunc(h fiber.Handler) http.HandlerFunc {
-	return handlerFunc(fiber.New(), h)
+// WoodyHandlerFunc wraps woody handler to net/http handler func
+func WoodyHandlerFunc(h woody.Handler) http.HandlerFunc {
+	return handlerFunc(woody.New(), h)
 }
 
-// FiberApp wraps fiber app to net/http handler func
-func FiberApp(app *fiber.App) http.HandlerFunc {
+// WoodyApp wraps woody app to net/http handler func
+func WoodyApp(app *woody.App) http.HandlerFunc {
 	return handlerFunc(app)
 }
 
-func handlerFunc(app *fiber.App, h ...fiber.Handler) http.HandlerFunc {
+func handlerFunc(app *woody.App, h ...woody.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// New fasthttp request
 		req := fasthttp.AcquireRequest()
@@ -108,14 +108,14 @@ func handlerFunc(app *fiber.App, h ...fiber.Handler) http.HandlerFunc {
 		if r.Body != nil {
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
-				http.Error(w, utils.StatusMessage(fiber.StatusInternalServerError), fiber.StatusInternalServerError)
+				http.Error(w, utils.StatusMessage(woody.StatusInternalServerError), woody.StatusInternalServerError)
 				return
 			}
 
 			req.Header.SetContentLength(len(body))
 			_, err = req.BodyWriter().Write(body)
 			if err != nil {
-				http.Error(w, utils.StatusMessage(fiber.StatusInternalServerError), fiber.StatusInternalServerError)
+				http.Error(w, utils.StatusMessage(woody.StatusInternalServerError), woody.StatusInternalServerError)
 				return
 			}
 		}
@@ -132,7 +132,7 @@ func handlerFunc(app *fiber.App, h ...fiber.Handler) http.HandlerFunc {
 		}
 		remoteAddr, err := net.ResolveTCPAddr("tcp", r.RemoteAddr)
 		if err != nil {
-			http.Error(w, utils.StatusMessage(fiber.StatusInternalServerError), fiber.StatusInternalServerError)
+			http.Error(w, utils.StatusMessage(woody.StatusInternalServerError), woody.StatusInternalServerError)
 			return
 		}
 
@@ -140,10 +140,10 @@ func handlerFunc(app *fiber.App, h ...fiber.Handler) http.HandlerFunc {
 		var fctx fasthttp.RequestCtx
 		fctx.Init(req, remoteAddr, nil)
 		if len(h) > 0 {
-			// New fiber Ctx
+			// New woody Ctx
 			ctx := app.AcquireCtx(&fctx)
 			defer app.ReleaseCtx(ctx)
-			// Execute fiber Ctx
+			// Execute woody Ctx
 			err := h[0](ctx)
 			if err != nil {
 				_ = app.Config().ErrorHandler(ctx, err) //nolint:errcheck // not needed

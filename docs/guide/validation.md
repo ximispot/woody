@@ -6,7 +6,7 @@ sidebar_position: 5
 
 ## Validator package
 
-Fiber can make _great_ use of the validator package to ensure correct validation of data to store.
+Woody can make _great_ use of the validator package to ensure correct validation of data to store.
 
 * [Official validator Github page \(Installation, use, examples..\).](https://github.com/go-playground/validator)
 
@@ -51,13 +51,13 @@ func ValidateStruct(user User) []*ErrorResponse {
     return errors
 }
 
-func AddUser(c *fiber.Ctx) error {
+func AddUser(c *woody.Ctx) error {
     //Connect to database
 
     user := new(User)
 
     if err := c.BodyParser(user); err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+        return c.Status(woody.StatusInternalServerError).JSON(woody.Map{
             "message": err.Error(),
         })
        
@@ -65,7 +65,7 @@ func AddUser(c *fiber.Ctx) error {
 
     errors := ValidateStruct(*user)
     if errors != nil {
-       return c.Status(fiber.StatusBadRequest).JSON(errors)
+       return c.Status(woody.StatusBadRequest).JSON(errors)
         
     }
 

@@ -7,14 +7,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody"
+	"github.com/ximispot/woody/utils"
 )
 
 // go test -run Test_FileSystem
 func Test_FileSystem(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/test", New(Config{
 		Root: http.Dir("../../.github/testdata/fs"),
@@ -25,7 +25,7 @@ func Test_FileSystem(t *testing.T) {
 		Browse: true,
 	}))
 
-	app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *woody.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
 
@@ -100,7 +100,7 @@ func Test_FileSystem(t *testing.T) {
 		},
 		{
 			name:        "Should be returns status 200",
-			url:         "/dir/img/fiber.png",
+			url:         "/dir/img/woody.png",
 			statusCode:  200,
 			contentType: "image/png",
 		},
@@ -112,7 +112,7 @@ func Test_FileSystem(t *testing.T) {
 		},
 		{
 			name:        "PathPrefix should be applied",
-			url:         "/prefix/fiber.png",
+			url:         "/prefix/woody.png",
 			statusCode:  200,
 			contentType: "image/png",
 		},
@@ -121,7 +121,7 @@ func Test_FileSystem(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, tt.url, nil))
+			resp, err := app.Test(httptest.NewRequest(woody.MethodGet, tt.url, nil))
 			utils.AssertEqual(t, nil, err)
 			utils.AssertEqual(t, tt.statusCode, resp.StatusCode)
 
@@ -136,41 +136,41 @@ func Test_FileSystem(t *testing.T) {
 // go test -run Test_FileSystem_Next
 func Test_FileSystem_Next(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		Root: http.Dir("../../.github/testdata/fs"),
-		Next: func(_ *fiber.Ctx) bool {
+		Next: func(_ *woody.Ctx) bool {
 			return true
 		},
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, fiber.StatusNotFound, resp.StatusCode)
+	utils.AssertEqual(t, woody.StatusNotFound, resp.StatusCode)
 }
 
 func Test_FileSystem_NonGetAndHead(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/test", New(Config{
 		Root: http.Dir("../../.github/testdata/fs"),
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodPost, "/test", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodPost, "/test", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 404, resp.StatusCode)
 }
 
 func Test_FileSystem_Head(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
 	app.Use("/test", New(Config{
 		Root: http.Dir("../../.github/testdata/fs"),
 	}))
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodHead, "/test", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodHead, "/test", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -183,21 +183,21 @@ func Test_FileSystem_NoRoot(t *testing.T) {
 		utils.AssertEqual(t, "filesystem: Root cannot be nil", recover())
 	}()
 
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New())
-	_, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	_, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 }
 
 func Test_FileSystem_UsingParam(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
-	app.Use("/:path", func(c *fiber.Ctx) error {
+	app.Use("/:path", func(c *woody.Ctx) error {
 		return SendFile(c, http.Dir("../../.github/testdata/fs"), c.Params("path")+".html")
 	})
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodHead, "/index", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodHead, "/index", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -206,13 +206,13 @@ func Test_FileSystem_UsingParam(t *testing.T) {
 
 func Test_FileSystem_UsingParam_NonFile(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 
-	app.Use("/:path", func(c *fiber.Ctx) error {
+	app.Use("/:path", func(c *woody.Ctx) error {
 		return SendFile(c, http.Dir("../../.github/testdata/fs"), c.Params("path")+".html")
 	})
 
-	req, err := http.NewRequestWithContext(context.Background(), fiber.MethodHead, "/template", nil)
+	req, err := http.NewRequestWithContext(context.Background(), woody.MethodHead, "/template", nil)
 	utils.AssertEqual(t, nil, err)
 	resp, err := app.Test(req)
 	utils.AssertEqual(t, nil, err)
@@ -221,13 +221,13 @@ func Test_FileSystem_UsingParam_NonFile(t *testing.T) {
 
 func Test_FileSystem_UsingContentTypeCharset(t *testing.T) {
 	t.Parallel()
-	app := fiber.New()
+	app := woody.New()
 	app.Use(New(Config{
 		Root:               http.Dir("../../.github/testdata/fs/index.html"),
 		ContentTypeCharset: "UTF-8",
 	}))
 
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+	resp, err := app.Test(httptest.NewRequest(woody.MethodGet, "/", nil))
 	utils.AssertEqual(t, nil, err)
 	utils.AssertEqual(t, 200, resp.StatusCode)
 	utils.AssertEqual(t, "text/html; charset=UTF-8", resp.Header.Get("Content-Type"))

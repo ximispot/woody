@@ -1,4 +1,4 @@
-package fiber
+package woody
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/ximispot/woody/utils"
 
 	"github.com/valyala/fasthttp"
 )
@@ -35,7 +35,7 @@ type Router interface {
 
 	Route(prefix string, fn func(router Router), name ...string) Router
 
-	Mount(prefix string, fiber *App) Router
+	Mount(prefix string, woody *App) Router
 
 	Name(name string) Router
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/ximispot/woody"
 )
 
 // Config defines the config for middleware.
@@ -14,7 +14,7 @@ type Config struct {
 	// Next defines a function to skip this middleware when returned true.
 	//
 	// Optional. Default: nil
-	Next func(c *fiber.Ctx) bool
+	Next func(c *woody.Ctx) bool
 
 	// File holds the path to an actual favicon that will be cached
 	//
@@ -54,7 +54,7 @@ const (
 )
 
 // New creates a new middleware handler
-func New(config ...Config) fiber.Handler {
+func New(config ...Config) woody.Handler {
 	// Set default config
 	cfg := ConfigDefault
 
@@ -101,7 +101,7 @@ func New(config ...Config) fiber.Handler {
 	}
 
 	// Return new handler
-	return func(c *fiber.Ctx) error {
+	return func(c *woody.Ctx) error {
 		// Don't execute middleware if Next returns true
 		if cfg.Next != nil && cfg.Next(c) {
 			return c.Next()
@@ -113,25 +113,25 @@ func New(config ...Config) fiber.Handler {
 		}
 
 		// Only allow GET, HEAD and OPTIONS requests
-		if c.Method() != fiber.MethodGet && c.Method() != fiber.MethodHead {
-			if c.Method() != fiber.MethodOptions {
-				c.Status(fiber.StatusMethodNotAllowed)
+		if c.Method() != woody.MethodGet && c.Method() != woody.MethodHead {
+			if c.Method() != woody.MethodOptions {
+				c.Status(woody.StatusMethodNotAllowed)
 			} else {
-				c.Status(fiber.StatusOK)
+				c.Status(woody.StatusOK)
 			}
-			c.Set(fiber.HeaderAllow, hAllow)
-			c.Set(fiber.HeaderContentLength, hZero)
+			c.Set(woody.HeaderAllow, hAllow)
+			c.Set(woody.HeaderContentLength, hZero)
 			return nil
 		}
 
 		// Serve cached favicon
 		if len(icon) > 0 {
-			c.Set(fiber.HeaderContentLength, iconLen)
-			c.Set(fiber.HeaderContentType, hType)
-			c.Set(fiber.HeaderCacheControl, cfg.CacheControl)
-			return c.Status(fiber.StatusOK).Send(icon)
+			c.Set(woody.HeaderContentLength, iconLen)
+			c.Set(woody.HeaderContentType, hType)
+			c.Set(woody.HeaderCacheControl, cfg.CacheControl)
+			return c.Status(woody.StatusOK).Send(icon)
 		}
 
-		return c.SendStatus(fiber.StatusNoContent)
+		return c.SendStatus(woody.StatusNoContent)
 	}
 }

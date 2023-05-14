@@ -8,7 +8,7 @@ Helmet middleware helps secure your apps by setting various HTTP headers.
 ## Signatures
 
 ```go
-func New(config ...Config) fiber.Handler
+func New(config ...Config) woody.Handler
 ```
 
 ## Examples
@@ -16,16 +16,16 @@ func New(config ...Config) fiber.Handler
 package main
 
 import (
-  "github.com/gofiber/fiber/v2"
-  "github.com/gofiber/fiber/v2/middleware/helmet"
+  "github.com/gowoody/woody/v2"
+  "github.com/ximispot/woody/middleware/helmet"
 )
 
 func main() {
-  app := fiber.New()
+  app := woody.New()
 
   app.Use(helmet.New())
 
-  app.Get("/", func(c *fiber.Ctx) error {
+  app.Get("/", func(c *woody.Ctx) error {
     return c.SendString("Welcome!")
   })
 
@@ -46,7 +46,7 @@ curl -I http://localhost:3000
 type Config struct {
 	// Next defines a function to skip middleware.
 	// Optional. Default: nil
-	Next func(*fiber.Ctx) bool
+	Next func(*woody.Ctx) bool
 
 	// XSSProtection
 	// Optional. Default value "0".
